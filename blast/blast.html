@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kutemo — WhatsApp Blast</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D0D0D;--s1:#141414;--s2:#1C1C1C;--s3:#242424;
+  --gold:#C9A84C;--gold-lt:#E8C96A;--gold-dk:#9A7835;
+  --cream:#F5EED8;--text:#E8E0CC;--muted:#8A7E6A;
+  --border:#2A2520;--green:#25D366;--red:#FF4444;--r:16px;
+}
+html,body{min-height:100%;font-family:'Josefin Sans',sans-serif;background:var(--bg);color:var(--text);}
+body{overflow-x:hidden;}
+
+.header{background:var(--s1);border-bottom:1px solid rgba(201,168,76,.18);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-box{width:36px;height:36px;border:1px solid var(--gold-dk);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--gold);font-style:italic;}
+.logo-text strong{font-size:13px;font-weight:600;color:var(--cream);letter-spacing:.1em;display:block;}
+.logo-text small{font-size:8px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;display:block;}
+.back-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid rgba(201,168,76,.2);background:transparent;border-radius:8px;color:var(--muted);font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:.2s;text-decoration:none;}
+.back-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+.hero{padding:24px 16px 16px;background:linear-gradient(180deg,rgba(201,168,76,.06),transparent);border-bottom:1px solid rgba(201,168,76,.1);text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border:1px solid rgba(201,168,76,.25);border-radius:20px;font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--cream);line-height:1.1;margin-bottom:5px;}
+.hero h1 em{color:var(--gold);font-style:italic;}
+.hero p{font-size:10px;color:var(--muted);letter-spacing:.04em;line-height:1.6;}
+
+.main{max-width:720px;margin:0 auto;padding:14px 14px 100px;}
+
+.card{background:var(--s1);border:1px solid rgba(201,168,76,.14);border-radius:var(--r);overflow:hidden;margin-bottom:12px;}
+.card-head{display:flex;align-items:center;gap:10px;padding:13px 16px;background:linear-gradient(90deg,rgba(201,168,76,.06),transparent);border-bottom:1px solid var(--border);}
+.card-num{width:26px;height:26px;border-radius:50%;border:1px solid rgba(201,168,76,.35);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--gold);font-family:'Cormorant Garamond',serif;flex-shrink:0;}
+.card-num.done{background:var(--gold);color:#1a1200;border-color:var(--gold);font-size:10px;font-family:'Josefin Sans',sans-serif;}
+.card-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream);font-weight:600;}
+.card-sub{font-size:9px;color:var(--muted);margin-top:2px;}
+.card-body{padding:14px;}
+
+.f{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.f label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.inp{width:100%;background:#181818;border:1px solid rgba(201,168,76,.12);border-radius:10px;padding:11px 13px;font-family:'Josefin Sans',sans-serif;font-size:13px;color:var(--cream);outline:none;transition:.25s;spellcheck:false;}
+.inp:focus{border-color:rgba(201,168,76,.45);box-shadow:0 0 0 3px rgba(201,168,76,.07);}
+.inp::placeholder{color:#3a3530;}
+textarea.inp{min-height:75px;resize:vertical;}
+.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.inp-row{grid-template-columns:1fr;}}
+
+.tabs{display:flex;gap:5px;margin-bottom:12px;background:var(--s2);border-radius:10px;padding:4px;}
+.tab{flex:1;padding:8px;border-radius:7px;border:none;background:transparent;font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.tab.active{background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.2);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+
+.add-row{display:flex;gap:8px;margin-bottom:10px;}
+.add-row .inp{margin-bottom:0;flex:1;}
+.add-btn{width:42px;height:42px;border-radius:10px;border:none;background:var(--gold-dk);color:#1a1200;font-size:20px;cursor:pointer;flex-shrink:0;transition:.2s;display:flex;align-items:center;justify-content:center;}
+.add-btn:hover{background:var(--gold);}
+
+.tamu-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;margin-bottom:10px;}
+.tamu-list::-webkit-scrollbar{width:4px;}
+.tamu-list::-webkit-scrollbar-thumb{background:var(--gold-dk);border-radius:4px;}
+
+.tamu-item{display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--s2);border-radius:10px;border:1px solid var(--border);transition:.3s;}
+.tamu-item.active-send{border-color:var(--gold);background:rgba(201,168,76,.08);box-shadow:0 0 0 2px rgba(201,168,76,.15);}
+.tamu-item.sent{border-color:rgba(37,211,102,.3);background:rgba(37,211,102,.05);}
+.tamu-item.skipped{border-color:rgba(255,68,68,.2);background:rgba(255,68,68,.04);}
+
+.tamu-av{width:32px;height:32px;border-radius:50%;background:rgba(201,168,76,.1);border:1px solid var(--gold-dk);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--gold);flex-shrink:0;}
+.tamu-info{flex:1;min-width:0;}
+.tamu-info strong{font-size:11px;color:var(--cream);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tamu-info span{font-size:9px;color:var(--muted);}
+.tamu-badge{font-size:9px;font-weight:700;flex-shrink:0;padding:3px 8px;border-radius:6px;}
+.tamu-badge.sent{background:rgba(37,211,102,.12);color:var(--green);}
+.tamu-badge.skipped{background:rgba(255,68,68,.1);color:var(--red);}
+.tamu-badge.current{background:rgba(201,168,76,.15);color:var(--gold);}
+.tamu-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:3px 6px;flex-shrink:0;transition:.2s;}
+.tamu-del:hover{color:var(--red);}
+.empty-state{padding:24px;text-align:center;color:var(--muted);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.empty-state .ei{font-size:32px;}
+
+.csv-drop{border:1.5px dashed rgba(201,168,76,.3);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;position:relative;background:rgba(201,168,76,.02);transition:.3s;}
+.csv-drop:hover,.csv-drop.over{border-color:var(--gold);background:rgba(201,168,76,.06);}
+.csv-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.csv-drop-icon{font-size:26px;margin-bottom:6px;color:var(--gold-dk);}
+.csv-drop strong{display:block;font-size:10px;color:var(--gold);letter-spacing:.1em;margin-bottom:3px;}
+.csv-drop p{font-size:9px;color:var(--muted);}
+.hint{font-size:9px;color:var(--muted);margin-top:8px;line-height:1.7;}
+.hint code{background:var(--s2);padding:2px 5px;border-radius:4px;color:var(--gold-dk);}
+
+.tmpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+@media(max-width:480px){.tmpl-grid{grid-template-columns:1fr;}}
+.tmpl-btn{padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--s2);cursor:pointer;text-align:left;transition:.2s;}
+.tmpl-btn.active{border-color:var(--gold);background:rgba(201,168,76,.07);}
+.tmpl-btn:hover{border-color:rgba(201,168,76,.3);}
+.tmpl-btn-name{font-size:10px;font-weight:700;color:var(--gold);margin-bottom:3px;letter-spacing:.05em;}
+.tmpl-btn-prev{font-size:9px;color:var(--muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+
+.msg-preview-box{background:#0a1a0a;border:1px solid rgba(37,211,102,.2);border-radius:12px;padding:13px;margin-bottom:10px;}
+.msg-preview-lbl{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:#25D366;margin-bottom:7px;}
+.msg-bubble{background:#1a2e1a;border-radius:12px 12px 12px 0;padding:11px;font-size:11px;color:#E8F5E9;line-height:1.7;white-space:pre-line;word-break:break-word;}
+
+.vars-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.var-pill{padding:4px 9px;border-radius:6px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.18);font-size:9px;color:var(--gold);cursor:pointer;transition:.2s;font-family:'Josefin Sans',sans-serif;}
+.var-pill:hover{background:rgba(201,168,76,.18);}
+
+/* ── BLAST PANEL ── */
+.blast-panel{border:1px solid rgba(201,168,76,.2);border-radius:14px;overflow:hidden;}
+
+.blast-stats{display:grid;grid-template-columns:repeat(4,1fr);background:var(--s2);}
+@media(max-width:480px){.blast-stats{grid-template-columns:repeat(2,1fr);}}
+.stat-cell{padding:12px 8px;text-align:center;border-right:1px solid var(--border);}
+.stat-cell:last-child{border-right:none;}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:26px;line-height:1;color:var(--cream);}
+.stat-n.g{color:var(--green);}.stat-n.o{color:var(--gold);}.stat-n.r{color:var(--red);}
+.stat-l{font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+
+.progress-bar{height:5px;background:var(--s3);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold-lt),var(--gold));transition:width .4s ease;width:0%;}
+
+/* ── CURRENT TAMU CARD ── */
+.current-card{padding:16px;background:var(--bg);border-bottom:1px solid var(--border);}
+.current-label{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.current-info{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.current-av{width:48px;height:48px;border-radius:50%;background:rgba(201,168,76,.1);border:2px solid var(--gold-dk);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);flex-shrink:0;}
+.current-name{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream);}
+.current-no{font-size:11px;color:var(--muted);margin-top:2px;}
+.current-msg{background:#0a1a0a;border:1px solid rgba(37,211,102,.15);border-radius:10px;padding:11px;font-size:10px;color:#d0e8d0;line-height:1.7;white-space:pre-line;word-break:break-word;max-height:120px;overflow-y:auto;margin-bottom:14px;}
+.current-msg::-webkit-scrollbar{width:3px;}
+.current-msg::-webkit-scrollbar-thumb{background:var(--gold-dk);border-radius:3px;}
+
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.btn-wa{padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#25D366,#128C4E);color:#fff;font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:.25s;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;min-height:48px;}
+.btn-wa:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,211,102,.3);}
+.btn-skip{padding:13px;border:1px solid rgba(255,68,68,.25);border-radius:12px;background:transparent;color:var(--red);font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:.2s;min-height:48px;}
+.btn-skip:hover{background:rgba(255,68,68,.08);}
+
+.blast-nav{padding:13px 16px;background:var(--s2);display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);}
+.blast-nav-info{font-size:10px;color:var(--muted);}
+.blast-nav-info strong{color:var(--cream);}
+
+/* ── IDLE / DONE STATE ── */
+.idle-state{padding:24px 16px;text-align:center;}
+.idle-icon{font-size:40px;margin-bottom:10px;display:block;}
+.idle-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream);margin-bottom:5px;}
+.idle-sub{font-size:10px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+
+.btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:'Josefin Sans',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:.25s;display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;}
+.btn-gold{background:linear-gradient(135deg,var(--gold-lt),var(--gold),var(--gold-dk));color:#1a1200;box-shadow:0 8px 24px rgba(201,168,76,.25);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,.4);}
+.btn-gold:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-outline{background:transparent;border:1px solid rgba(201,168,76,.22);color:var(--muted);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-sm{min-height:36px;padding:0 14px;width:auto;font-size:9px;}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid rgba(201,168,76,.3);color:var(--cream);padding:9px 18px;border-radius:9px;font-size:11px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9999;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.toast.show{opacity:1;}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--gold-dk);border-radius:4px;}
+
+/* ── Kontak HP ── */
+.kontak-unsupported{text-align:center;padding:20px 16px;color:var(--muted);}
+.kontak-unsupported strong{display:block;font-size:12px;color:var(--cream);margin-bottom:5px;}
+.kontak-unsupported p{font-size:10px;line-height:1.6;}
+.kontak-info-box{display:flex;align-items:flex-start;gap:10px;padding:12px;background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.14);border-radius:10px;margin-bottom:12px;}
+.kontak-info-icon{font-size:22px;flex-shrink:0;}
+.kontak-info-title{font-size:11px;font-weight:700;color:var(--cream);margin-bottom:3px;}
+.kontak-info-desc{font-size:9px;color:var(--muted);line-height:1.55;}
+.btn-kontak{width:100%;padding:14px;border:1.5px solid rgba(37,211,102,.35);border-radius:12px;background:rgba(37,211,102,.07);color:var(--green);font-family:'Josefin Sans',sans-serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:.25s;display:flex;align-items:center;justify-content:center;gap:9px;min-height:50px;margin-bottom:12px;}
+.btn-kontak:hover{background:rgba(37,211,102,.14);border-color:var(--green);transform:translateY(-1px);}
+.btn-kontak:active{transform:scale(.98);}
+.btn-kontak:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-kontak-icon{font-size:20px;}
+.kontak-result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.kontak-preview-list{display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto;margin-bottom:8px;}
+.kontak-preview-list::-webkit-scrollbar{width:3px;}
+.kontak-preview-list::-webkit-scrollbar-thumb{background:var(--gold-dk);border-radius:3px;}
+.kontak-preview-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--s2);border-radius:9px;border:1px solid var(--border);transition:.2s;}
+.kontak-preview-item.selected{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.06);}
+.kontak-preview-item.no-phone{opacity:.4;}
+.kp-check{width:20px;height:20px;border-radius:5px;border:1.5px solid rgba(201,168,76,.3);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:11px;transition:.2s;}
+.kontak-preview-item.selected .kp-check{background:var(--gold-dk);border-color:var(--gold);color:#1a1200;}
+.kp-av{width:30px;height:30px;border-radius:50%;background:rgba(201,168,76,.1);border:1px solid var(--gold-dk);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--gold);flex-shrink:0;}
+.kp-info{flex:1;min-width:0;}
+.kp-info strong{font-size:11px;color:var(--cream);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.kp-info span{font-size:9px;color:var(--muted);}
+.kp-no-phone{font-size:9px;color:rgba(255,68,68,.7);}
+.kontak-loading{text-align:center;padding:16px;color:var(--muted);font-size:10px;}
+.kontak-loading::before{content:'';display:inline-block;width:16px;height:16px;border:2px solid rgba(201,168,76,.3);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="logo" href="index.html">
+    <div class="logo-box">K</div>
+    <div class="logo-text"><strong>Kutemo</strong><small>Wedding Invitation</small></div>
+  </a>
+  <a class="back-btn" href="index.html">← Kembali</a>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">💬 WhatsApp Blast</div>
+  <h1>Kirim Undangan ke<br><em>Semua Tamu</em></h1>
+  <p>Kirim pesan undangan digital satu per satu ke seluruh tamu dengan mudah</p>
+</div>
+
+<div class="main">
+
+  <!-- STEP 1: DATA -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-num" id="num1">1</div>
+      <div><div class="card-title">Data Pengantin & Link</div><div class="card-sub">Isi info dasar undangan</div></div>
+    </div>
+    <div class="card-body">
+      <div class="inp-row">
+        <div class="f"><label>Nama Pria</label><input class="inp" id="namaPria" placeholder="Ahmad" oninput="refreshPreview()" spellcheck="false"></div>
+        <div class="f"><label>Nama Wanita</label><input class="inp" id="namaWanita" placeholder="Aulia" oninput="refreshPreview()" spellcheck="false"></div>
+      </div>
+      <div class="inp-row">
+        <div class="f"><label>Tanggal Acara</label><input class="inp" type="date" id="tglAcara" oninput="refreshPreview()"></div>
+        <div class="f"><label>Link Undangan</label><input class="inp" id="linkUndan" placeholder="https://kutemo.id/u/ahmad-aulia" oninput="refreshPreview()" spellcheck="false"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: TAMU -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-num" id="num2">2</div>
+      <div><div class="card-title">Daftar Tamu</div><div class="card-sub">Manual, CSV/Excel, atau paste teks</div></div>
+    </div>
+    <div class="card-body">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab(this,'tab-manual')">✏️ Manual</button>
+        <button class="tab" onclick="switchTab(this,'tab-csv')">📊 CSV/Excel</button>
+        <button class="tab" onclick="switchTab(this,'tab-paste')">📋 Paste</button>
+        <button class="tab" id="tab-kontak-btn" onclick="switchTab(this,'tab-kontak')">📱 Kontak</button>
+      </div>
+
+      <!-- Manual -->
+      <div class="tab-panel active" id="tab-manual">
+        <div class="add-row">
+          <input class="inp" id="inpNama" placeholder="Nama tamu..." spellcheck="false"
+            onkeydown="if(event.key==='Enter'){document.getElementById('inpNo').focus();}">
+          <input class="inp" id="inpNo" placeholder="08xxxxxxxxxx" spellcheck="false"
+            onkeydown="if(event.key==='Enter')addManual();" style="max-width:155px;">
+          <button class="add-btn" onclick="addManual()" title="Tambah">+</button>
+        </div>
+      </div>
+
+      <!-- CSV -->
+      <div class="tab-panel" id="tab-csv">
+        <div class="csv-drop" id="csvDrop">
+          <input type="file" accept=".csv,.xlsx,.xls" onchange="handleFile(this)">
+          <div class="csv-drop-icon">📊</div>
+          <strong>Upload CSV / Excel</strong>
+          <p>Klik atau seret file ke sini</p>
+        </div>
+        <div class="hint">Kolom: <code>Nama</code> dan <code>Nomor</code> (atau <code>No HP</code>)<br>
+        Contoh: <code>Budi Santoso, 081234567890</code></div>
+      </div>
+
+      <!-- Paste -->
+      <div class="tab-panel" id="tab-paste">
+        <textarea class="inp" id="pasteArea" placeholder="Tempel daftar tamu:&#10;Budi Santoso, 081234567890&#10;Siti Rahayu, 087654321098&#10;&#10;Satu tamu per baris, pisah nama & nomor dengan koma" style="min-height:90px;margin-bottom:9px;" spellcheck="false"></textarea>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin-bottom:0;" onclick="importPaste()">📋 Import</button>
+      </div>
+
+      <!-- Kontak HP -->
+      <div class="tab-panel" id="tab-kontak">
+        <div id="kontak-not-supported" style="display:none">
+          <div class="kontak-unsupported">
+            <span style="font-size:28px;display:block;margin-bottom:8px;">💻</span>
+            <strong>Fitur ini hanya tersedia di HP</strong>
+            <p>Buka halaman ini di Chrome/Safari HP kamu untuk mengakses kontak.</p>
+          </div>
+        </div>
+        <div id="kontak-supported">
+          <div class="kontak-info-box">
+            <div class="kontak-info-icon">📱</div>
+            <div>
+              <div class="kontak-info-title">Import dari Kontak HP</div>
+              <div class="kontak-info-desc">Browser akan meminta izin untuk memilih kontak. Pilih satu atau banyak sekaligus.</div>
+            </div>
+          </div>
+          <button class="btn-kontak" id="btnPickKontak" onclick="pickContacts()">
+            <span class="btn-kontak-icon">👥</span>
+            <span>Pilih dari Kontak HP</span>
+          </button>
+          <div id="kontak-result" style="display:none">
+            <div class="kontak-result-header">
+              <span id="kontakResultCount" style="font-size:10px;color:var(--gold);">0 kontak dipilih</span>
+              <button onclick="addAllContacts()" class="btn btn-outline btn-sm">✓ Tambah Semua</button>
+            </div>
+            <div class="kontak-preview-list" id="kontakPreviewList"></div>
+          </div>
+          <div class="hint" style="margin-top:8px;">
+            ✦ Hanya kontak yang punya nomor HP yang bisa dipilih<br>
+            ✦ Privasi terjaga — tidak ada data dikirim ke server
+          </div>
+        </div>
+      </div>
+
+      <!-- List header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 7px;">
+        <div style="font-size:10px;color:var(--muted);">Tamu: <span id="tamuCount" style="color:var(--gold);font-weight:700;">0</span> orang</div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ Export</button>
+          <button class="btn btn-outline btn-sm" onclick="clearAll()" style="color:var(--red);border-color:rgba(255,68,68,.25);">Hapus Semua</button>
+        </div>
+      </div>
+      <div class="tamu-list" id="tamuList">
+        <div class="empty-state"><span class="ei">👥</span>Belum ada tamu.<br>Tambahkan dari tab di atas.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: PESAN -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-num" id="num3">3</div>
+      <div><div class="card-title">Template Pesan</div><div class="card-sub">Pilih atau tulis pesan</div></div>
+    </div>
+    <div class="card-body">
+      <div class="tmpl-grid">
+        <button class="tmpl-btn active" id="t0" onclick="pickTmpl(0)">
+          <div class="tmpl-btn-name">✦ Formal Islami</div>
+          <div class="tmpl-btn-prev">Assalamu'alaikum... kami mengundang kehadiran Anda</div>
+        </button>
+        <button class="tmpl-btn" id="t1" onclick="pickTmpl(1)">
+          <div class="tmpl-btn-name">💕 Romantis</div>
+          <div class="tmpl-btn-prev">Halo {nama_tamu} 🌸 dengan penuh sukacita kami mengundangmu</div>
+        </button>
+        <button class="tmpl-btn" id="t2" onclick="pickTmpl(2)">
+          <div class="tmpl-btn-name">😊 Santai</div>
+          <div class="tmpl-btn-prev">Hai {nama_tamu}! 👋 kami mau nikah nih!</div>
+        </button>
+        <button class="tmpl-btn" id="t3" onclick="pickTmpl(3)">
+          <div class="tmpl-btn-name">✏️ Kustom</div>
+          <div class="tmpl-btn-prev">Tulis pesan sendiri di bawah...</div>
+        </button>
+      </div>
+
+      <div id="customArea" style="display:none;margin-bottom:10px;">
+        <textarea class="inp" id="customMsg"
+          placeholder="Tulis pesan kustom...&#10;Gunakan: {nama_tamu} {nama_pria} {nama_wanita} {tanggal} {link_undangan}"
+          oninput="refreshPreview()" spellcheck="false"></textarea>
+      </div>
+
+      <div style="font-size:9px;color:var(--muted);margin-bottom:5px;letter-spacing:.1em;text-transform:uppercase;">Klik untuk sisipkan variabel</div>
+      <div class="vars-row">
+        <span class="var-pill" onclick="insertVar('{nama_tamu}')">{nama_tamu}</span>
+        <span class="var-pill" onclick="insertVar('{nama_pria}')">{nama_pria}</span>
+        <span class="var-pill" onclick="insertVar('{nama_wanita}')">{nama_wanita}</span>
+        <span class="var-pill" onclick="insertVar('{tanggal}')">{tanggal}</span>
+        <span class="var-pill" onclick="insertVar('{link_undangan}')">{link_undangan}</span>
+      </div>
+
+      <div class="msg-preview-box">
+        <div class="msg-preview-lbl">💬 Preview Pesan</div>
+        <div class="msg-bubble" id="msgPreview">Isi data dan pilih template...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: BLAST -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-num" id="num4">4</div>
+      <div><div class="card-title">Kirim WhatsApp Blast</div><div class="card-sub">Kirim satu per satu via WhatsApp</div></div>
+    </div>
+    <div class="card-body" style="padding:0;">
+
+      <div class="blast-panel">
+        <!-- Stats -->
+        <div class="blast-stats">
+          <div class="stat-cell"><div class="stat-n" id="sTotal">0</div><div class="stat-l">Total</div></div>
+          <div class="stat-cell"><div class="stat-n o" id="sBelum">0</div><div class="stat-l">Belum</div></div>
+          <div class="stat-cell"><div class="stat-n g" id="sSent">0</div><div class="stat-l">Terkirim</div></div>
+          <div class="stat-cell"><div class="stat-n r" id="sSkip">0</div><div class="stat-l">Dilewati</div></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+
+        <!-- Idle state -->
+        <div class="idle-state" id="idleState">
+          <span class="idle-icon">💬</span>
+          <div class="idle-title">Siap Mengirim</div>
+          <div class="idle-sub">Setiap tamu akan dibukakan WhatsApp-nya.<br>Klik <strong style="color:var(--green);">Kirim via WA</strong> lalu konfirmasi kirim di WhatsApp.<br>Kemudian kembali ke sini untuk lanjut ke tamu berikutnya.</div>
+          <button class="btn btn-gold" onclick="startBlast()" id="startBtn">💬 Mulai Blast</button>
+        </div>
+
+        <!-- Active: tampilkan tamu satu per satu -->
+        <div id="activeState" style="display:none;">
+          <div class="current-card">
+            <div class="current-label">✦ Kirim ke</div>
+            <div class="current-info">
+              <div class="current-av" id="curAv">?</div>
+              <div>
+                <div class="current-name" id="curNama">-</div>
+                <div class="current-no" id="curNo">-</div>
+              </div>
+            </div>
+            <div class="current-msg" id="curMsg">-</div>
+            <div class="action-row">
+              <a class="btn-wa" id="btnKirim" href="#" target="_blank" onclick="markSent()">
+                💬 Kirim via WA
+              </a>
+              <button class="btn-skip" onclick="skipCurrent()">✕ Lewati</button>
+            </div>
+          </div>
+          <div class="blast-nav">
+            <div class="blast-nav-info">
+              Tamu <strong id="curIdx">1</strong> dari <strong id="curTotal">0</strong>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="stopBlast()">⏹ Hentikan</button>
+          </div>
+        </div>
+
+        <!-- Done state -->
+        <div class="idle-state" id="doneState" style="display:none;">
+          <span class="idle-icon">🎉</span>
+          <div class="idle-title">Blast Selesai!</div>
+          <div class="idle-sub" id="doneSub">Semua tamu telah diproses.</div>
+          <div style="display:flex;gap:8px;justify-content:center;">
+            <button class="btn btn-gold" style="width:auto;padding:0 24px;" onclick="resetBlast()">↺ Ulangi</button>
+            <button class="btn btn-outline" style="width:auto;padding:0 24px;" onclick="exportCSV()">⬇ Export Hasil</button>
+          </div>
+        </div>
+
+      </div><!-- /blast-panel -->
+
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ STATE ══
+var tamus = [];
+var tmplIdx = 0;
+var blastIdx = 0;
+var blastActive = false;
+var sentCount = 0, skipCount = 0;
+
+var TMPLS = [
+  "Assalamu'alaikum Wr. Wb.\nYth. Bapak/Ibu/Sdr/i {nama_tamu}\n\nKami mengundang kehadiran Anda pada pernikahan:\n\n💍 {nama_pria} & {nama_wanita}\n📅 {tanggal}\n\nBuka undangan kami:\n{link_undangan}\n\nWassalamu'alaikum Wr. Wb. 🙏",
+  "Halo {nama_tamu} 🌸\n\nDengan penuh sukacita, kami mengundangmu hadir di momen bahagia kami ✨\n\n💍 {nama_pria} & {nama_wanita}\n📅 {tanggal}\n\nUndangan digital kami:\n{link_undangan}\n\nDitunggu kehadirannya ya! 💌",
+  "Hai {nama_tamu}! 👋\n\n{nama_pria} & {nama_wanita} mau nikah nih! 🎉\nTanggal: {tanggal}\n\nJangan lupa hadir ya 🙏\n{link_undangan}",
+  ""
+];
+
+// ══ HELPERS ══
+function $i(id){ return document.getElementById(id); }
+
+function toast(msg){
+  var t = $i('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+function fmtDate(v){
+  if(!v) return '-';
+  try {
+    return new Date(v+'T00:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  } catch(e){ return v; }
+}
+
+function cleanNo(no){
+  no = String(no).replace(/\D/g,'');
+  if(no.charAt(0) === '0') no = '62' + no.slice(1);
+  else if(!no.startsWith('62')) no = '62' + no;
+  return no;
+}
+
+function buildMsg(nama){
+  var tmpl = tmplIdx === 3
+    ? ($i('customMsg').value || TMPLS[0])
+    : TMPLS[tmplIdx];
+  return tmpl
+    .replace(/\{nama_tamu\}/g, nama || 'Tamu Undangan')
+    .replace(/\{nama_pria\}/g, $i('namaPria').value.trim() || 'Pengantin Pria')
+    .replace(/\{nama_wanita\}/g, $i('namaWanita').value.trim() || 'Pengantin Wanita')
+    .replace(/\{tanggal\}/g, fmtDate($i('tglAcara').value))
+    .replace(/\{link_undangan\}/g, $i('linkUndan').value.trim() || 'https://kutemo.id/undangan');
+}
+
+function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ══ RENDER TAMU LIST ══
+function renderList(){
+  $i('tamuCount').textContent = tamus.length;
+  updateStats();
+  var el = $i('tamuList');
+  if(!tamus.length){
+    el.innerHTML = '<div class="empty-state"><span class="ei">👥</span>Belum ada tamu.<br>Tambahkan dari tab di atas.</div>';
+    return;
+  }
+  el.innerHTML = tamus.map(function(t, i){
+    var cls = t.status === 'sent' ? ' sent' : t.status === 'skipped' ? ' skipped' : '';
+    var badge = t.status === 'sent'
+      ? '<span class="tamu-badge sent">✓ Terkirim</span>'
+      : t.status === 'skipped'
+      ? '<span class="tamu-badge skipped">✕ Dilewati</span>'
+      : '';
+    return '<div class="tamu-item'+cls+'" id="ti'+i+'">'
+      + '<div class="tamu-av">'+escH(t.nama.charAt(0).toUpperCase())+'</div>'
+      + '<div class="tamu-info"><strong>'+escH(t.nama)+'</strong><span>'+escH(t.no)+'</span></div>'
+      + badge
+      + (!blastActive ? '<button class="tamu-del" onclick="delTamu('+i+')" title="Hapus">✕</button>' : '')
+      + '</div>';
+  }).join('');
+}
+
+function updateStats(){
+  var total = tamus.length;
+  var sent  = tamus.filter(function(t){ return t.status==='sent'; }).length;
+  var skip  = tamus.filter(function(t){ return t.status==='skipped'; }).length;
+  var belum = total - sent - skip;
+  $i('sTotal').textContent = total;
+  $i('sBelum').textContent = belum;
+  $i('sSent').textContent  = sent;
+  $i('sSkip').textContent  = skip;
+  var done = sent + skip;
+  $i('progFill').style.width = total > 0 ? Math.round(done/total*100)+'%' : '0%';
+  sentCount = sent; skipCount = skip;
+}
+
+// ══ TAMBAH TAMU ══
+function addManual(){
+  var nama = $i('inpNama').value.trim();
+  var no   = $i('inpNo').value.trim();
+  if(!nama){ toast('⚠️ Isi nama tamu'); $i('inpNama').focus(); return; }
+  if(!no)  { toast('⚠️ Isi nomor WA');   $i('inpNo').focus();   return; }
+  tamus.push({ nama:nama, no:no, status:'' });
+  $i('inpNama').value = '';
+  $i('inpNo').value   = '';
+  $i('inpNama').focus();
+  renderList();
+  toast('👤 '+nama+' ditambahkan');
+}
+
+function delTamu(i){
+  var n = tamus[i].nama;
+  tamus.splice(i,1);
+  renderList();
+  toast('Dihapus: '+n);
+}
+
+function clearAll(){
+  if(!tamus.length) return;
+  if(!confirm('Hapus semua '+tamus.length+' tamu?')) return;
+  tamus = [];
+  renderList();
+  toast('Daftar dikosongkan');
+}
+
+// ══ CSV / PASTE ══
+function handleFile(inp){
+  var file = inp.files[0]; if(!file) return;
+  var ext = file.name.split('.').pop().toLowerCase();
+  if(ext === 'csv'){
+    var r = new FileReader();
+    r.onload = function(e){ parseText(e.target.result); };
+    r.readAsText(file,'UTF-8');
+  } else if(typeof XLSX !== 'undefined'){
+    var r = new FileReader();
+    r.onload = function(e){
+      var wb = XLSX.read(e.target.result,{type:'array'});
+      var csv = XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+      parseText(csv);
+    };
+    r.readAsArrayBuffer(file);
+  } else {
+    toast('⚠️ Excel belum dimuat. Coba lagi sebentar atau gunakan CSV.');
+  }
+  inp.value = '';
+}
+
+function parseText(text){
+  var lines = text.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+  var start = 0;
+  if(lines[0] && /nama|name|no|nomor|phone/i.test(lines[0])) start = 1;
+  var added = 0;
+  for(var i = start; i < lines.length; i++){
+    var p = lines[i].split(/[,;|\t]/);
+    if(p.length < 2) continue;
+    var nama = p[0].trim().replace(/^["']|["']$/g,'');
+    var no   = p[1].trim().replace(/^["']|["']$/g,'').replace(/[\s\-]/g,'');
+    if(nama && no && /\d{8,}/.test(no)){
+      tamus.push({ nama:nama, no:no, status:'' });
+      added++;
+    }
+  }
+  renderList();
+  if(added) toast('✅ '+added+' tamu diimport');
+  else toast('⚠️ Tidak ada data yang bisa dibaca');
+}
+
+function importPaste(){
+  var t = $i('pasteArea').value.trim();
+  if(!t){ toast('⚠️ Tempel daftar tamu dulu'); return; }
+  parseText(t);
+  $i('pasteArea').value = '';
+}
+
+function exportCSV(){
+  if(!tamus.length){ toast('⚠️ Daftar tamu kosong'); return; }
+  var rows = ['Nama,Nomor,Status'];
+  tamus.forEach(function(t){
+    rows.push('"'+t.nama+'","'+t.no+'","'+(t.status||'belum')+'"');
+  });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'}));
+  a.download = 'tamu-kutemo.csv';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(a.href); },500);
+  toast('📥 CSV diunduh');
+}
+
+// ══ TABS ══
+function switchTab(btn, panelId){
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  btn.classList.add('active');
+  $i(panelId).classList.add('active');
+}
+
+// ══ TEMPLATE ══
+function pickTmpl(idx){
+  tmplIdx = idx;
+  for(var i=0;i<4;i++) $i('t'+i).classList.toggle('active', i===idx);
+  $i('customArea').style.display = idx===3 ? 'block' : 'none';
+  refreshPreview();
+}
+
+function insertVar(v){
+  if(tmplIdx !== 3){ pickTmpl(3); }
+  var ta = $i('customMsg');
+  var s = ta.selectionStart, e = ta.selectionEnd;
+  ta.value = ta.value.slice(0,s) + v + ta.value.slice(e);
+  ta.selectionStart = ta.selectionEnd = s + v.length;
+  ta.focus();
+  refreshPreview();
+}
+
+function refreshPreview(){
+  $i('msgPreview').textContent = buildMsg('Budi Santoso');
+}
+
+// ══ BLAST ══
+function startBlast(){
+  if(!tamus.length){ toast('⚠️ Tambah tamu dulu'); return; }
+  if(!$i('namaPria').value.trim()){ toast('⚠️ Isi nama pengantin dulu'); return; }
+  // Reset status semua
+  tamus.forEach(function(t){ t.status = ''; });
+  blastIdx = 0;
+  blastActive = true;
+  sentCount = 0; skipCount = 0;
+  showTamu(blastIdx);
+}
+
+function showTamu(idx){
+  var t = tamus[idx];
+  // Update current card
+  $i('curAv').textContent    = t.nama.charAt(0).toUpperCase();
+  $i('curNama').textContent  = t.nama;
+  $i('curNo').textContent    = t.no;
+  $i('curMsg').textContent   = buildMsg(t.nama);
+  $i('curIdx').textContent   = idx + 1;
+  $i('curTotal').textContent = tamus.length;
+
+  var no  = cleanNo(t.no);
+  var msg = buildMsg(t.nama);
+  var url = 'https://wa.me/' + no + '?text=' + encodeURIComponent(msg);
+  $i('btnKirim').href = url;
+
+  // Tandai current
+  tamus.forEach(function(x){ if(x._current) x._current = false; });
+  t._current = true;
+
+  // Show active state
+  $i('idleState').style.display  = 'none';
+  $i('activeState').style.display = 'block';
+  $i('doneState').style.display  = 'none';
+
+  renderList();
+  // Scroll ke tamu ini di list
+  var el = $i('ti'+idx);
+  if(el) el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function markSent(){
+  // Dipanggil saat user klik "Kirim via WA"
+  if(!blastActive) return;
+  tamus[blastIdx].status = 'sent';
+  blastIdx++;
+  nextOrDone();
+}
+
+function skipCurrent(){
+  if(!blastActive) return;
+  tamus[blastIdx].status = 'skipped';
+  blastIdx++;
+  nextOrDone();
+}
+
+function nextOrDone(){
+  updateStats();
+  if(blastIdx >= tamus.length){
+    finishBlast();
+  } else {
+    showTamu(blastIdx);
+  }
+}
+
+function finishBlast(){
+  blastActive = false;
+  $i('idleState').style.display  = 'none';
+  $i('activeState').style.display = 'none';
+  $i('doneState').style.display  = 'block';
+  var sent = tamus.filter(function(t){ return t.status==='sent'; }).length;
+  var skip = tamus.filter(function(t){ return t.status==='skipped'; }).length;
+  $i('doneSub').textContent = sent+' pesan terkirim, '+skip+' dilewati dari total '+tamus.length+' tamu.';
+  renderList();
+  toast('🎉 Blast selesai! '+sent+' terkirim.');
+}
+
+function stopBlast(){
+  if(!confirm('Hentikan blast sekarang?')) return;
+  blastActive = false;
+  $i('idleState').style.display   = 'block';
+  $i('activeState').style.display = 'none';
+  $i('doneState').style.display   = 'none';
+  $i('startBtn').textContent = '💬 Lanjutkan Blast';
+  renderList();
+}
+
+function resetBlast(){
+  tamus.forEach(function(t){ t.status=''; });
+  blastIdx = 0; blastActive = false;
+  $i('idleState').style.display  = 'block';
+  $i('activeState').style.display = 'none';
+  $i('doneState').style.display  = 'none';
+  $i('startBtn').textContent = '💬 Mulai Blast';
+  $i('progFill').style.width = '0%';
+  renderList();
+}
+
+// ══ CSV DRAG DROP ══
+var drop = $i('csvDrop');
+drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
+drop.addEventListener('drop', function(e){
+  e.preventDefault(); drop.classList.remove('over');
+  var f = e.dataTransfer.files[0];
+  if(f) handleFile({ files:[f], value:'' });
+});
+
+// ══ KONTAK HP (Web Contacts API) ══
+var pickedContacts = [];  // hasil pilihan kontak mentah
+var selectedContacts = []; // yang sudah dicentang
+
+function initKontakTab(){
+  var supported = ('contacts' in navigator && 'ContactsManager' in window);
+  $i('kontak-not-supported').style.display = supported ? 'none' : 'block';
+  $i('kontak-supported').style.display     = supported ? 'block' : 'none';
+}
+
+async function pickContacts(){
+  var btn = $i('btnPickKontak');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="btn-kontak-icon">⏳</span><span>Memuat kontak...</span>';
+
+  try {
+    var props = ['name','tel'];
+    var opts  = { multiple: true };
+
+    // Cek dukungan
+    var supported = await navigator.contacts.getProperties();
+    if(!supported.includes('tel')){
+      toast('⚠️ Kontak tidak menyertakan nomor telepon');
+      btn.disabled = false;
+      btn.innerHTML = '<span class="btn-kontak-icon">👥</span><span>Pilih dari Kontak HP</span>';
+      return;
+    }
+
+    var contacts = await navigator.contacts.select(props, opts);
+    if(!contacts || contacts.length === 0){
+      toast('Tidak ada kontak dipilih');
+      btn.disabled = false;
+      btn.innerHTML = '<span class="btn-kontak-icon">👥</span><span>Pilih dari Kontak HP</span>';
+      return;
+    }
+
+    pickedContacts  = contacts;
+    selectedContacts = contacts.slice(); // semua terseleksi by default
+    renderKontakPreview(contacts);
+
+  } catch(err){
+    if(err.name === 'SecurityError'){
+      toast('⚠️ Izin kontak ditolak');
+    } else if(err.name === 'InvalidStateError'){
+      toast('⚠️ Tutup pilihan kontak yang masih terbuka');
+    } else {
+      toast('⚠️ Gagal: ' + (err.message || err));
+    }
+    console.warn('Contacts API error:', err);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<span class="btn-kontak-icon">👥</span><span>Pilih Kontak Lainnya</span>';
+}
+
+function renderKontakPreview(contacts){
+  var list = $i('kontakPreviewList');
+  var resultBox = $i('kontak-result');
+
+  if(!contacts || contacts.length === 0){
+    resultBox.style.display = 'none';
+    return;
+  }
+
+  resultBox.style.display = 'block';
+
+  // Hitung yang punya nomor
+  var withPhone = contacts.filter(function(c){ return c.tel && c.tel.length > 0; });
+  $i('kontakResultCount').textContent = withPhone.length + ' kontak dengan nomor HP';
+
+  list.innerHTML = contacts.map(function(c, i){
+    var nama = (c.name && c.name[0]) ? c.name[0] : 'Tanpa Nama';
+    var noList = c.tel && c.tel.length ? c.tel : [];
+    var hasPhone = noList.length > 0;
+    var noPrimary = hasPhone ? noList[0] : '';
+    var isSelected = hasPhone; // default: semua yang punya nomor terseleksi
+    c._idx = i;
+    c._selected = isSelected;
+
+    var phonesHtml = hasPhone
+      ? noList.map(function(n,ni){
+          return '<span class="kp-info-no" style="font-size:9px;color:var(--muted);margin-right:6px;">'
+            + escH(n) + '</span>';
+        }).join('')
+      : '<span class="kp-no-phone">Tidak ada nomor HP</span>';
+
+    return '<div class="kontak-preview-item'+(isSelected?' selected':'')+(hasPhone?'':' no-phone')+'" id="kpi'+i+'" '
+      + (hasPhone ? 'onclick="toggleKontak('+i+')"' : '') + '>'
+      + '<div class="kp-check">'+(isSelected?'✓':'')+'</div>'
+      + '<div class="kp-av">'+escH(nama.charAt(0).toUpperCase())+'</div>'
+      + '<div class="kp-info"><strong>'+escH(nama)+'</strong><span>'+phonesHtml+'</span></div>'
+      + '</div>';
+  }).join('');
+
+  updateSelectedContacts();
+}
+
+function toggleKontak(i){
+  var c = pickedContacts[i];
+  if(!c) return;
+  c._selected = !c._selected;
+  var el = $i('kpi'+i);
+  var check = el.querySelector('.kp-check');
+  el.classList.toggle('selected', c._selected);
+  check.textContent = c._selected ? '✓' : '';
+  updateSelectedContacts();
+}
+
+function updateSelectedContacts(){
+  selectedContacts = pickedContacts.filter(function(c){ return c._selected && c.tel && c.tel.length; });
+  $i('kontakResultCount').textContent = selectedContacts.length + ' kontak dipilih';
+}
+
+function addAllContacts(){
+  if(!selectedContacts.length){ toast('⚠️ Pilih minimal 1 kontak'); return; }
+  var added = 0;
+  selectedContacts.forEach(function(c){
+    var nama = (c.name && c.name[0]) ? c.name[0] : 'Tanpa Nama';
+    var no   = c.tel[0]; // ambil nomor pertama
+    // Cek duplikat
+    var exists = tamus.some(function(t){ return t.no.replace(/\D/g,'') === no.replace(/\D/g,''); });
+    if(!exists){
+      tamus.push({ nama: nama, no: no, status: '' });
+      added++;
+    }
+  });
+  renderList();
+  if(added > 0){
+    toast('✅ '+added+' kontak ditambahkan');
+    // Reset preview
+    pickedContacts = []; selectedContacts = [];
+    $i('kontak-result').style.display = 'none';
+    $i('btnPickKontak').innerHTML = '<span class="btn-kontak-icon">👥</span><span>Pilih Kontak Lainnya</span>';
+  } else {
+    toast('ℹ️ Semua kontak sudah ada di daftar');
+  }
+}
+
+// ══ INIT ══
+refreshPreview();
+initKontakTab();
+
+// Load SheetJS untuk Excel
+(function(){
+  var s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>

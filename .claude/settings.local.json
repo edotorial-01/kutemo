@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(grep -v \"body\\\\.ku\\\\|\\\\.light\\\\|onclick\\\\|function\\\\|var \\\\|let \\\\|const \\\\|sync\\\\|\\\\$\\(\")",
+      "Bash(vercel *)",
+      "Bash(dig kutemo.id A +short)",
+      "Bash(dig www.kutemo.id CNAME +short)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://kutemo.id)",
+      "Bash(curl -sI https://kutemo.id)",
+      "Bash(dig kutemo.id A +short @8.8.8.8)",
+      "Bash(dig www.kutemo.id A +short @8.8.8.8)",
+      "Bash(curl -sI http://kutemo.id)",
+      "WebFetch(domain:kutemo.id)",
+      "Bash(curl -s https://kutemo.id)",
+      "Bash(curl *)",
+      "WebFetch(domain:developers.facebook.com)",
+      "WebFetch(domain:www.opengraph.xyz)",
+      "WebFetch(domain:metatags.io)",
+      "Bash(sips -s format jpeg -s formatOptions 75 --resampleWidth 400 golden-noir.png --out golden-noir.jpg)",
+      "Bash(sips -s format jpeg -s formatOptions 75 --resampleWidth 400 java-royale.png --out java-royale.jpg)",
+      "Bash(sips -s format jpeg -s formatOptions 75 --resampleWidth 400 luxora.png --out luxora.jpg)",
+      "Bash(sips -s format jpeg -s formatOptions 75 --resampleWidth 400 midnight-elegance.png --out midnight-elegance.jpg)",
+      "Bash(grep -n \"^function saveForm\\\\|^function fmtSlug\\\\|^function cpTxt\\\\|^} *$\" /Volumes/edotorial/Undangan-Online/Wedding/luxora/form/index.html)",
+      "Bash(python3 -m http.server 7400)",
+      "Bash(echo \"PID=$!\")",
+      "Bash(npx playwright *)",
+      "Bash(cp /tmp/verify_payment.js /tmp/ktm-verify/verify.js)",
+      "Read(//private/tmp/ktm-verify/**)",
+      "Bash(node verify.js)",
+      "Bash(ls ~/.claude/projects/-Volumes-edotorial-Undangan-Online/memory/ 2>/dev/null; ls /Users/user/Library/Caches/ms-playwright/ 2>/dev/null; echo \"installed\")",
+      "Read(//Users/user/Library/Caches/ms-playwright/**)"
+    ]
+  }
+}

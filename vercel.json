@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.kutemo.id" }],
+      "destination": "https://kutemo.id/$1",
+      "permanent": true
+    }
+  ]
+}
