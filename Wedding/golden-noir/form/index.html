@@ -72,6 +72,14 @@ input[type=text],input[type=date],input[type=time],input[type=url],input[type=te
 input:focus,select:focus,textarea:focus{border-color:rgba(201,168,76,.5);box-shadow:0 0 0 3px rgba(201,168,76,.08),0 8px 20px rgba(0,0,0,.2);transform:translateY(-1px)}
 input::placeholder,textarea::placeholder{color:#3a3530}
 textarea{resize:vertical;min-height:70px}
+.tp-wrap{display:flex;flex-direction:column;gap:8px}
+.tp-selects{display:flex;align-items:center;gap:8px}
+.tp-selects select{flex:1;min-width:0}
+.tp-sep{font-size:20px;font-weight:700;color:var(--gold);flex-shrink:0;line-height:1;margin-top:2px}
+.tp-presets{display:flex;flex-wrap:wrap;gap:5px}
+.tp-btn{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:8px;color:var(--muted);font-family:'Josefin Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.05em;padding:5px 10px;cursor:pointer;transition:.2s;white-space:nowrap}
+.tp-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.14)}
+.tp-btn.active{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.22)}
 select{background-color:#181818;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C9A84C' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:12px 8px;padding-right:36px}
 select option{background:#1C1C1C;color:var(--cream);font-size:14px;padding:10px}
 
@@ -1383,9 +1391,29 @@ body.ku .save-indicator{color:rgba(21,101,192,.5);}
           </div>
           <div class="f f-span2"><label>✏️ Judul Undangan <span class="opt">(Opsional)</span></label><input type="text" id="judulUndangan" placeholder="The Wedding of Ahmad & Aulia" oninput="scheduleSync()" spellcheck="false" autocorrect="off" autocapitalize="off"></div>
           <div class="f"><label>📅 Tgl Akad <span class="req">✦</span></label><input type="date" id="tglAkad" oninput="scheduleSync()" spellcheck="false" autocorrect="off" autocapitalize="off"></div>
-          <div class="f"><label>⏰ Waktu Akad <span class="opt">(Opsional)</span></label><input type="time" id="wktAkad" oninput="scheduleSync()" spellcheck="false" autocorrect="off" autocapitalize="off"></div>
+          <div class="f"><label>⏰ Waktu Akad <span class="opt">(Opsional)</span></label>
+            <div class="tp-wrap" data-tp="wktAkad">
+              <div class="tp-selects">
+                <select class="tp-h" onchange="syncTp(this)"><option value="">Jam</option><option>06</option><option>07</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option></select>
+                <span class="tp-sep">:</span>
+                <select class="tp-m" onchange="syncTp(this)"><option value="">Menit</option><option>00</option><option>15</option><option>30</option><option>45</option></select>
+              </div>
+              <div class="tp-presets"><button type="button" class="tp-btn" onclick="setTp('wktAkad','07:00')">07.00</button><button type="button" class="tp-btn" onclick="setTp('wktAkad','08:00')">08.00</button><button type="button" class="tp-btn" onclick="setTp('wktAkad','09:00')">09.00</button><button type="button" class="tp-btn" onclick="setTp('wktAkad','10:00')">10.00</button><button type="button" class="tp-btn" onclick="setTp('wktAkad','11:00')">11.00</button><button type="button" class="tp-btn" onclick="setTp('wktAkad','12:00')">12.00</button></div>
+            </div>
+            <input type="hidden" id="wktAkad">
+          </div>
           <div class="f"><label>📅 Tgl Resepsi <span class="opt">(Opsional)</span></label><input type="date" id="tglResepsi" oninput="scheduleSync()" spellcheck="false" autocorrect="off" autocapitalize="off"></div>
-          <div class="f"><label>⏰ Waktu Resepsi <span class="opt">(Opsional)</span></label><input type="time" id="wktResepsi" oninput="scheduleSync()" spellcheck="false" autocorrect="off" autocapitalize="off"></div>
+          <div class="f"><label>⏰ Waktu Resepsi <span class="opt">(Opsional)</span></label>
+            <div class="tp-wrap" data-tp="wktResepsi">
+              <div class="tp-selects">
+                <select class="tp-h" onchange="syncTp(this)"><option value="">Jam</option><option>06</option><option>07</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option></select>
+                <span class="tp-sep">:</span>
+                <select class="tp-m" onchange="syncTp(this)"><option value="">Menit</option><option>00</option><option>15</option><option>30</option><option>45</option></select>
+              </div>
+              <div class="tp-presets"><button type="button" class="tp-btn" onclick="setTp('wktResepsi','10:00')">10.00</button><button type="button" class="tp-btn" onclick="setTp('wktResepsi','11:00')">11.00</button><button type="button" class="tp-btn" onclick="setTp('wktResepsi','12:00')">12.00</button><button type="button" class="tp-btn" onclick="setTp('wktResepsi','13:00')">13.00</button><button type="button" class="tp-btn" onclick="setTp('wktResepsi','17:00')">17.00</button><button type="button" class="tp-btn" onclick="setTp('wktResepsi','18:00')">18.00</button><button type="button" class="tp-btn" onclick="setTp('wktResepsi','19:00')">19.00</button><button type="button" class="tp-btn" onclick="setTp('wktResepsi','20:00')">20.00</button></div>
+            </div>
+            <input type="hidden" id="wktResepsi">
+          </div>
           <div class="f f-span2"><label>🌏 Zona Waktu</label>
             <select id="zona" onchange="scheduleSync()">
               <option>WIB (UTC+7)</option><option>WITA (UTC+8)</option><option>WIT (UTC+9)</option>
@@ -2137,6 +2165,35 @@ const fmtDate = v => {
 };
 const pad = n => String(Math.floor(n)).padStart(2,'0');
 const fmtRp = n => 'Rp '+n.toLocaleString('id-ID');
+
+// -- TIME PICKER --
+function syncTp(sel){
+  const wrap=sel.closest('.tp-wrap');
+  const h=wrap.querySelector('.tp-h').value;
+  const m=wrap.querySelector('.tp-m').value;
+  const id=wrap.dataset.tp;
+  const hid=document.getElementById(id);
+  if(hid)hid.value=(h&&m!==''&&m!==undefined)?h+':'+m:'';
+  wrap.querySelectorAll('.tp-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+hid.value+"'")));
+  scheduleSync();
+}
+function setTp(id,val){
+  const hid=document.getElementById(id);
+  if(hid)hid.value=val;
+  const wrap=document.querySelector('.tp-wrap[data-tp="'+id+'"]');
+  if(!wrap)return;
+  const parts=val.split(':');
+  wrap.querySelector('.tp-h').value=parts[0];
+  wrap.querySelector('.tp-m').value=parts[1];
+  wrap.querySelectorAll('.tp-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+val+"'")));
+  scheduleSync();
+}
+function restoreTp(){
+  ['wktAkad','wktResepsi'].forEach(id=>{
+    const hid=document.getElementById(id);
+    if(hid&&hid.value&&hid.value.includes(':'))setTp(id,hid.value);
+  });
+}
 
 // -- PROGRESS --
 function updateProgress(){
@@ -4700,6 +4757,7 @@ function autoSaveRestore(){
     });
     if(data._step&&data._step>1){gotoStep(data._step);}
     if(restored){
+      restoreTp();
       setTimeout(()=>{try{sync();}catch(e){}},300);
       const toast=document.getElementById('draftToast');
       if(toast){
