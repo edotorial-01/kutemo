@@ -1674,7 +1674,6 @@ function closePreview(){document.getElementById('previewModal').classList.remove
 /* ── PAYMENT MODAL ── */
 let _payProduct=null;
 function openPayModal(p){
-  _loadMidtrans();
   _payProduct=p;
   document.getElementById('payProductName').textContent=p.name;
   document.getElementById('payProductPrice').textContent=formatRp(p.price);
@@ -1777,6 +1776,7 @@ async function submitPayment(){
     }
     const orderId=data.order_id;
     closePayModal();
+    await _loadMidtrans(!!data.is_sandbox);
     window.snap.pay(data.token,{
       onSuccess:function(){
         /* 1. Simpan data mempelai ke localStorage */
@@ -3218,17 +3218,24 @@ function closeInfoPopup(){
 
 /* ── MIDTRANS CONFIG ── */
 const MIDTRANS_CLIENT_KEY = 'Mid-client-2v9pXKZN6TUp3Gib';
-const MIDTRANS_IS_SANDBOX = true;
 let _midtransLoaded=false;
-function _loadMidtrans(){
-  if(_midtransLoaded)return;
-  _midtransLoaded=true;
-  var s=document.createElement('script');
-  s.src=MIDTRANS_IS_SANDBOX
-    ? 'https://app.sandbox.midtrans.com/snap/snap.js'
-    : 'https://app.midtrans.com/snap/snap.js';
-  s.setAttribute('data-client-key',MIDTRANS_CLIENT_KEY);
-  document.head.appendChild(s);
+function _loadMidtrans(isSandbox){
+  // reload if environment changed
+  if(_midtransLoaded===isSandbox)return Promise.resolve();
+  _midtransLoaded=isSandbox;
+  return new Promise(resolve=>{
+    // remove old snap script if exists
+    const old=document.querySelector('script[data-midtrans]');
+    if(old)old.remove();
+    var s=document.createElement('script');
+    s.src=isSandbox
+      ? 'https://app.sandbox.midtrans.com/snap/snap.js'
+      : 'https://app.midtrans.com/snap/snap.js';
+    s.setAttribute('data-client-key',MIDTRANS_CLIENT_KEY);
+    s.setAttribute('data-midtrans','1');
+    s.onload=resolve;
+    document.head.appendChild(s);
+  });
 }
 
 /* ── WHATSAPP ADMIN ── */

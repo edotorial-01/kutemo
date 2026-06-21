@@ -62,7 +62,7 @@ export default async function handler(req, res) {
       return res.status(response.status).json({ error: 'Gagal membuat transaksi', detail: data });
     }
 
-    return res.status(200).json({ token: data.token, order_id: orderId });
+    return res.status(200).json({ token: data.token, order_id: orderId, is_sandbox: isSandbox });
   } catch (err) {
     console.error('Fetch error:', err);
     return res.status(500).json({ error: 'Gagal menghubungi Midtrans' });
