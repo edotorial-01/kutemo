@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server key belum dikonfigurasi' });
   }
 
-  const isSandbox = serverKey.startsWith('SB-');
+  const isSandbox = serverKey.startsWith('SB-') || process.env.MIDTRANS_SANDBOX === 'true';
   const apiUrl = isSandbox
     ? 'https://app.sandbox.midtrans.com/snap/v1/transactions'
     : 'https://app.midtrans.com/snap/v1/transactions';

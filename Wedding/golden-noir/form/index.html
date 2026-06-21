@@ -1315,7 +1315,7 @@ body.ku .save-indicator{color:rgba(21,101,192,.5);}
   </div>
 
   <div class="prog-wrap">
-    <div class="prog-hd"><span>Progress Pengisian</span><strong id="prog-text">0 / 5 Terisi</strong></div>
+    <div class="prog-hd"><span>Progress Pengisian</span><strong id="prog-text">0 / 7 Selesai</strong></div>
     <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
   </div>
 
@@ -2138,9 +2138,34 @@ const fmtDate = v => {
 const pad = n => String(Math.floor(n)).padStart(2,'0');
 const fmtRp = n => 'Rp '+n.toLocaleString('id-ID');
 
+// -- PROGRESS --
+function updateProgress(){
+  const get=id=>{const e=$(id);return e?e.value.trim():'';};
+  const checks=[
+    ['sn1',()=>get('namaPria')&&get('namaWanita')],
+    ['sn2',()=>get('jenisAcara')&&get('tglAkad')],
+    ['sn3',()=>get('namaTempatAkad')],
+    ['sn4',()=>typeof storyData!='undefined'&&storyData.filter(Boolean).length>0],
+    ['sn5',()=>typeof galData!='undefined'&&galData.some(Boolean)],
+    ['sn8',()=>get('noRek')],
+    ['sn9',()=>get('slugInput')],
+  ];
+  let done=0;
+  checks.forEach(([id,fn])=>{
+    const ok=!!fn();
+    const el=$(id);
+    if(el){el.classList.toggle('done',ok);el.textContent=ok?'✓':id.replace('sn','');}
+    if(ok)done++;
+  });
+  const total=checks.length;
+  $('prog-fill').style.width=Math.round(done/total*100)+'%';
+  $('prog-text').textContent=done+' / '+total+' Selesai';
+}
+
 // -- SYNC --
 let syncTimer=null,previewDirty=false;
 function scheduleSync(){
+  updateProgress();
   previewDirty=true;
   if($('view-preview').classList.contains('active')){
     if(syncTimer)clearTimeout(syncTimer);
@@ -2865,9 +2890,7 @@ function sync(){
   const mlink=$('mapsLink').value,mEmbed=$('mapsEmbed').value;
   const noRek=$('noRek').value,nmRek=$('namaRek').value,pesGift=$('pesanGift').value;
   const showStory=$('showStory').checked,showGaleri=$('showGaleri').checked,showGift=$('showGift').checked,rsvpOn=$('rsvpActive').checked;
-  const req=[$('namaPria').value,$('namaWanita').value,$('jenisAcara').value,$('tglAkad').value,$('namaTempatAkad').value];
-  const filled=req.filter(v=>v.trim()).length;
-  $('prog-fill').style.width=Math.round(filled/5*100)+'%';$('prog-text').textContent=filled+' / 5 Terisi';
+  updateProgress();
   $('inv-pria-name').textContent=pria;$('inv-wanita-name').textContent=wanita;
   const loc=[kota,prov].filter(Boolean).join(', ')||'Pekanbaru';
   $('inv-date-badge').textContent=(tglA?fmtDate(tglA):'Tanggal belum diisi')+' - '+loc;
@@ -2942,11 +2965,8 @@ function addGuest(){
 }
 function rmGuest(id){const el=$(id);if(el)el.remove();}
 function updateCard(el,tid){$(tid).textContent=el.value.trim()||'-';}
-function fmtSlug(el){el.value=el.value.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');$('linkPrev').textContent='kutemo.id/undangan/'+(el.value||'...');}
+function fmtSlug(el){el.value=el.value.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');$('linkPrev').textContent='kutemo.id/undangan/'+(el.value||'...');updateProgress();}
 function saveForm(){
-  // Update progress
-  for(let i=1;i<=9;i++){const el=$('sn'+i);if(el){el.classList.add('done');el.textContent='-';}}
-  $('prog-fill').style.width='100%';$('prog-text').textContent='5 / 5 Terisi';
   // Reset preview ke cover agar fresh
   resetPreviewToCover();
   // Sync data terbaru
