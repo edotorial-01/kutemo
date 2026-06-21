@@ -3218,9 +3218,8 @@ function closeInfoPopup(){
 
 /* ── MIDTRANS CONFIG ── */
 const MIDTRANS_CLIENT_KEY = 'Mid-client-2v9pXKZN6TUp3Gib';
-let _midtransLoaded=false;
+let _midtransLoaded=null;
 function _loadMidtrans(isSandbox){
-  // reload if environment changed
   if(_midtransLoaded===isSandbox)return Promise.resolve();
   _midtransLoaded=isSandbox;
   return new Promise(resolve=>{
