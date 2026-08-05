@@ -1932,8 +1932,8 @@ function openPayModal(p){
   else{img.style.background=p.bg||"var(--blue-light)";img.style.backgroundImage="";}
   document.getElementById("payNama").value="";
   document.getElementById("payWa").value="";
-  document.getElementById("payNamaPria").value=mempelaiData.pria||"";
-  document.getElementById("payNamaWanita").value=mempelaiData.wanita||"";
+  document.getElementById("payNamaPria").value="";
+  document.getElementById("payNamaWanita").value="";
   _discountPct=0;
   var di=document.getElementById("payDiscCode");if(di){di.value="";di.disabled=false;}
   var dinfo=document.getElementById("payDiscInfo");if(dinfo)dinfo.classList.remove("show");
