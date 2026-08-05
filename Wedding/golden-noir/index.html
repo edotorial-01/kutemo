@@ -1020,6 +1020,33 @@
   .reveal-delay-2 { transition-delay: 0.2s; }
   .reveal-delay-3 { transition-delay: 0.3s; }
 
+  /* Animasi masuk photo mempelai */
+  .couple-grid .person-card:first-child {
+    opacity: 0;
+    transform: translateX(-60px);
+    transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1);
+    transition-delay: .3s;
+  }
+  .couple-grid .person-card:last-child {
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1);
+    transition-delay: .45s;
+  }
+  .couple-grid.visible .person-card:first-child,
+  .couple-grid.visible .person-card:last-child {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .couple-grid .person-photo {
+    transition: transform .6s cubic-bezier(.34,1.56,.64,1);
+    transition-delay: .6s;
+    transform: scale(.88);
+  }
+  .couple-grid.visible .person-photo {
+    transform: scale(1);
+  }
+
   /* MUSIC BTN */
   .music-btn {
     position: fixed;
@@ -1084,7 +1111,7 @@
     color: var(--gold);
   }
 </style>
-<script>(function(){try{var d=JSON.parse(localStorage.getItem('ktm_data')||'null');if(d&&d.tanggal_resepsi){var wt=(d.waktu_resepsi||'08:00').replace(/[^0-9:]/g,'').substring(0,5)||'08:00';window._ktmDate=new Date(d.tanggal_resepsi+'T'+wt+':00+07:00');}}catch(e){}}());</script>
+<script>(function(){try{var d=JSON.parse(localStorage.getItem('ktm_data')||'null');if(d&&d.tanggal_resepsi){var wt=(function(t){var m=t.match(/(\d{1,2})[.:h](\d{2})/);return m?('0'+m[1]).slice(-2)+':'+m[2]:'08:00';})(d.waktu_resepsi||'');window._ktmDate=new Date(d.tanggal_resepsi+'T'+wt+':00+07:00');}}catch(e){}}());</script>
 </head>
 
 
@@ -1465,7 +1492,7 @@
   // Countdown
   //hitung
   function startCountdown() {
-    const target = window._ktmDate||new Date('2026-06-23T08:00:00');
+    const target = window._ktmDate||new Date('2027-06-23T08:00:00');
     function update() {
       const now = new Date();
       const diff = target - now;
@@ -1622,6 +1649,8 @@ document.getElementById('lightboxImg').style.transition = 'opacity 0.18s ease, t
     D.foto_pria=localStorage.getItem('ktm_foto_pria')||'';
     D.foto_wanita=localStorage.getItem('ktm_foto_wanita')||'';
     var _gal=[];for(var _i=0;_i<12;_i++)_gal.push(localStorage.getItem('ktm_gallery_'+_i)||'');
+    /* Sync musik: jika user pilih lagu di form, update audio source */
+    if(D.lagu){try{var _el=document.getElementById('bgMusic');if(_el){var _s=_el.querySelector('source');if(_s)_s.src='https://kutemo.id/'+D.lagu;else _el.src='https://kutemo.id/'+D.lagu;_el.load();}}catch(e){}}
     var BL=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     var HR=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
     function fmtD(v){if(!v)return '';var d=new Date(v+'T12:00:00');return HR[d.getDay()]+', '+d.getDate()+' '+BL[d.getMonth()]+' '+d.getFullYear();}

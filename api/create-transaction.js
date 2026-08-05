@@ -42,7 +42,13 @@ export default async function handler(req, res) {
       price: product.price,
       quantity: 1,
       name: product.name.substring(0, 50)
-    }]
+    }],
+    enabled_payments: [
+      'credit_card',
+      'bca_va', 'bni_va', 'bri_va', 'mandiri_bill', 'permata_va', 'other_va',
+      'gopay', 'shopeepay', 'qris',
+      'indomaret', 'alfamart'
+    ]
   };
 
   try {

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Awan — Edotorial Photo</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .cloud-hero {
+    position: relative;
+    padding: 36px 20px 28px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .cloud-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, var(--primary-dim) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cloud-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--primary-dim);
+    border: 1px solid var(--primary-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .cloud-icon svg { width: 36px; height: 36px; stroke: var(--primary); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .cloud-hero h1 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .cloud-hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .cloud-hero p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; max-width: 300px; margin: 0 auto; }
+
+  /* Search box */
+  .search-wrap {
+    margin: 0 20px 8px;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 0 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .search-box:focus-within {
+    border-color: var(--primary-border);
+    box-shadow: var(--glow);
+  }
+  .search-box svg { width: 18px; height: 18px; stroke: var(--text-muted); flex-shrink: 0; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .search-box input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 14px 0;
+  }
+  .search-box input::placeholder { color: var(--text-muted); }
+  .search-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+  }
+  .search-btn:active { opacity: 0.8; }
+  .search-hint { font-size: 11.5px; color: var(--text-muted); padding: 0 4px; }
+
+  /* Divider */
+  .divider-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 24px 20px 16px;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .divider-label::before,
+  .divider-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* Guide cards */
+  .guide-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 20px;
+  }
+  .guide-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .guide-step {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-dim);
+    border: 1px solid var(--primary-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+  .guide-body h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .guide-body p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; }
+  .guide-body code {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    background: var(--primary-dim);
+    color: var(--primary);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* Info banner */
+  .info-banner {
+    margin: 20px 20px 0;
+    background: var(--primary-dim);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .info-banner svg { width: 18px; height: 18px; stroke: var(--primary); fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 1px; }
+  .info-banner p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; }
+  .info-banner p a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+  /* Open button */
+  .open-cloud-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 16px 20px 0;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border: none;
+    border-radius: var(--radius-md);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+  }
+  .open-cloud-btn:active { opacity: 0.85; transform: scale(0.99); }
+  .open-cloud-btn svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+
+  <!-- DESKTOP TOP NAV -->
+  <nav class="top-nav" aria-label="Navigasi utama">
+    <a href="index.html" class="brand-mark"><img src="img/logo.png" alt="Edotorial Photo"></a>
+    <div class="top-nav-links">
+      <a href="index.html">Beranda</a>
+      <a href="portfolio.html">Portofolio</a>
+      <a href="pricing.html">Paket</a>
+      <a href="booking.html">Booking</a>
+      <a href="tools.html">Tools</a>
+    </div>
+    <div class="top-nav-actions">
+      <button class="icon-btn theme-toggle" aria-label="Ganti mode gelap/terang">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <a href="booking.html" class="btn btn-primary btn-sm">Booking Sekarang</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="cloud-hero">
+    <div class="cloud-icon">
+      <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+    </div>
+    <h1>Awan <em>Edotorial</em></h1>
+    <p>Akses dan temukan file foto & video hasil sesi kamu yang tersimpan di cloud kami.</p>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="cloudSearch" placeholder="Cari nama / kode sesi kamu…" autocomplete="off">
+      <button class="search-btn" onclick="doSearch()">Cari</button>
+    </div>
+  </div>
+  <p class="search-hint" style="padding: 6px 24px 0;">Contoh: <code style="font-family:var(--font-mono);font-size:11px;background:var(--primary-dim);color:var(--primary);padding:1px 5px;border-radius:4px;">Dinda_Prewedding_2025</code></p>
+
+  <!-- OPEN CLOUD -->
+  <a href="https://cloude.kutemo.id" target="_blank" class="open-cloud-btn">
+    <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+    Buka cloude.kutemo.id
+    <svg viewBox="0 0 24 24" style="width:14px;height:14px;margin-left:2px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+  </a>
+
+  <!-- DIVIDER -->
+  <div class="divider-label">Panduan Mencari File</div>
+
+  <!-- GUIDE -->
+  <div class="guide-list">
+    <div class="guide-card">
+      <div class="guide-step">1</div>
+      <div class="guide-body">
+        <h3>Dapatkan Kode Sesi</h3>
+        <p>Setelah sesi foto selesai, tim Edotorial akan mengirimkan <strong>kode sesi</strong> melalui WhatsApp. Kode ini unik untuk setiap klien.</p>
+      </div>
+    </div>
+    <div class="guide-card">
+      <div class="guide-step">2</div>
+      <div class="guide-body">
+        <h3>Ketik di Kolom Pencarian</h3>
+        <p>Masukkan kode sesi atau nama kamu di kolom pencarian di atas, lalu tekan <strong>Cari</strong>. Kamu akan diarahkan ke halaman file kamu di <code>cloude.kutemo.id</code>.</p>
+      </div>
+    </div>
+    <div class="guide-card">
+      <div class="guide-step">3</div>
+      <div class="guide-body">
+        <h3>Unduh File Kamu</h3>
+        <p>Pilih foto atau video yang ingin diunduh. File tersedia selama <strong>30 hari</strong> setelah pengiriman kode sesi.</p>
+      </div>
+    </div>
+    <div class="guide-card">
+      <div class="guide-step">4</div>
+      <div class="guide-body">
+        <h3>File Tidak Ditemukan?</h3>
+        <p>Pastikan kode sesi benar. Jika masih tidak muncul, hubungi kami via WhatsApp — tim kami siap membantu.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO BANNER -->
+  <div class="info-banner">
+    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p>File disimpan di <a href="https://cloude.kutemo.id" target="_blank">cloude.kutemo.id</a> dan hanya dapat diakses menggunakan kode sesi yang dikirim oleh tim kami. Jaga kerahasiaan kode kamu.</p>
+  </div>
+
+  <div style="height:24px"></div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5Z"/><path d="M9 21V12h6v9"/></svg>
+      <span class="nav-label">Beranda</span>
+    </a>
+    <a href="portfolio.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span class="nav-label">Portofolio</span>
+    </a>
+    <a href="booking.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M8 15h.01M12 15h.01M16 15h.01"/></svg>
+      <span class="nav-label">Booking</span>
+    </a>
+    <a href="tools.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/></svg>
+      <span class="nav-label">Tools</span>
+    </a>
+    <a href="storage.html" class="nav-item active">
+      <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+      <span class="nav-label">Awan</span>
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="nav-label">Profil</span>
+    </a>
+  </nav>
+
+  <script src="script.js"></script>
+  <script>
+    function doSearch() {
+      const query = document.getElementById("cloudSearch").value.trim();
+      if (!query) return;
+      window.open("https://cloude.kutemo.id/search?q=" + encodeURIComponent(query), "_blank");
+    }
+    document.getElementById("cloudSearch").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doSearch();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking — Edotorial Photo</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .page-head { padding: 4px 20px 0; }
+  .page-head h1 { font-family: var(--font-display); font-size: 26px; font-weight: 600; margin: 10px 0 4px; }
+  .page-head p { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+
+  .pkg-summary {
+    margin: 18px 20px 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pkg-summary img { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; flex: none; }
+  .pkg-summary .info { flex: 1; }
+  .pkg-summary .name { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+  .pkg-summary .price { font-family: var(--font-mono); font-size: 12.5px; color: var(--primary); margin-top: 2px; }
+  .pkg-summary a { font-size: 11px; color: var(--text-secondary); text-decoration: underline; }
+
+  .form-wrap { padding: 0 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  .area-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .area-chip {
+    font-size: 12.5px; padding: 8px 14px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line); color: var(--text-secondary);
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .area-chip.active {
+    background: linear-gradient(135deg, var(--accent), var(--primary));
+    color: var(--on-primary);
+    border-color: transparent;
+  }
+
+  .summary-box {
+    background: var(--surface-alt);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .summary-box b { color: var(--text-primary); }
+
+  .submit-bar { padding: 8px 20px 4px; }
+</style>
+</head>
+<body>
+
+  <div class="status-spacer"></div>
+  <div class="topbar">
+    <a href="pricing.html" class="icon-btn" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </a>
+    <span class="brand">Booking</span>
+    <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Ganti mode gelap/terang">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+
+  <div class="page-head">
+    <h1>Form Pemesanan</h1>
+    <p>Lengkapi detail di bawah, lalu kirim langsung ke admin via WhatsApp.</p>
+  </div>
+
+  <div class="pkg-summary">
+    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=200&auto=format&fit=crop" alt="Paket dipilih">
+    <div class="info">
+      <div class="name" id="pkgName">Paket Wedding</div>
+      <div class="price" id="pkgPrice">Rp 3.500.000</div>
+    </div>
+    <a href="pricing.html">Ganti</a>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-title" style="font-size:17px;">Pilih Tanggal</span></div>
+  </div>
+  <div class="form-wrap">
+    <div class="cal-wrap">
+      <div id="calendar"></div>
+      <div class="cal-legend">
+        <span><span class="dot available"></span>Tersedia</span>
+        <span><span class="dot booked"></span>Penuh</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-title" style="font-size:17px;">Area Layanan</span></div>
+  </div>
+  <div class="form-wrap">
+    <p class="muted" style="font-size:12.5px; margin-top:-10px;">Pilih wilayah lokasi acara/sesi foto kamu.</p>
+    <div class="area-list" id="areaList">
+      <button class="area-chip active" data-area="Bagansiapiapi">Bagansiapiapi</button>
+      <button class="area-chip" data-area="Bangko">Bangko</button>
+      <button class="area-chip" data-area="Rimba Melintang">Rimba Melintang</button>
+      <button class="area-chip" data-area="Pujud">Pujud</button>
+      <button class="area-chip" data-area="Luar Kota">Luar Kota (+biaya transport)</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-title" style="font-size:17px;">Data Pemesan</span></div>
+  </div>
+  <div class="form-wrap">
+    <div class="field">
+      <label for="nama">Nama Lengkap</label>
+      <input type="text" id="nama" placeholder="Nama kamu">
+    </div>
+    <div class="field">
+      <label for="hp">Nomor WhatsApp</label>
+      <input type="tel" id="hp" placeholder="08xxxxxxxxxx">
+    </div>
+    <div class="field">
+      <label for="lokasi">Detail Lokasi</label>
+      <input type="text" id="lokasi" placeholder="Nama gedung / alamat lengkap">
+    </div>
+    <div class="field">
+      <label for="catatan">Catatan Tambahan</label>
+      <textarea id="catatan" placeholder="Request khusus, tema, jumlah tamu, dll (opsional)"></textarea>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-title" style="font-size:17px;">Ringkasan</span></div>
+  </div>
+  <div class="form-wrap">
+    <div class="summary-box" id="summaryBox">
+      Lengkapi form di atas untuk melihat ringkasan pesanan.
+    </div>
+  </div>
+
+  <div class="submit-bar">
+    <button class="btn btn-primary" id="submitBtn">Kirim Pesanan via WhatsApp</button>
+  </div>
+
+  <div style="height:24px"></div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      Beranda
+    </a>
+    <a href="portfolio.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+      Portofolio
+    </a>
+    <a href="booking.html" class="nav-item active">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
+      Booking
+    </a>
+    <a href="storage.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+      Awan
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+      Profil
+    </a>
+  </nav>
+
+  <script src="script.js"></script>
+  <script>
+    // ---- Paket dari query string ----
+    const PAKET_DATA = {
+      wedding:    { name: "Paket Wedding",    price: "Rp 3.500.000" },
+      prewedding: { name: "Paket Prewedding", price: "Rp 1.800.000" },
+      produk:     { name: "Paket Produk",     price: "Rp 500.000 / 10 produk" },
+    };
+    const params = new URLSearchParams(window.location.search);
+    const paketKey = params.get("paket") || "wedding";
+    const paket = PAKET_DATA[paketKey] || PAKET_DATA.wedding;
+    document.getElementById("pkgName").textContent = paket.name;
+    document.getElementById("pkgPrice").textContent = paket.price;
+
+    // ---- Kalender: contoh tanggal yang sudah penuh ----
+    const bookedDates = {
+      "2026-07-04": "booked",
+      "2026-07-11": "booked",
+      "2026-07-18": "booked",
+    };
+    let selectedDate = null;
+    renderCalendar("calendar", bookedDates, (dateKey) => {
+      selectedDate = dateKey;
+      updateSummary();
+    });
+
+    // ---- Area layanan ----
+    let selectedArea = "Bagansiapiapi";
+    document.querySelectorAll(".area-chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll(".area-chip").forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        selectedArea = chip.dataset.area;
+        updateSummary();
+      });
+    });
+
+    function updateSummary() {
+      const nama = document.getElementById("nama").value || "-";
+      const box = document.getElementById("summaryBox");
+      box.innerHTML = `
+        <b>Paket:</b> ${paket.name} (${paket.price})<br>
+        <b>Tanggal:</b> ${selectedDate || "belum dipilih"}<br>
+        <b>Area:</b> ${selectedArea}<br>
+        <b>Nama:</b> ${nama}
+      `;
+    }
+    ["nama","hp","lokasi","catatan"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", updateSummary);
+    });
+    updateSummary();
+
+    // ---- Submit -> buka WhatsApp dengan pesan terisi ----
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      const nama = document.getElementById("nama").value.trim();
+      const hp = document.getElementById("hp").value.trim();
+      const lokasi = document.getElementById("lokasi").value.trim();
+      const catatan = document.getElementById("catatan").value.trim();
+
+      if (!nama || !hp || !selectedDate) {
+        alert("Mohon isi nama, nomor WhatsApp, dan pilih tanggal dulu ya.");
+        return;
+      }
+
+      const msg =
+`Halo Edotorial Photo, saya mau booking:
+Paket: ${paket.name} (${paket.price})
+Tanggal: ${selectedDate}
+Area: ${selectedArea}
+Nama: ${nama}
+No. WA: ${hp}
+Lokasi: ${lokasi || "-"}
+Catatan: ${catatan || "-"}`;
+
+      window.open(buildWaLink(msg), "_blank");
+    });
+  </script>
+</body>
+</html>

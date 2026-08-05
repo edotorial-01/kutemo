@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edotorial Photo — Galeri Foto Privat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   TOKENS
+   ================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:   #100F1C; --bg2: #16142A; --bg3: #1C1935;
+  --glass:  rgba(220,210,255,0.055);
+  --glass2: rgba(220,210,255,0.10);
+  --glass-b:  rgba(220,210,255,0.12);
+  --glass-b2: rgba(220,210,255,0.20);
+  --iris:  #B09FE8; --iris-l: #CBBFF7; --iris-d: rgba(176,159,232,0.18);
+  --prism: #E8A0C0; --prism-l: #F5C0D8;
+  --aqua:  #7DCEC4; --aqua-d: rgba(125,206,196,0.16);
+  --g-ip:   linear-gradient(135deg,#B09FE8,#E8A0C0);
+  --g-ca:   linear-gradient(135deg,#7DCEC4,#B09FE8);
+  --g-full: linear-gradient(135deg,#7DCEC4 0%,#B09FE8 50%,#E8A0C0 100%);
+  --g-card: linear-gradient(140deg,rgba(176,159,232,0.16),rgba(232,160,192,0.10));
+  --t1:#EDE9F8; --t2:#C9C3E0; --t3:#9890B4; --t4:#5A5278;
+  --ok:#6EC9A4; --warn:#E8C47A; --bad:#E8909A;
+  --r4:4px; --r8:8px; --r12:12px; --r16:16px; --r24:24px; --rF:999px;
+  --p: 20px;
+  --sidebar: 260px;
+  --topbar-h: 60px;
+
+  /* Theme-aware surface colors (used in hardcoded bg values below) */
+  --topbar-bg:  rgba(16,15,28,0.85);
+  --demobar-bg: rgba(16,15,28,0.92);
+  --modal-bg:   rgba(16,15,28,0.96);
+  --adm-bg:     rgba(16,15,28,0.88);
+  --orb-op:     0.20;
+}
+
+/* ================================================================
+   LIGHT MODE TOKENS
+   ================================================================ */
+html[data-theme="light"] {
+  --bg:  #F3F0FF;
+  --bg2: #EAE5FB;
+  --bg3: #DDD6F7;
+
+  --glass:    rgba(255,255,255,0.68);
+  --glass2:   rgba(255,255,255,0.88);
+  --glass-b:  rgba(176,159,232,0.28);
+  --glass-b2: rgba(176,159,232,0.50);
+
+  --iris:   #7B68D4; --iris-l: #6355B8; --iris-d: rgba(123,104,212,0.14);
+  --prism:  #C878A4; --prism-l: #B06090;
+  --aqua:   #4AABA0; --aqua-d: rgba(74,171,160,0.14);
+
+  --g-ip:   linear-gradient(135deg,#7B68D4,#C878A4);
+  --g-ca:   linear-gradient(135deg,#4AABA0,#7B68D4);
+  --g-full: linear-gradient(135deg,#4AABA0 0%,#7B68D4 50%,#C878A4 100%);
+  --g-card: linear-gradient(140deg,rgba(123,104,212,0.10),rgba(200,120,164,0.07));
+
+  --t1: #1A1230; --t2: #3B2E62; --t3: #7060A4; --t4: #A898CC;
+  --ok: #2A9A78; --warn: #B87820; --bad: #C04868;
+
+  --topbar-bg:  rgba(243,240,255,0.88);
+  --demobar-bg: rgba(234,229,251,0.94);
+  --modal-bg:   rgba(243,240,255,0.97);
+  --adm-bg:     rgba(234,229,251,0.96);
+  --orb-op:     0.12;
+}
+
+/* smooth transitions when switching theme — EXCLUDE html/body (handled by bg directly) */
+.topbar, .demo-bar, .glass, .adm-card,
+.hero-card, .info-wrap, .cd-card, .gallery-row,
+.stat-card, .date-chip, .badge, .ib, .btn-glass,
+.adm-modal, .qr-modal, .field input, .field select {
+  transition:
+    background 0.28s ease,
+    background-color 0.28s ease,
+    border-color 0.28s ease,
+    color 0.28s ease;
+}
+html, body { transition: background-color 0.28s ease, color 0.28s ease; }
+
+/* ================================================================
+   BASE
+   ================================================================ */
+html { scroll-behavior: smooth; }
+html, body {
+  background: var(--bg); color: var(--t1);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+body { overflow-x: hidden; }
+img { display: block; max-width: 100%; }
+button { cursor: pointer; border: none; background: none; color: inherit; font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* ================================================================
+   CONTAINER
+   ================================================================ */
+.container {
+  width: 100%; max-width: 1280px;
+  margin: 0 auto; padding: 0 var(--p);
+}
+@media (min-width: 768px) {
+  .container { padding: 0 32px; }
+}
+@media (min-width: 1024px) {
+  .container { padding: 0 48px; }
+}
+
+/* ================================================================
+   AMBIENT ORBS
+   ================================================================ */
+.ambient {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px); opacity: var(--orb-op, 0.20);
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.orb1 { width: 400px; height: 400px; background: #9B8FD4; top: -120px; left: -100px; animation-delay:0s; }
+.orb2 { width: 320px; height: 320px; background: #D4879E; bottom: 5%; right: -80px; animation-delay:-6s; }
+.orb3 { width: 260px; height: 260px; background: #6BB8B0; top: 35%; left: 35%; animation-delay:-12s; }
+@media (min-width: 768px) {
+  .orb1 { width: 600px; height: 600px; opacity: 0.16; }
+  .orb2 { width: 500px; height: 500px; opacity: 0.14; }
+  .orb3 { width: 400px; height: 400px; opacity: 0.12; }
+}
+@keyframes drift {
+  0%   { transform: translate(0,0) scale(1); }
+  50%  { transform: translate(24px,-24px) scale(1.08); }
+  100% { transform: translate(-18px,18px) scale(0.95); }
+}
+
+/* ================================================================
+   VIEWS
+   ================================================================ */
+.view { display: none; position: relative; z-index: 1; min-height: 100dvh; padding-bottom: 80px; }
+.view.active { display: block; }
+@media (min-width: 768px) {
+  .view { padding-bottom: 48px; padding-top: var(--topbar-h); }
+}
+
+/* ================================================================
+   TOPBAR — sticky, responsive
+   ================================================================ */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--topbar-h); z-index: 100;
+  background: var(--topbar-bg); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-b);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--p);
+}
+@media (min-width: 768px) { .topbar { padding: 0 48px; } }
+
+.topbar-logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 34px; height: 34px; border-radius: var(--r8);
+  background: var(--g-full); display: flex; align-items: center; justify-content: center; flex: none;
+}
+.logo-mark svg { width: 18px; height: 18px; fill: #fff; }
+.logo-name { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+.logo-sub { font-size: 11px; color: var(--t3); font-weight: 500; margin-top: 1px; }
+
+/* Desktop nav links (inside topbar) */
+.desktop-nav {
+  display: none;
+  gap: 2px;
+}
+@media (min-width: 768px) { .desktop-nav { display: flex; } }
+.dn-btn {
+  font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: var(--rF);
+  color: var(--t3); white-space: nowrap; transition: all 0.2s; letter-spacing: 0.01em;
+}
+.dn-btn:hover { color: var(--t2); background: var(--glass); }
+.dn-btn.active { background: var(--iris-d); color: var(--iris-l); }
+
+.topbar-right { display: flex; gap: 8px; align-items: center; }
+.ib {
+  width: 36px; height: 36px; border-radius: var(--r8);
+  background: var(--glass); border: 1px solid var(--glass-b);
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.ib:active { background: var(--glass2); }
+.ib svg { width: 16px; height: 16px; }
+
+/* Theme toggle icon swap */
+.theme-toggle-btn { position: relative; overflow: hidden; }
+.theme-toggle-btn svg {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px; height: 16px;
+  transition: opacity 0.3s ease, transform 0.35s ease;
+}
+.theme-toggle-btn .icon-sun  { opacity: 0; transform: translate(-50%,-50%) rotate(-30deg) scale(0.8); }
+.theme-toggle-btn .icon-moon { opacity: 1; transform: translate(-50%,-50%) rotate(0deg) scale(1); }
+html[data-theme="light"] .theme-toggle-btn .icon-sun  { opacity: 1; transform: translate(-50%,-50%) rotate(0deg) scale(1); }
+html[data-theme="light"] .theme-toggle-btn .icon-moon { opacity: 0; transform: translate(-50%,-50%) rotate(30deg) scale(0.8); }
+
+/* ================================================================
+   MOBILE DEMO SWITCHER (bottom pill — hidden on desktop)
+   ================================================================ */
+.demo-bar {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 300; background: var(--demobar-bg);
+  backdrop-filter: blur(16px); border: 1px solid var(--glass-b);
+  border-radius: var(--rF); display: flex; gap: 2px; padding: 4px;
+  max-width: calc(100% - 32px);
+}
+@media (min-width: 768px) { .demo-bar { display: none; } }
+.demo-btn {
+  font-size: 11px; font-weight: 600; padding: 7px 13px; border-radius: var(--rF);
+  color: var(--t3); white-space: nowrap; transition: all 0.2s;
+}
+.demo-btn.active { background: var(--g-ip); color: #fff; }
+
+/* ================================================================
+   GLASS / BADGE / CHIP / BUTTONS
+   ================================================================ */
+.glass  { background:var(--glass);  border:1px solid var(--glass-b);  backdrop-filter:blur(12px); border-radius:var(--r16); }
+.glass2 { background:var(--glass2); border:1px solid var(--glass-b2); backdrop-filter:blur(16px); border-radius:var(--r16); }
+
+.badge { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:3px 10px; border-radius:var(--rF); text-transform:uppercase; letter-spacing:0.04em; }
+.badge .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+.badge-ok   { background:rgba(110,201,164,0.15); color:#7DCBB0; border:1px solid rgba(110,201,164,0.3); }
+.badge-warn { background:rgba(232,196,122,0.15); color:#E8C47A; border:1px solid rgba(232,196,122,0.3); }
+.badge-bad  { background:rgba(232,144,154,0.15); color:#F0A8B4; border:1px solid rgba(232,144,154,0.3); }
+
+.chip-row { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
+.chip-row::-webkit-scrollbar { display:none; }
+.chip {
+  flex:none; font-size:13px; font-weight:600; padding:9px 16px; border-radius:var(--rF);
+  background:var(--glass); border:1px solid var(--glass-b); color:var(--t3); transition:all 0.2s;
+}
+.chip.active { background:var(--iris-d); border-color:rgba(176,159,232,0.5); color:var(--iris-l); }
+
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:48px; padding:0 22px; border-radius:var(--rF);
+  font-weight:700; font-size:14px; width:100%; letter-spacing:0.01em;
+  transition:transform 0.15s ease, box-shadow 0.2s ease;
+}
+.btn-grad { background:var(--g-full); color:#fff; box-shadow:0 4px 20px rgba(176,159,232,0.32); }
+.btn-grad:active { transform:scale(0.98); }
+.btn-glass { background:var(--glass); border:1px solid var(--glass-b); color:var(--t1); }
+.btn-glass:active { background:var(--glass2); }
+.btn-sm { height:36px; padding:0 14px; font-size:13px; width:auto; }
+
+/* ================================================================
+   COVER PHOTO (from 1.jpg in Google Drive folder)
+   ================================================================ */
+.cover-section {
+  position: relative;
+  width: 100%;
+  height: 56vh;
+  min-height: 300px;
+  max-height: 520px;
+  overflow: hidden;
+  margin-top: var(--topbar-h); /* mobile: push below fixed topbar */
+}
+@media (min-width: 768px) {
+  .cover-section {
+    margin-top: 0; /* desktop: view already has padding-top for topbar */
+    height: 60vh;
+    min-height: 380px;
+    max-height: 640px;
+  }
+}
+@media (min-width: 1280px) {
+  .cover-section { max-height: 720px; }
+}
+
+.cover-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  transition: transform 8s ease;
+  display: block;
+}
+.cover-section:hover .cover-img { transform: scale(1.03); }
+
+/* Multi-layer gradient: dark vignette top (topbar contrast) + heavy fade bottom (text legibility) */
+.cover-gradient {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(16,15,28,0.55) 0%,
+      rgba(16,15,28,0.0) 22%,
+      rgba(16,15,28,0.0) 40%,
+      rgba(16,15,28,0.6) 70%,
+      rgba(16,15,28,0.97) 100%
+    );
+}
+
+.cover-content {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px var(--p) 28px;
+}
+@media (min-width: 768px)  { .cover-content { padding: 32px 32px 36px; } }
+@media (min-width: 1024px) { .cover-content { padding: 40px 48px 44px; } }
+
+.cover-file-tag {
+  position: absolute;
+  top: calc(var(--topbar-h) + 12px);
+  right: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 500;
+  color: rgba(255,255,255,0.65);
+  background: rgba(16,15,28,0.55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 4px 9px; border-radius: var(--rF);
+  display: flex; align-items: center; gap: 5px;
+  letter-spacing: 0.04em;
+}
+@media (min-width: 768px) {
+  .cover-file-tag { top: 14px; right: 20px; }
+}
+.cover-file-tag::before {
+  content: '';
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--aqua); flex: none;
+}
+
+.cover-eyebrow {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.cover-title {
+  font-size: 26px; font-weight: 900;
+  letter-spacing: -0.03em; line-height: 1.1;
+  color: #fff; margin-bottom: 6px;
+  text-shadow: 0 2px 12px rgba(16,15,28,0.4);
+}
+@media (min-width: 768px)  { .cover-title { font-size: 38px; } }
+@media (min-width: 1024px) { .cover-title { font-size: 50px; } }
+
+.cover-sub {
+  font-size: 13.5px; color: rgba(255,255,255,0.72);
+  font-weight: 500; margin-bottom: 18px;
+}
+@media (min-width: 768px) { .cover-sub { font-size: 15px; } }
+
+.cover-actions {
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.cover-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 40px; padding: 0 18px; border-radius: var(--rF);
+  font-size: 13px; font-weight: 700; border: none; cursor: pointer;
+  font-family: inherit; transition: transform 0.15s;
+  letter-spacing: 0.01em;
+}
+.cover-btn:active { transform: scale(0.97); }
+.cover-btn-primary {
+  background: var(--g-full); color: #fff;
+  box-shadow: 0 4px 18px rgba(176,159,232,0.4);
+}
+.cover-btn-glass {
+  background: rgba(255,255,255,0.14);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+}
+.cover-btn svg { width: 14px; height: 14px; }
+
+/* ================================================================
+   COUNTDOWN — real-time sisa masa aktif
+   ================================================================ */
+.countdown-section {
+  padding: 20px var(--p) 0;
+}
+@media (min-width: 768px) { .countdown-section { padding: 24px 32px 0; } }
+@media (min-width: 1024px) { .countdown-section { padding: 28px 48px 0; } }
+
+.countdown-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; color: var(--t3);
+  text-transform: uppercase; letter-spacing: 0.07em;
+  margin-bottom: 12px;
+}
+.countdown-label .pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--aqua); flex: none;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.4; transform:scale(0.75); }
+}
+
+.countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+@media (min-width: 480px) { .countdown-grid { gap: 12px; } }
+@media (min-width: 768px) { .countdown-grid { gap: 14px; } }
+
+.cd-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-b);
+  border-radius: var(--r16);
+  padding: 16px 8px 14px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.cd-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--g-card);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cd-card:hover::before { opacity: 1; }
+
+/* Glowing ring around the number */
+.cd-number {
+  font-size: 32px; font-weight: 900;
+  letter-spacing: -0.04em; line-height: 1;
+  background: var(--g-full);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  margin-bottom: 8px;
+  position: relative; z-index: 1;
+  transition: transform 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 480px) { .cd-number { font-size: 38px; } }
+@media (min-width: 768px) { .cd-number { font-size: 44px; } }
+@media (min-width: 1024px) { .cd-number { font-size: 52px; } }
+
+.cd-number.tick {
+  animation: cd-tick 0.2s ease;
+}
+@keyframes cd-tick {
+  0%  { transform: translateY(-4px); opacity: 0.6; }
+  100%{ transform: translateY(0);    opacity: 1; }
+}
+
+.cd-unit {
+  font-size: 10px; font-weight: 700; color: var(--t3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  position: relative; z-index: 1;
+}
+@media (min-width: 480px) { .cd-unit { font-size: 11px; } }
+
+/* Urgency states */
+.cd-card.urgent { border-color: rgba(232,144,154,0.45); }
+.cd-card.urgent .cd-number {
+  background: linear-gradient(135deg,#E8909A,#F0C0C8);
+  -webkit-background-clip: text; background-clip: text;
+}
+.cd-card.urgent::before { background: linear-gradient(140deg,rgba(232,144,154,0.14),rgba(240,192,200,0.08)); opacity:1; }
+
+/* Expired state */
+.countdown-expired {
+  display: none;
+  padding: 16px 18px; border-radius: var(--r12);
+  background: rgba(232,144,154,0.10); border: 1px solid rgba(232,144,154,0.30);
+  font-size: 13.5px; color: #F0A8B4; font-weight: 600;
+  text-align: center;
+}
+.countdown-expired.show { display: block; }
+
+/* ================================================================
+   VIEW: CLIENT DASHBOARD
+   ================================================================ */
+.client-layout {
+  padding: 24px var(--p) 0; /* topbar handled by cover section now */
+}
+@media (min-width: 768px) {
+  .client-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 32px 32px 0;
+    align-items: start;
+  }
+}
+@media (min-width: 1024px) {
+  .client-layout {
+    grid-template-columns: 3fr 2fr;
+    padding: 40px 48px 0;
+    gap: 32px;
+  }
+}
+
+/* Hero card */
+.hero-card {
+  padding: 26px 22px 22px; border-radius: var(--r24);
+  background: var(--g-card); border: 1px solid rgba(255,255,255,0.12);
+  position: relative; overflow: hidden;
+}
+.iris-ring { position:absolute; border-radius:50%; border:1.5px solid transparent; background-clip:padding-box; animation:spin-iris 24s linear infinite; pointer-events:none; }
+.iris-ring1 { width:380px;height:380px;top:-130px;right:-130px; border-color:rgba(176,159,232,0.22) rgba(125,206,196,0.14) rgba(232,160,192,0.18) rgba(125,206,196,0.10); }
+.iris-ring2 { width:260px;height:260px;top:-80px;right:-80px; border-color:rgba(125,206,196,0.18) rgba(176,159,232,0.10) rgba(125,206,196,0.14) rgba(232,160,192,0.08); animation-direction:reverse; animation-duration:18s; }
+@keyframes spin-iris { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+.hero-eyebrow { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; position:relative; z-index:1; }
+.hero-tag { font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--aqua); letter-spacing:0.05em; text-transform:uppercase; }
+.hero-gallery-name { font-size:22px; font-weight:800; letter-spacing:-0.02em; line-height:1.15; margin-bottom:4px; position:relative; z-index:1; }
+@media (min-width:1024px) { .hero-gallery-name { font-size:28px; } }
+.hero-client { font-size:13px; color:var(--t3); margin-bottom:20px; position:relative; z-index:1; }
+.hero-client strong { color:var(--t2); }
+
+/* Storage ring */
+.storage-row { display:flex; align-items:center; gap:18px; margin-bottom:20px; position:relative; z-index:1; }
+.storage-ring-wrap { position:relative; width:76px; height:76px; flex:none; }
+.ring-svg { width:76px; height:76px; transform:rotate(-90deg); }
+.ring-bg  { fill:none; stroke:rgba(255,255,255,0.08); stroke-width:5; }
+.ring-fill { fill:none; stroke-width:5; stroke-linecap:round; stroke-dasharray:201; transition:stroke-dashoffset 1.2s ease; }
+.ring-pct { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:15px; font-weight:800; }
+
+.storage-info .storage-used { font-size:20px; font-weight:800; letter-spacing:-0.02em; }
+.storage-info .storage-used span { font-size:13px; font-weight:500; color:var(--t3); }
+.storage-info .storage-label { font-size:12px; color:var(--t3); margin-top:4px; }
+.storage-info .file-types { margin-top:8px; display:flex; gap:10px; }
+.storage-info .file-types span { font-size:11.5px; color:var(--t3); }
+
+/* Days bar */
+.days-row { margin-bottom:16px; position:relative; z-index:1; }
+.days-label { display:flex; justify-content:space-between; margin-bottom:7px; }
+.days-label span,.days-label strong { font-size:12px; }
+.days-label span { color:var(--t3); }
+.progress-track { height:5px; background:rgba(255,255,255,0.08); border-radius:var(--rF); overflow:hidden; }
+.progress-fill { height:100%; border-radius:var(--rF); background:var(--g-full); transition:width 1.2s ease; width:0; }
+
+/* Dates */
+.dates-row { display:flex; gap:10px; margin-bottom:20px; position:relative; z-index:1; }
+.date-chip { flex:1; padding:11px 14px; border-radius:var(--r12); background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); }
+.date-chip .dc-label { font-size:10px; color:var(--t4); font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px; }
+.date-chip .dc-val { font-size:13.5px; font-weight:700; }
+.date-chip.dc-warn .dc-val { color:var(--warn); }
+
+/* Right column: stats + info */
+.client-right { display:flex; flex-direction:column; gap:16px; }
+
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (min-width:768px) { .stats-grid { grid-template-columns:repeat(2,1fr); } }
+@media (min-width:1280px) { .stats-grid { grid-template-columns:repeat(4,1fr); } }
+
+.stat-card { padding:14px 12px; border-radius:var(--r12); background:var(--glass); border:1px solid var(--glass-b); text-align:center; }
+.stat-val { font-size:20px; font-weight:800; letter-spacing:-0.02em; }
+.stat-val.g { background:var(--g-full); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.stat-label { font-size:10px; color:var(--t4); font-weight:700; margin-top:3px; text-transform:uppercase; letter-spacing:0.03em; }
+
+.info-wrap { background:var(--glass); border:1px solid var(--glass-b); border-radius:var(--r16); overflow:hidden; }
+.info-row { display:flex; justify-content:space-between; align-items:center; padding:13px 16px; }
+.info-row:not(:last-child) { border-bottom:1px solid rgba(255,255,255,0.05); }
+.info-row .ir-label { font-size:13px; color:var(--t3); }
+.info-row .ir-val { font-size:13px; font-weight:700; }
+
+/* ================================================================
+   VIEW: GALLERY
+   ================================================================ */
+.gallery-topbar {
+  position: fixed; top: var(--topbar-h); left: 0; right: 0; z-index: 90;
+  background: rgba(16,15,28,0.85); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-b);
+  padding: 12px var(--p);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+@media (min-width:768px) { .gallery-topbar { padding: 12px 32px; } }
+@media (min-width:1024px) { .gallery-topbar { padding: 12px 48px; } }
+
+.gallery-topbar-left { display:flex; align-items:center; gap:12px; }
+.gallery-content { padding-top: calc(var(--topbar-h) + 60px); }
+@media (min-width:768px) { .gallery-content { padding-top: calc(var(--topbar-h) + 68px); } }
+
+.view-toggle { display:flex; gap:4px; padding:4px; background:var(--glass); border:1px solid var(--glass-b); border-radius:var(--r8); }
+.vt-btn { width:30px; height:30px; border-radius:5px; display:flex; align-items:center; justify-content:center; color:var(--t3); transition:all 0.2s; }
+.vt-btn svg { width:15px; height:15px; }
+.vt-btn.active { background:var(--g-ip); color:#fff; }
+
+.chip-bar { padding: 0 var(--p) 14px; }
+@media (min-width:768px) { .chip-bar { padding: 0 32px 16px; } }
+@media (min-width:1024px) { .chip-bar { padding: 0 48px 16px; } }
+
+/* Grid */
+.photo-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 var(--p); }
+@media (min-width:640px)  { .photo-grid { grid-template-columns:repeat(3,1fr); gap:12px; } }
+@media (min-width:768px)  { .photo-grid { grid-template-columns:repeat(3,1fr); padding:0 32px; } }
+@media (min-width:1024px) { .photo-grid { grid-template-columns:repeat(4,1fr); padding:0 48px; gap:14px; } }
+@media (min-width:1280px) { .photo-grid { grid-template-columns:repeat(5,1fr); } }
+
+.photo-card { border-radius:var(--r12); overflow:hidden; position:relative; cursor:pointer; }
+.photo-card img { width:100%; aspect-ratio:3/4; object-fit:cover; transition:transform 0.35s ease; }
+.photo-card:hover img { transform:scale(1.04); }
+.photo-overlay { position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,rgba(16,15,28,0.88) 100%); opacity:0; transition:opacity 0.25s; display:flex; align-items:flex-end; padding:10px; }
+.photo-card:hover .photo-overlay { opacity:1; }
+.photo-card-actions { display:flex; gap:6px; width:100%; }
+.pa-btn { flex:1; height:32px; border-radius:var(--r8); font-size:11px; font-weight:700; background:rgba(255,255,255,0.14); backdrop-filter:blur(6px); color:#fff; border:1px solid rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; gap:5px; }
+.pa-btn svg { width:13px; height:13px; }
+
+/* Masonry */
+.photo-masonry { columns:2; gap:10px; padding:0 var(--p); }
+@media (min-width:640px)  { .photo-masonry { columns:3; } }
+@media (min-width:1024px) { .photo-masonry { columns:4; padding:0 48px; gap:14px; } }
+@media (min-width:1280px) { .photo-masonry { columns:5; } }
+.photo-masonry .photo-card { break-inside:avoid; margin-bottom:10px; }
+.photo-masonry .photo-card img { aspect-ratio:auto; height:auto; }
+.photo-masonry .photo-card:nth-child(odd)  img { aspect-ratio:3/4; }
+.photo-masonry .photo-card:nth-child(even) img { aspect-ratio:4/5; }
+.photo-masonry .photo-card:nth-child(3n)   img { aspect-ratio:3/5; }
+
+/* Skeleton */
+.skeleton { background:linear-gradient(90deg,var(--bg2),var(--bg3),var(--bg2)); background-size:300%; animation:skel 1.6s ease infinite; border-radius:var(--r12); }
+@keyframes skel { 0%{background-position:0%}100%{background-position:300%} }
+
+/* ================================================================
+   PHOTO MODAL
+   ================================================================ */
+.modal-overlay {
+  position:fixed; inset:0; z-index:200;
+  background: var(--modal-bg); backdrop-filter:blur(24px);
+  display:none; flex-direction:column;
+}
+.modal-overlay.open { display:flex; }
+@media (min-width:768px) {
+  .modal-overlay { flex-direction:row; }
+  .modal-img-area { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; position:relative; }
+  .modal-side { width:320px; flex:none; border-left:1px solid var(--glass-b); display:flex; flex-direction:column; padding:28px 24px; gap:16px; overflow-y:auto; }
+}
+
+.modal-top { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; flex:none; border-bottom:1px solid var(--glass-b); }
+.modal-counter { font-size:12px; color:var(--t3); font-weight:600; }
+@media (min-width:768px) {
+  .modal-top { display:none; } /* hidden on desktop; integrated into modal-side */
+}
+
+.modal-img-wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:0 20px; overflow:hidden; position:relative; }
+@media (min-width:768px) { .modal-img-wrap { padding:0; } }
+.modal-img-wrap img { max-height:100%; max-width:100%; border-radius:var(--r16); object-fit:contain; }
+
+.modal-nav { position:absolute; top:50%; transform:translateY(-50%); width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; z-index:2; transition:background 0.2s; }
+.modal-nav:hover { background:rgba(255,255,255,0.18); }
+.modal-nav svg { width:18px; height:18px; stroke:#fff; fill:none; }
+.modal-nav-prev { left:12px; }
+.modal-nav-next { right:12px; }
+@media (min-width:768px) { .modal-nav-prev { left:20px; } .modal-nav-next { right:20px; } }
+
+.modal-bottom { flex:none; padding:16px 20px 24px; border-top:1px solid var(--glass-b); }
+@media (min-width:768px) { .modal-bottom { display:none; } }
+
+.modal-filename { font-size:14px; font-weight:700; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.modal-fileinfo { font-size:12px; color:var(--t3); }
+.modal-actions { display:flex; gap:8px; margin-top:12px; }
+.modal-actions .btn { flex:1; }
+
+/* Desktop modal side */
+.modal-side-header { display:flex; align-items:center; justify-content:space-between; }
+.modal-side-header .modal-counter { font-size:13px; }
+.modal-side-meta { }
+.modal-side-meta .modal-filename { font-size:16px; }
+.modal-side-meta .modal-fileinfo { font-size:13px; margin-top:6px; }
+.modal-side-actions { display:flex; flex-direction:column; gap:8px; }
+.modal-side-actions .btn { font-size:13px; height:42px; }
+.modal-side-nav { display:flex; gap:8px; padding-top:16px; border-top:1px solid var(--glass-b); }
+.modal-side-nav .btn { height:40px; font-size:13px; }
+
+/* ================================================================
+   VIEW: LOCKED
+   ================================================================ */
+.locked-bg { position:fixed; inset:0; z-index:0; display:grid; grid-template-columns:repeat(3,1fr); gap:3px; filter:blur(10px) brightness(0.15); }
+.locked-bg img { width:100%; height:33.33vh; object-fit:cover; }
+@media (min-width:768px) {
+  .locked-bg { grid-template-columns:repeat(6,1fr); }
+  .locked-bg img { height:50vh; }
+}
+.locked-overlay { position:relative; z-index:1; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:var(--p); }
+.locked-card { width:100%; max-width:440px; padding:40px 32px 36px; border-radius:var(--r24); background:rgba(16,15,28,0.84); border:1px solid rgba(255,255,255,0.12); backdrop-filter:blur(28px); text-align:center; }
+.lock-icon-wrap { width:84px; height:84px; border-radius:50%; margin:0 auto 24px; background:rgba(232,144,154,0.12); border:1.5px solid rgba(232,144,154,0.35); display:flex; align-items:center; justify-content:center; box-shadow:0 0 48px rgba(232,144,154,0.18); }
+.lock-icon-wrap svg { width:38px; height:38px; color:#F0B0BA; }
+.locked-title { font-size:22px; font-weight:800; letter-spacing:-0.02em; margin-bottom:10px; }
+.locked-sub { font-size:14px; color:var(--t3); line-height:1.65; margin-bottom:24px; }
+.locked-expiry { padding:16px 20px; border-radius:var(--r12); background:rgba(232,196,122,0.10); border:1px solid rgba(232,196,122,0.22); margin-bottom:28px; }
+.locked-expiry .le-label { font-size:11px; color:#E8C47A; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px; }
+.locked-expiry .le-date { font-size:20px; font-weight:800; color:#F0D898; }
+.locked-actions { display:flex; flex-direction:column; gap:10px; }
+.locked-logo { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:40px; }
+
+/* ================================================================
+   VIEW: ADMIN
+   ================================================================ */
+.admin-layout {
+  padding: calc(var(--topbar-h) + 24px) var(--p) 0;
+  display: flex; flex-direction: column; gap: 24px;
+}
+@media (min-width:768px) {
+  .admin-layout {
+    flex-direction: row; align-items: flex-start;
+    padding: 32px 32px 0; gap: 24px;
+  }
+}
+@media (min-width:1024px) {
+  .admin-layout { padding: 40px 48px 0; gap: 32px; }
+}
+
+/* Sidebar stats */
+.admin-sidebar {
+  display: flex; flex-direction: column; gap: 14px;
+}
+@media (min-width:768px) {
+  .admin-sidebar { width: var(--sidebar); flex:none; position: sticky; top: calc(var(--topbar-h) + 32px); }
+}
+
+.admin-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (min-width:768px) { .admin-stats-grid { grid-template-columns:1fr; } }
+
+.adm-card { padding:16px; border-radius:var(--r16); background:var(--glass); border:1px solid var(--glass-b); }
+.adm-card .ac-icon { width:36px; height:36px; border-radius:var(--r8); display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+.adm-card .ac-icon svg { width:18px; height:18px; }
+.adm-card .ac-val { font-size:26px; font-weight:900; letter-spacing:-0.03em; }
+.adm-card .ac-val.g { background:var(--g-full); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.adm-card .ac-label { font-size:11px; color:var(--t4); font-weight:700; margin-top:2px; text-transform:uppercase; letter-spacing:0.03em; }
+
+/* Admin main */
+.admin-main { flex:1; min-width:0; }
+.admin-main-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.admin-main-head h3 { font-size:16px; font-weight:800; }
+.admin-main-head span { font-size:12px; color:var(--t3); }
+
+.gallery-list { display:flex; flex-direction:column; gap:10px; }
+
+/* Mobile gallery row */
+.gallery-row { padding:14px 16px; border-radius:var(--r16); background:var(--glass); border:1px solid var(--glass-b); display:flex; align-items:center; gap:12px; transition:background 0.2s; }
+.gallery-row:hover { background:var(--glass2); }
+.gl-thumb { width:48px; height:48px; border-radius:var(--r8); object-fit:cover; flex:none; }
+.gl-info { flex:1; min-width:0; }
+.gl-name { font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px; }
+.gl-meta { font-size:11px; color:var(--t3); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.gl-actions { display:flex; gap:6px; }
+.gl-act-btn { width:32px; height:32px; border-radius:var(--r8); background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; color:var(--t3); transition:all 0.2s; }
+.gl-act-btn:hover { background:var(--glass2); color:var(--t2); }
+.gl-act-btn svg { width:14px; height:14px; }
+.gl-act-btn.del { color:var(--bad); }
+
+/* Desktop: extra columns in row */
+@media (min-width:768px) {
+  .gallery-row { gap:16px; }
+  .gl-thumb { width:52px; height:52px; }
+  .gl-extra { display:flex; align-items:center; gap:16px; }
+  .gl-extra-item { font-size:12px; color:var(--t3); white-space:nowrap; }
+  .gl-extra-item strong { color:var(--t1); display:block; font-size:13px; font-weight:700; }
+}
+.gl-extra { display:none; }
+@media (min-width:900px) { .gl-extra { display:flex; } }
+
+/* FAB */
+.fab { position:fixed; bottom:72px; right:18px; z-index:100; width:54px; height:54px; border-radius:50%; background:var(--g-full); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 20px rgba(176,159,232,0.38); transition:transform 0.2s; }
+.fab:active { transform:scale(0.93); }
+.fab svg { width:22px; height:22px; stroke:#fff; fill:none; }
+@media (min-width:768px) { .fab { bottom:32px; right:48px; } }
+
+/* Add gallery modal */
+.adm-modal-overlay { position:fixed; inset:0; z-index:200; background:var(--adm-bg); backdrop-filter:blur(16px); display:none; align-items:flex-end; justify-content:center; }
+@media (min-width:768px) { .adm-modal-overlay { align-items:center; } }
+.adm-modal-overlay.open { display:flex; }
+.adm-modal { width:100%; max-width:520px; padding:28px 24px 36px; background:var(--bg2); border:1px solid var(--glass-b); border-radius:var(--r24) var(--r24) 0 0; }
+@media (min-width:768px) { .adm-modal { border-radius:var(--r24); } }
+.adm-modal h3 { font-size:18px; font-weight:800; margin-bottom:20px; }
+.field { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.field label { font-size:11.5px; font-weight:700; color:var(--t3); text-transform:uppercase; letter-spacing:0.04em; }
+.field input, .field select { background:var(--glass); border:1px solid var(--glass-b); border-radius:var(--r8); padding:12px 14px; font-size:14px; color:var(--t1); font-family:inherit; transition:border-color 0.2s; }
+.field input:focus, .field select:focus { outline:none; border-color:var(--iris); }
+.field input::placeholder { color:var(--t4); }
+.adm-modal-footer { display:flex; gap:10px; margin-top:20px; }
+.adm-modal-footer .btn { flex:1; }
+
+/* Desktop: 2-col form grid */
+@media (min-width:768px) {
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
+  .form-grid .field-full { grid-column:1/-1; }
+}
+
+/* QR Modal */
+.qr-modal-overlay { position:fixed; inset:0; z-index:200; background:var(--adm-bg); backdrop-filter:blur(16px); display:none; align-items:center; justify-content:center; padding:var(--p); }
+.qr-modal-overlay.open { display:flex; }
+.qr-modal { width:100%; max-width:360px; padding:32px 26px; background:var(--bg2); border:1px solid var(--glass-b); border-radius:var(--r24); text-align:center; }
+.qr-modal h3 { font-size:18px; font-weight:800; margin-bottom:6px; }
+.qr-modal p { font-size:13px; color:var(--t3); margin-bottom:24px; }
+.qr-box { width:160px; height:160px; margin:0 auto 20px; background:#fff; border-radius:var(--r16); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.qr-box img { width:136px; height:136px; }
+
+/* Toast */
+.toast { position:fixed; bottom:84px; left:50%; transform:translateX(-50%) translateY(16px); z-index:400; max-width:400px; width:calc(100% - 40px); padding:13px 18px; border-radius:var(--r12); background:var(--glass2); border:1px solid var(--glass-b2); backdrop-filter:blur(16px); font-size:13px; font-weight:600; color:var(--t1); display:flex; align-items:center; gap:10px; opacity:0; transition:all 0.3s; pointer-events:none; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast svg { width:16px; height:16px; flex:none; color:var(--ok); }
+@media (min-width:768px) { .toast { bottom:32px; } }
+
+/* Animations */
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
+.fade-up { animation:fadeUp 0.4s ease both; }
+.delay-1{animation-delay:.08s} .delay-2{animation-delay:.16s}
+.delay-3{animation-delay:.24s} .delay-4{animation-delay:.32s}
+</style>
+</head>
+<body>
+
+<!-- AMBIENT -->
+<div class="ambient">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7DCEC4"/>
+      <stop offset="50%" stop-color="#B09FE8"/>
+      <stop offset="100%" stop-color="#E8A0C0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ============================================================
+     GLOBAL TOPBAR (shared across all views)
+     ============================================================ -->
+<nav class="topbar" id="globalTopbar">
+  <div class="topbar-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 20 20"><path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4zm0 1a5 5 0 1 0 0 10A5 5 0 0 0 10 5zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">Edotorial Photo</div>
+    </div>
+  </div>
+
+  <!-- Desktop nav -->
+  <div class="desktop-nav" id="desktopNav">
+    <button class="dn-btn active" onclick="switchView('client')">Dashboard</button>
+    <button class="dn-btn" onclick="switchView('gallery')">Galeri Foto</button>
+    <button class="dn-btn" onclick="switchView('admin')">Admin</button>
+  </div>
+
+  <div class="topbar-right">
+    <!-- Theme toggle -->
+    <button class="ib theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Ganti mode gelap/terang" aria-label="Toggle tema">
+      <!-- Moon icon (shown in dark mode) -->
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/>
+      </svg>
+      <!-- Sun icon (shown in light mode) -->
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+      </svg>
+    </button>
+    <button class="ib" onclick="showQr()" title="QR Code">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="17" width="3" height="3"/><rect x="14" y="18" width="3" height="3"/></svg>
+    </button>
+    <button class="ib" onclick="toast('Link galeri disalin ke clipboard 📋')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 3.9M15.4 6.6 8.6 10.5"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     VIEW 1: CLIENT DASHBOARD
+     ============================================================ -->
+<div class="view active" id="v-client">
+
+  <!-- ── COVER PHOTO (diambil dari file bernama 1.jpg di folder Drive) ── -->
+  <div class="cover-section">
+    <img
+      class="cover-img"
+      id="coverImg"
+      src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=90&w=1400&auto=format&fit=crop"
+      alt="Cover galeri — 1.jpg">
+    <div class="cover-gradient"></div>
+
+    <!-- Label nama file -->
+    <div class="cover-file-tag">1.jpg · Cover Galeri</div>
+
+    <!-- Konten overlay bawah -->
+    <div class="cover-content">
+      <div class="cover-eyebrow">
+        <span class="badge badge-ok"><span class="dot"></span>Aktif</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:rgba(255,255,255,0.55);letter-spacing:0.04em">Paket Wedding Premium · 90 Hari</span>
+      </div>
+      <h1 class="cover-title">Wedding Dinda &amp; Bayu</h1>
+      <p class="cover-sub">Galeri foto milik <strong style="color:#fff">Dinda Rahmawati</strong> · 152 file · Berakhir 14 Sep 2026</p>
+      <div class="cover-actions">
+        <button class="cover-btn cover-btn-primary" onclick="switchView('gallery')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+          Lihat Semua Foto
+        </button>
+        <button class="cover-btn cover-btn-glass" onclick="toast('Menyiapkan ZIP… 📦')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 15V3M8 11l4 4 4-4"/><path d="M3 19h18"/></svg>
+          Unduh Semua
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- ── END COVER PHOTO ── -->
+
+  <!-- ── COUNTDOWN — Sisa Masa Aktif Real-time ── -->
+  <div class="countdown-section fade-up delay-1">
+    <div class="countdown-label">
+      <span class="pulse"></span>
+      Sisa Masa Aktif Galeri
+    </div>
+    <div class="countdown-grid" id="countdownGrid">
+      <div class="cd-card" id="cd-days">
+        <div class="cd-number" id="cd-d">--</div>
+        <div class="cd-unit">Hari</div>
+      </div>
+      <div class="cd-card" id="cd-hours">
+        <div class="cd-number" id="cd-h">--</div>
+        <div class="cd-unit">Jam</div>
+      </div>
+      <div class="cd-card" id="cd-minutes">
+        <div class="cd-number" id="cd-m">--</div>
+        <div class="cd-unit">Menit</div>
+      </div>
+      <div class="cd-card" id="cd-seconds">
+        <div class="cd-number" id="cd-s">--</div>
+        <div class="cd-unit">Detik</div>
+      </div>
+    </div>
+    <div class="countdown-expired" id="countdownExpired">
+      ⏰ Masa aktif galeri ini telah berakhir — silakan perpanjang untuk mengakses kembali.
+    </div>
+  </div>
+  <!-- ── END COUNTDOWN ── -->
+
+  <div class="client-layout">
+
+    <!-- LEFT: Hero card -->
+    <div class="hero-card fade-up">
+      <div class="iris-ring iris-ring1"></div>
+      <div class="iris-ring iris-ring2"></div>
+      <div class="hero-eyebrow">
+        <span class="hero-tag">Paket Wedding Premium</span>
+        <span class="badge badge-ok"><span class="dot"></span>Aktif</span>
+      </div>
+      <div class="hero-gallery-name">Wedding Dinda &amp; Bayu</div>
+      <div class="hero-client">Galeri milik <strong>Dinda Rahmawati</strong></div>
+
+      <div class="storage-row">
+        <div class="storage-ring-wrap">
+          <svg class="ring-svg" viewBox="0 0 76 76">
+            <circle class="ring-bg" cx="38" cy="38" r="32"/>
+            <circle class="ring-fill" cx="38" cy="38" r="32" id="storageRing"
+              stroke="url(#ringGrad)" stroke-dasharray="201" stroke-dashoffset="201"/>
+          </svg>
+          <div class="ring-pct" id="storagePct">0%</div>
+        </div>
+        <div class="storage-info">
+          <div class="storage-used">2,4 GB <span>/ 10 GB</span></div>
+          <div class="storage-label">Kapasitas terpakai · 152 file</div>
+          <div class="file-types"><span>🖼 140 foto</span><span>🎥 12 video</span></div>
+        </div>
+      </div>
+
+      <div class="days-row">
+        <div class="days-label">
+          <span>Sisa masa aktif</span>
+          <strong id="daysLeft">0 hari lagi</strong>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="daysBar"></div></div>
+      </div>
+
+      <div class="dates-row">
+        <div class="date-chip">
+          <div class="dc-label">Aktif sejak</div>
+          <div class="dc-val">15 Jun 2026</div>
+        </div>
+        <div class="date-chip dc-warn">
+          <div class="dc-label">Kadaluarsa</div>
+          <div class="dc-val">14 Sep 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Stats + info -->
+    <div class="client-right fade-up delay-1">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-val g">152</div><div class="stat-label">Total File</div></div>
+        <div class="stat-card"><div class="stat-val">48</div><div class="stat-label">Diunduh</div></div>
+        <div class="stat-card"><div class="stat-val">12</div><div class="stat-label">Favorit</div></div>
+        <div class="stat-card"><div class="stat-val g">2.4<span style="font-size:11px;font-weight:500"> GB</span></div><div class="stat-label">Ukuran</div></div>
+      </div>
+
+      <div class="info-wrap">
+        <div class="info-row"><span class="ir-label">Paket</span><span class="ir-val">Wedding Premium</span></div>
+        <div class="info-row"><span class="ir-label">Durasi</span><span class="ir-val">90 Hari</span></div>
+        <div class="info-row"><span class="ir-label">Kapasitas</span><span class="ir-val">10 GB</span></div>
+        <div class="info-row"><span class="ir-label">Akses foto HD</span><span class="ir-val">✅ Aktif</span></div>
+        <div class="info-row"><span class="ir-label">Unduh ZIP</span><span class="ir-val">✅ Aktif</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     VIEW 2: GALLERY
+     ============================================================ -->
+<div class="view" id="v-gallery">
+  <!-- Sub-topbar (below main topbar) -->
+  <div class="gallery-topbar">
+    <div class="gallery-topbar-left">
+      <button class="ib" onclick="switchView('client')" id="galleryBackBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <span style="font-size:15px;font-weight:800;">152 File</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="chip-row" style="max-width:300px;overflow:hidden;" id="filterChips">
+        <button class="chip active" data-f="all" style="font-size:11.5px;padding:6px 12px">Semua</button>
+        <button class="chip" data-f="photo" style="font-size:11.5px;padding:6px 12px">📷 Foto</button>
+        <button class="chip" data-f="video" style="font-size:11.5px;padding:6px 12px">🎥 Video</button>
+        <button class="chip" data-f="fav" style="font-size:11.5px;padding:6px 12px">❤️ Favorit</button>
+      </div>
+      <div class="view-toggle" id="viewToggle">
+        <button class="vt-btn active" data-mode="grid" onclick="setViewMode('grid')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </button>
+        <button class="vt-btn" data-mode="masonry" onclick="setViewMode('masonry')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="11" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="18" width="7" height="3" rx="1"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="gallery-content">
+    <div id="photoGrid" class="photo-grid"></div>
+    <div style="height:24px"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     VIEW 3: LOCKED
+     ============================================================ -->
+<div class="view" id="v-locked" style="padding-bottom:0">
+  <div class="locked-bg">
+    <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=50&w=300" alt="">
+    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=50&w=300" alt="">
+    <img src="https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=50&w=300" alt="">
+    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=50&w=300" alt="">
+    <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=50&w=300" alt="">
+    <img src="https://images.unsplash.com/photo-1529636444744-adffc9135a5e?q=50&w=300" alt="">
+  </div>
+  <div class="locked-overlay">
+    <div class="locked-logo">
+      <div class="logo-mark" style="width:38px;height:38px">
+        <svg viewBox="0 0 20 20" style="width:20px;height:20px"><path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4zm0 1a5 5 0 1 0 0 10A5 5 0 0 0 10 5zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+      </div>
+      <span class="logo-name">Edotorial Photo</span>
+    </div>
+    <div class="locked-card">
+      <div class="lock-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div class="locked-title">Masa Penyimpanan Berakhir</div>
+      <div class="locked-sub">Akses galeri foto kamu telah dikunci karena masa aktif penyimpanan telah habis.</div>
+      <div class="locked-expiry">
+        <div class="le-label">Kadaluarsa pada</div>
+        <div class="le-date">14 Maret 2026</div>
+      </div>
+      <div class="locked-actions">
+        <button class="btn btn-grad" onclick="toast('Menghubungkan ke halaman pembayaran perpanjangan…')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 2 3.09 6.26 6.91 1-5 4.87 1.18 6.87L12 17.77l-6.18 3.23L7 14.13 2 9.26l6.91-1L12 2z"/></svg>
+          Perpanjang Akses
+        </button>
+        <button class="btn btn-glass" onclick="toast('Membuka WhatsApp Admin…')">Hubungi Admin via WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     VIEW 4: ADMIN
+     ============================================================ -->
+<div class="view" id="v-admin">
+  <div class="admin-layout">
+
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+      <div class="admin-stats-grid">
+        <div class="adm-card fade-up">
+          <div class="ac-icon" style="background:rgba(176,159,232,0.14)"><svg viewBox="0 0 24 24" fill="none" stroke="#CBBFF7" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3"/></svg></div>
+          <div class="ac-val g">12</div><div class="ac-label">Galeri Aktif</div>
+        </div>
+        <div class="adm-card fade-up delay-1">
+          <div class="ac-icon" style="background:rgba(232,196,122,0.14)"><svg viewBox="0 0 24 24" fill="none" stroke="#E8C47A" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          <div class="ac-val" style="color:#E8C47A">3</div><div class="ac-label">Hampir Exp</div>
+        </div>
+        <div class="adm-card fade-up delay-2">
+          <div class="ac-icon" style="background:rgba(232,144,154,0.13)"><svg viewBox="0 0 24 24" fill="none" stroke="#F0A8B4" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="ac-val" style="color:#F0A8B4">4</div><div class="ac-label">Terkunci</div>
+        </div>
+        <div class="adm-card fade-up delay-3">
+          <div class="ac-icon" style="background:rgba(125,206,196,0.13)"><svg viewBox="0 0 24 24" fill="none" stroke="#7DCEC4" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          <div class="ac-val g">48<span style="font-size:12px;font-weight:500"> GB</span></div><div class="ac-label">Total Storage</div>
+        </div>
+      </div>
+
+      <!-- Quick add on desktop sidebar -->
+      <button class="btn btn-grad" style="display:none" id="sidebarAddBtn" onclick="openAdmModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah Galeri
+      </button>
+    </div>
+
+    <!-- Main content -->
+    <div class="admin-main">
+      <div class="admin-main-head">
+        <h3>Semua Galeri</h3>
+        <span>19 galeri</span>
+      </div>
+      <div class="gallery-list" id="adminGalleryList"></div>
+    </div>
+  </div>
+
+  <button class="fab" onclick="openAdmModal()">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+</div>
+
+<!-- ============================================================
+     PHOTO MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="photoModal">
+  <!-- Mobile top bar -->
+  <div class="modal-top">
+    <span class="modal-counter" id="modalCounter">1 / 8</span>
+    <div style="display:flex;gap:8px">
+      <button class="ib" onclick="toggleFav()" id="modalFavBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+      <button class="ib" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Image area -->
+  <div class="modal-img-wrap modal-img-area">
+    <button class="modal-nav modal-nav-prev" onclick="prevPhoto()">
+      <svg viewBox="0 0 24 24" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <img id="modalImg" src="" alt="Preview">
+    <button class="modal-nav modal-nav-next" onclick="nextPhoto()">
+      <svg viewBox="0 0 24 24" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile bottom bar -->
+  <div class="modal-bottom">
+    <div class="modal-filename" id="modalFilename">IMG_001.jpg</div>
+    <div class="modal-fileinfo" id="modalFileinfo">4.2 MB · JPEG</div>
+    <div class="modal-actions">
+      <button class="btn btn-grad btn-sm" style="flex:2" onclick="toast('Mengunduh foto… ✅')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 15V3M8 11l4 4 4-4"/><path d="M3 19h18"/></svg>Unduh
+      </button>
+      <button class="btn btn-glass btn-sm" style="flex:1" onclick="toast('Link disalin 📋')">Salin Link</button>
+    </div>
+  </div>
+
+  <!-- Desktop side panel -->
+  <div class="modal-side" id="modalSide">
+    <div class="modal-side-header">
+      <span class="modal-counter" id="modalCounterDesktop">1 / 8</span>
+      <div style="display:flex;gap:8px">
+        <button class="ib" onclick="toggleFav()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <button class="ib" onclick="closeModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="modal-side-meta">
+      <div class="modal-filename" id="modalFilenameD"></div>
+      <div class="modal-fileinfo" id="modalFileinfoD" style="margin-top:6px"></div>
+    </div>
+    <div class="modal-side-actions">
+      <button class="btn btn-grad" onclick="toast('Mengunduh foto… ✅')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 15V3M8 11l4 4 4-4"/><path d="M3 19h18"/></svg>Unduh Foto
+      </button>
+      <button class="btn btn-glass" onclick="toast('Link foto disalin 📋')">Salin Link Foto</button>
+    </div>
+    <div class="modal-side-nav" style="margin-top:auto">
+      <button class="btn btn-glass" style="flex:1" onclick="prevPhoto()">← Prev</button>
+      <button class="btn btn-glass" style="flex:1" onclick="nextPhoto()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="adm-modal-overlay" id="admModal">
+  <div class="adm-modal">
+    <h3>Tambah Galeri Baru</h3>
+    <div class="form-grid">
+      <div class="field"><label>Nama Klien</label><input type="text" placeholder="cth. Dinda Rahmawati"></div>
+      <div class="field"><label>Nama Galeri</label><input type="text" placeholder="cth. Wedding Dinda & Bayu"></div>
+      <div class="field field-full"><label>Link Folder Google Drive</label><input type="url" placeholder="https://drive.google.com/drive/folders/...">
+        <div style="font-size:11.5px;color:var(--aqua);margin-top:6px;display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace">
+          <span style="width:5px;height:5px;border-radius:50%;background:var(--aqua);flex:none;display:inline-block"></span>
+          File bernama <strong>1.jpg</strong> di folder ini otomatis jadi cover galeri klien
+        </div>
+      </div>
+      <div class="field"><label>Paket</label>
+        <select>
+          <option>Wedding Premium — 90 Hari · 10 GB</option>
+          <option>Prewedding — 60 Hari · 5 GB</option>
+          <option>Event — 30 Hari · 3 GB</option>
+          <option>Custom</option>
+        </select>
+      </div>
+      <div class="field"><label>Nomor WA Klien</label><input type="tel" placeholder="08xxxxxxxxxx"></div>
+    </div>
+    <div class="adm-modal-footer">
+      <button class="btn btn-glass" onclick="closeAdmModal()">Batal</button>
+      <button class="btn btn-grad" onclick="saveGallery()">Simpan Galeri</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="qr-modal-overlay" id="qrModal">
+  <div class="qr-modal">
+    <h3>QR Code Galeri</h3>
+    <p>Scan untuk membagikan akses galeri kepada klien</p>
+    <div class="qr-box">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=136x136&data=https://edotorialphoto.vercel.app/g/dinda-bayu-2026&color=B09FE8" alt="QR" onerror="this.parentElement.innerHTML='<div style=\'padding:20px;font-size:12px;color:#888\'>QR tidak tersedia</div>'">
+    </div>
+    <p style="font-size:11.5px;word-break:break-all;color:var(--t3);margin-bottom:18px">edotorialphoto.vercel.app/g/dinda-bayu-2026</p>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-glass btn-sm" style="flex:1" onclick="toast('Link disalin 📋')">Salin Link</button>
+      <button class="btn btn-grad btn-sm" style="flex:1" onclick="toast('Membagikan via WhatsApp…')">Kirim WA</button>
+      <button class="btn btn-glass btn-sm" style="width:38px;flex:none" onclick="closeQr()">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- MOBILE DEMO SWITCHER -->
+<div class="demo-bar">
+  <button class="demo-btn active" onclick="switchView('client')">Dashboard</button>
+  <button class="demo-btn" onclick="switchView('gallery')">Galeri</button>
+  <button class="demo-btn" onclick="switchView('admin')">Admin</button>
+</div>
+
+<script>
+const PHOTOS = [
+  {src:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=700',name:'WDD_001.jpg',size:'4.2 MB',dim:'6000×4000 px'},
+  {src:'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=700',name:'WDD_002.jpg',size:'5.1 MB',dim:'6000×4000 px'},
+  {src:'https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=700',name:'WDD_003.jpg',size:'3.8 MB',dim:'5500×3667 px'},
+  {src:'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=700',name:'WDD_004.jpg',size:'6.2 MB',dim:'6000×4000 px'},
+  {src:'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=700',name:'WDD_005.jpg',size:'4.7 MB',dim:'5500×3667 px'},
+  {src:'https://images.unsplash.com/photo-1529636444744-adffc9135a5e?q=80&w=700',name:'WDD_006.jpg',size:'3.3 MB',dim:'4000×6000 px'},
+  {src:'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=700',name:'WDD_007.jpg',size:'5.5 MB',dim:'6000×4000 px'},
+  {src:'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=700',name:'WDD_008.jpg',size:'4.9 MB',dim:'6000×4000 px'},
+];
+
+const GALLERIES = [
+  {name:'Wedding Dinda & Bayu',client:'Dinda Rahmawati',pkg:'Wedding Premium',days:85,files:152,exp:'14 Sep 2026',status:'ok',thumb:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=60&w=120'},
+  {name:'Prewedding Sari & Ari',client:'Sari Putri',pkg:'Prewedding',days:18,files:68,exp:'12 Jul 2026',status:'warn',thumb:'https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=60&w=120'},
+  {name:'Wedding Yuni & Dion',client:'Yuni Astuti',pkg:'Wedding Premium',days:3,files:201,exp:'27 Jun 2026',status:'warn',thumb:'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=60&w=120'},
+  {name:'Maternity Rini',client:'Rini Handayani',pkg:'Event 30 Hari',days:0,files:45,exp:'20 Mar 2026',status:'bad',thumb:'https://images.unsplash.com/photo-1529636444744-adffc9135a5e?q=60&w=120'},
+  {name:'Wedding Maya & Budi',client:'Maya Sari',pkg:'Wedding Premium',days:60,files:178,exp:'23 Agu 2026',status:'ok',thumb:'https://images.unsplash.com/photo-1519741497674-611481863552?q=60&w=120'},
+];
+
+let currentView='client', currentMode='grid', currentPhoto=0, isFav=false;
+
+function switchView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('v-'+name).classList.add('active');
+  // Mobile demo btns
+  document.querySelectorAll('.demo-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['client','gallery','admin'][i]===name);
+  });
+  // Desktop nav btns
+  document.querySelectorAll('.dn-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['client','gallery','admin'][i]===name);
+  });
+  currentView=name;
+  if(name==='gallery') renderGallery();
+  if(name==='admin') renderAdmin();
+  // Show/hide sidebar add btn on desktop
+  const sab=document.getElementById('sidebarAddBtn');
+  if(sab) sab.style.display = (name==='admin' && window.innerWidth>=768) ? 'flex' : 'none';
+}
+
+function animateHero(){
+  const ring=document.getElementById('storageRing');
+  if(!ring)return;
+  const pct=24; const circ=201; const offset=circ-(circ*pct/100);
+  setTimeout(()=>{
+    ring.style.strokeDashoffset=offset;
+    let c=0; const t=setInterval(()=>{c=Math.min(c+1,pct);document.getElementById('storagePct').textContent=c+'%';if(c>=pct)clearInterval(t);},30);
+  },400);
+  const bar=document.getElementById('daysBar');
+  const days=85,total=90;
+  setTimeout(()=>{
+    if(bar){bar.style.width=(days/total*100)+'%';}
+    document.getElementById('daysLeft').textContent=days+' hari lagi';
+  },500);
+}
+
+function setViewMode(mode){
+  currentMode=mode;
+  document.querySelectorAll('.vt-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  renderGallery();
+}
+
+function renderGallery(){
+  const c=document.getElementById('photoGrid');
+  if(!c)return;
+  c.className=currentMode==='masonry'?'photo-masonry':'photo-grid';
+  c.innerHTML=Array(8).fill(0).map(()=>`<div class="photo-card"><div class="skeleton" style="aspect-ratio:3/4;width:100%"></div></div>`).join('');
+  setTimeout(()=>{
+    c.innerHTML=PHOTOS.map((p,i)=>`
+      <div class="photo-card" onclick="openModal(${i})">
+        <img src="${p.src}" alt="${p.name}" loading="lazy">
+        <div class="photo-overlay"><div class="photo-card-actions">
+          <button class="pa-btn" onclick="event.stopPropagation();toast('Mengunduh ${p.name}…')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 15V3M8 11l4 4 4-4"/><path d="M3 19h18"/></svg>Unduh
+          </button>
+          <button class="pa-btn" onclick="event.stopPropagation();toast('Ditambahkan ke favorit ❤️')" style="flex:0;width:32px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div></div>
+      </div>`).join('');
+    document.querySelectorAll('#filterChips .chip').forEach(ch=>{
+      ch.onclick=()=>{document.querySelectorAll('#filterChips .chip').forEach(c=>c.classList.remove('active'));ch.classList.add('active');};
+    });
+  },600);
+}
+
+function openModal(i){currentPhoto=i;updateModal();document.getElementById('photoModal').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){document.getElementById('photoModal').classList.remove('open');document.body.style.overflow='';}
+function prevPhoto(){currentPhoto=(currentPhoto-1+PHOTOS.length)%PHOTOS.length;updateModal();}
+function nextPhoto(){currentPhoto=(currentPhoto+1)%PHOTOS.length;updateModal();}
+function updateModal(){
+  const p=PHOTOS[currentPhoto];
+  const counter=`${currentPhoto+1} / ${PHOTOS.length}`;
+  const info=`${p.size} · ${p.dim} · JPEG`;
+  document.getElementById('modalImg').src=p.src;
+  document.getElementById('modalFilename').textContent=p.name;
+  document.getElementById('modalFileinfo').textContent=info;
+  document.getElementById('modalCounter').textContent=counter;
+  // Desktop
+  const fd=document.getElementById('modalFilenameD');
+  const fid=document.getElementById('modalFileinfoD');
+  const cd=document.getElementById('modalCounterDesktop');
+  if(fd) fd.textContent=p.name;
+  if(fid) fid.textContent=info;
+  if(cd) cd.textContent=counter;
+}
+function toggleFav(){
+  isFav=!isFav;
+  document.querySelectorAll('#modalFavBtn svg path, #photoModal .modal-side svg path').forEach(p=>{
+    p.setAttribute('fill',isFav?'#E8A0C0':'none');
+    p.setAttribute('stroke',isFav?'#E8A0C0':'currentColor');
+  });
+  toast(isFav?'Ditambahkan ke favorit ❤️':'Dihapus dari favorit');
+}
+
+function renderAdmin(){
+  const list=document.getElementById('adminGalleryList');
+  if(!list)return;
+  const cls={ok:'badge-ok',warn:'badge-warn',bad:'badge-bad'};
+  const lbl={ok:'Aktif',warn:(d)=>d+' hari',bad:'Terkunci'};
+  list.innerHTML=GALLERIES.map((g,i)=>`
+    <div class="gallery-row fade-up" style="animation-delay:${i*0.06}s">
+      <img class="gl-thumb" src="${g.thumb}" alt="">
+      <div class="gl-info">
+        <div class="gl-name">${g.name}</div>
+        <div class="gl-meta">
+          <span class="badge ${cls[g.status]}" style="font-size:10px;padding:2px 7px"><span class="dot"></span>${g.status==='warn'?lbl.warn(g.days):g.status==='ok'?lbl.ok:lbl.bad}</span>
+          <span>${g.files} file</span><span>${g.client}</span>
+        </div>
+      </div>
+      <div class="gl-extra">
+        <div class="gl-extra-item"><strong>${g.pkg}</strong>Paket</div>
+        <div class="gl-extra-item"><strong>${g.exp}</strong>Kadaluarsa</div>
+        <div class="gl-extra-item"><strong style="color:${g.days>30?'var(--ok)':g.days>7?'var(--warn)':'var(--bad)'}">${g.days} hari</strong>Sisa</div>
+      </div>
+      <div class="gl-actions">
+        <button class="gl-act-btn" onclick="toast('Membuka galeri ${g.name}…')" title="Lihat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button class="gl-act-btn" onclick="toast('Edit galeri ${g.name}…')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="gl-act-btn del" onclick="toast('Galeri dihapus 🗑️')" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      </div>
+    </div>`).join('');
+}
+
+function openAdmModal(){document.getElementById('admModal').classList.add('open');}
+function closeAdmModal(){document.getElementById('admModal').classList.remove('open');}
+function saveGallery(){closeAdmModal();toast('Galeri baru berhasil dibuat! Link dikirim via WA 🎉');}
+function showQr(){document.getElementById('qrModal').classList.add('open');}
+function closeQr(){document.getElementById('qrModal').classList.remove('open');}
+
+let toastTimer;
+function toast(msg){
+  clearTimeout(toastTimer);
+  const el=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  el.classList.add('show');
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ================================================================
+// THEME — dark / light
+// localStorage dibungkus try-catch karena bisa throw di sandbox
+// ================================================================
+let _currentTheme = 'dark';
+
+(function initTheme() {
+  try {
+    const saved = localStorage.getItem('ep-theme');
+    if (saved === 'light' || saved === 'dark') {
+      _currentTheme = saved;
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+      _currentTheme = 'light';
+    }
+  } catch (e) {
+    // localStorage tidak tersedia — pakai default dark
+  }
+  document.documentElement.setAttribute('data-theme', _currentTheme);
+})();
+
+function applyTheme(theme) {
+  _currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem('ep-theme', theme); } catch (e) {}
+}
+
+function toggleTheme() {
+  applyTheme(_currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+
+// ================================================================
+// Tanggal kadaluarsa galeri (dari database — di sini hardcode untuk demo)
+const EXPIRY_DATE = new Date('2026-09-14T23:59:59');
+
+// Nilai sebelumnya untuk deteksi perubahan & animasi tick
+let prevCdValues = { d: null, h: null, m: null, s: null };
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function updateCountdown() {
+  const now  = new Date();
+  const diff = EXPIRY_DATE - now;
+
+  const expired = document.getElementById('countdownExpired');
+  const grid    = document.getElementById('countdownGrid');
+
+  if (diff <= 0) {
+    // Sudah expired
+    grid.style.display  = 'none';
+    expired.classList.add('show');
+    return;
+  }
+
+  const totalSec = Math.floor(diff / 1000);
+  const d = Math.floor(totalSec / 86400);
+  const h = Math.floor((totalSec % 86400) / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+
+  const vals = { d, h, m, s };
+  const ids  = { d:'cd-d', h:'cd-h', m:'cd-m', s:'cd-s' };
+  const cards = { d:'cd-days', h:'cd-hours', m:'cd-minutes', s:'cd-seconds' };
+
+  // Terapkan urgency style jika < 7 hari
+  const isUrgent = d < 7;
+  Object.values(cards).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('urgent', isUrgent);
+  });
+
+  // Update angka + animasi tick saat berubah
+  Object.keys(vals).forEach(key => {
+    const el = document.getElementById(ids[key]);
+    if (!el) return;
+    const newVal = pad(vals[key]);
+    if (prevCdValues[key] !== newVal) {
+      el.textContent = newVal;
+      el.classList.remove('tick');
+      // reflow trigger agar animasi ulang
+      void el.offsetWidth;
+      el.classList.add('tick');
+      prevCdValues[key] = newVal;
+    }
+  });
+}
+
+function startCountdown() {
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+}
+
+
+  animateHero();
+  startCountdown(); ini mengambil file bernama "1.jpg"
+  // dari folder Google Drive klien via API. Di sini kita simulasikan dengan
+  // foto pertama dari array PHOTOS (PHOTOS[0] = 1.jpg).
+  const coverImg = document.getElementById('coverImg');
+  if (coverImg) {
+    // Simulate loading delay (Drive API fetch)
+    coverImg.style.opacity = '0';
+    coverImg.style.transition = 'opacity 0.6s ease';
+    const coverSrc = PHOTOS[0].src; // → 1.jpg
+    const tempImg = new Image();
+    tempImg.onload = () => {
+      coverImg.src = coverSrc;
+      setTimeout(() => { coverImg.style.opacity = '1'; }, 50);
+    };
+    tempImg.src = coverSrc;
+  }
+  document.getElementById('qrModal').addEventListener('click',e=>{if(e.target===document.getElementById('qrModal'))closeQr();});
+  document.getElementById('admModal').addEventListener('click',e=>{if(e.target===document.getElementById('admModal'))closeAdmModal();});
+  // Swipe gallery in modal
+  let tx=0;
+  document.getElementById('photoModal').addEventListener('touchstart',e=>{tx=e.touches[0].clientX;});
+  document.getElementById('photoModal').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){dx<0?nextPhoto():prevPhoto();}});
+  // Keyboard arrow nav
+  document.addEventListener('keydown',e=>{
+    if(!document.getElementById('photoModal').classList.contains('open'))return;
+    if(e.key==='ArrowLeft')prevPhoto();
+    if(e.key==='ArrowRight')nextPhoto();
+    if(e.key==='Escape')closeModal();
+  });
+  // Handle gallery back on desktop (hide back button since nav is in topbar)
+  function handleResize(){
+    const isDesktop=window.innerWidth>=768;
+    const backBtn=document.getElementById('galleryBackBtn');
+    if(backBtn) backBtn.style.display=isDesktop?'none':'flex';
+    const sab=document.getElementById('sidebarAddBtn');
+    if(sab && currentView==='admin') sab.style.display=isDesktop?'flex':'none';
+  }
+  window.addEventListener('resize',handleResize);
+  handleResize();
+});
+</script>
+</body>
+</html>

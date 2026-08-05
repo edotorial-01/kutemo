@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LensaCloud — Galeri Foto Privat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   LENSACLOUD — TOKENS & RESET
+   Premium client photo storage platform
+   ================================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  /* Background layers */
+  --bg:       #070B18;
+  --bg2:      #0C1128;
+  --bg3:      #111630;
+
+  /* Glass */
+  --glass:    rgba(255,255,255,0.055);
+  --glass2:   rgba(255,255,255,0.09);
+  --glass-b:  rgba(255,255,255,0.10);
+  --glass-b2: rgba(255,255,255,0.18);
+
+  /* Brand */
+  --iris:     #6366F1;
+  --iris-l:   #818CF8;
+  --iris-d:   rgba(99,102,241,0.20);
+  --prism:    #8B5CF6;
+  --prism-l:  #A78BFA;
+  --aqua:     #22D3EE;
+  --aqua-d:   rgba(34,211,238,0.18);
+
+  /* Gradients */
+  --g-ip:   linear-gradient(135deg, #6366F1, #8B5CF6);
+  --g-ca:   linear-gradient(135deg, #22D3EE, #6366F1);
+  --g-full: linear-gradient(135deg, #22D3EE 0%, #6366F1 50%, #8B5CF6 100%);
+  --g-card: linear-gradient(140deg, rgba(99,102,241,0.18), rgba(139,92,246,0.14));
+
+  /* Text */
+  --t1: #F1F5F9;
+  --t2: #CBD5E1;
+  --t3: #94A3B8;
+  --t4: #475569;
+
+  /* Status */
+  --ok:   #10B981;
+  --warn: #F59E0B;
+  --bad:  #EF4444;
+
+  /* Radii */
+  --r4: 4px; --r8: 8px; --r12: 12px; --r16: 16px; --r24: 24px; --rF: 999px;
+
+  /* Spacing */
+  --max-w: 480px;
+  --p: 20px;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+body { max-width: var(--max-w); margin: 0 auto; overflow-x: hidden; position: relative; }
+img { display: block; max-width: 100%; }
+button { cursor: pointer; border: none; background: none; color: inherit; font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+
+/* ================================================================
+   AMBIENT BACKGROUND — three bokeh orbs
+   ================================================================ */
+.ambient {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  overflow: hidden; max-width: var(--max-w); margin: 0 auto;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); opacity: 0.28;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.orb1 { width: 280px; height: 280px; background: #6366F1; top: -80px; left: -60px; animation-delay: 0s; }
+.orb2 { width: 220px; height: 220px; background: #8B5CF6; bottom: 10%; right: -40px; animation-delay: -6s; }
+.orb3 { width: 180px; height: 180px; background: #22D3EE; top: 40%; left: 30%; animation-delay: -12s; }
+@keyframes drift {
+  0%   { transform: translate(0,0) scale(1); }
+  50%  { transform: translate(20px,-20px) scale(1.1); }
+  100% { transform: translate(-15px,15px) scale(0.95); }
+}
+
+/* ================================================================
+   VIEWS — show/hide
+   ================================================================ */
+.view { display: none; position: relative; z-index: 1; padding-bottom: 96px; }
+.view.active { display: block; }
+
+/* ================================================================
+   DEMO SWITCHER
+   ================================================================ */
+.demo-bar {
+  position: fixed; bottom: 16px;
+  left: 50%; transform: translateX(-50%);
+  z-index: 300;
+  background: rgba(7,11,24,0.88);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-b);
+  border-radius: var(--rF);
+  display: flex; gap: 2px; padding: 4px;
+  max-width: calc(var(--max-w) - 32px);
+}
+.demo-btn {
+  font-size: 11px; font-weight: 600; padding: 7px 12px; border-radius: var(--rF);
+  color: var(--t3); white-space: nowrap; transition: all 0.2s;
+  letter-spacing: 0.01em;
+}
+.demo-btn.active { background: var(--g-ip); color: #fff; }
+
+/* ================================================================
+   GLASS UTILITIES
+   ================================================================ */
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-b);
+  backdrop-filter: blur(12px);
+  border-radius: var(--r16);
+}
+.glass2 {
+  background: var(--glass2);
+  border: 1px solid var(--glass-b2);
+  backdrop-filter: blur(16px);
+  border-radius: var(--r16);
+}
+
+/* ================================================================
+   BADGES & CHIPS
+   ================================================================ */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; padding: 3px 10px;
+  border-radius: var(--rF); text-transform: uppercase; letter-spacing: 0.04em;
+}
+.badge-ok  { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
+.badge-warn { background: rgba(245,158,11,0.15); color: #FCD34D; border: 1px solid rgba(245,158,11,0.3); }
+.badge-bad  { background: rgba(239,68,68,0.15); color: #FCA5A5; border: 1px solid rgba(239,68,68,0.3); }
+.badge .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+.chip-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.chip-row::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; font-size: 12.5px; font-weight: 600; padding: 8px 14px;
+  border-radius: var(--rF); background: var(--glass); border: 1px solid var(--glass-b);
+  color: var(--t3); transition: all 0.2s;
+}
+.chip.active { background: var(--iris-d); border-color: rgba(99,102,241,0.5); color: var(--iris-l); }
+
+/* ================================================================
+   BUTTONS
+   ================================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 48px; padding: 0 22px; border-radius: var(--rF);
+  font-weight: 700; font-size: 14px; width: 100%; letter-spacing: 0.01em;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.btn-grad {
+  background: var(--g-full); color: #fff;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+}
+.btn-grad:active { transform: scale(0.98); }
+.btn-glass {
+  background: var(--glass); border: 1px solid var(--glass-b); color: var(--t1);
+}
+.btn-glass:active { background: var(--glass2); }
+.btn-sm { height: 36px; padding: 0 14px; font-size: 13px; width: auto; }
+.btn-icon {
+  width: 38px; height: 38px; padding: 0; width: auto; flex: none;
+  background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--r12);
+}
+
+/* ================================================================
+   TOP BAR
+   ================================================================ */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px var(--p) 10px; position: sticky; top: 0; z-index: 10;
+  background: rgba(7,11,24,0.7); backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.topbar-logo { display: flex; align-items: center; gap: 9px; }
+.logo-mark {
+  width: 32px; height: 32px; border-radius: var(--r8);
+  background: var(--g-full); display: flex; align-items: center; justify-content: center;
+}
+.logo-mark svg { width: 18px; height: 18px; fill: #fff; }
+.logo-name { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; }
+.topbar-actions { display: flex; gap: 8px; }
+.ib {
+  width: 36px; height: 36px; border-radius: var(--r8);
+  background: var(--glass); border: 1px solid var(--glass-b);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.ib:active { background: var(--glass2); }
+.ib svg { width: 16px; height: 16px; }
+
+/* ================================================================
+   VIEW: CLIENT DASHBOARD
+   ================================================================ */
+
+/* --- Hero card with iris bokeh animation --- */
+.hero-card {
+  margin: 16px var(--p) 0;
+  padding: 24px 22px 22px;
+  border-radius: var(--r24);
+  background: var(--g-card);
+  border: 1px solid rgba(255,255,255,0.13);
+  position: relative;
+  overflow: hidden;
+}
+.iris-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
+  animation: spin-iris 24s linear infinite;
+  pointer-events: none;
+}
+.iris-ring1 {
+  width: 340px; height: 340px; top: -120px; right: -120px;
+  border-color: rgba(99,102,241,0.25) rgba(34,211,238,0.15) rgba(139,92,246,0.2) rgba(34,211,238,0.12);
+}
+.iris-ring2 {
+  width: 240px; height: 240px; top: -70px; right: -70px;
+  border-color: rgba(34,211,238,0.2) rgba(99,102,241,0.12) rgba(34,211,238,0.15) rgba(139,92,246,0.1);
+  animation-direction: reverse; animation-duration: 18s;
+}
+@keyframes spin-iris {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.hero-eyebrow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+  color: var(--aqua); letter-spacing: 0.05em; text-transform: uppercase;
+}
+.hero-gallery-name {
+  font-size: 22px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15;
+  margin-bottom: 4px;
+}
+.hero-client { font-size: 13px; color: var(--t3); margin-bottom: 20px; }
+.hero-client strong { color: var(--t2); }
+
+/* Storage ring */
+.storage-row { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.storage-ring-wrap { position: relative; width: 72px; height: 72px; flex: none; }
+.ring-svg { width: 72px; height: 72px; transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 5; }
+.ring-fill { fill: none; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 188; transition: stroke-dashoffset 1.2s ease; }
+.ring-fill-grad { stroke: url(#ringGrad); }
+.ring-pct {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 15px; font-weight: 800; letter-spacing: -0.02em;
+}
+.storage-info { flex: 1; }
+.storage-used { font-size: 19px; font-weight: 800; letter-spacing: -0.02em; }
+.storage-used span { font-size: 12px; font-weight: 500; color: var(--t3); }
+.storage-label { font-size: 11.5px; color: var(--t3); margin-top: 3px; }
+
+/* Days bar */
+.days-row { margin-bottom: 14px; }
+.days-label { display: flex; justify-content: space-between; margin-bottom: 7px; }
+.days-label span { font-size: 12px; color: var(--t3); }
+.days-label strong { font-size: 12px; color: var(--t1); font-weight: 700; }
+.progress-track { height: 5px; background: rgba(255,255,255,0.08); border-radius: var(--rF); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: var(--rF); background: var(--g-full); transition: width 1.2s ease; width: 0; }
+
+/* Dates */
+.dates-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.date-chip {
+  flex: 1; padding: 10px 12px; border-radius: var(--r12);
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+}
+.date-chip .dc-label { font-size: 10px; color: var(--t4); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+.date-chip .dc-val { font-size: 13px; font-weight: 700; }
+.date-chip.dc-warn .dc-val { color: var(--warn); }
+
+/* Stats row */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 var(--p) 0; margin-top: 14px; }
+.stat-card {
+  padding: 12px 10px; border-radius: var(--r12);
+  background: var(--glass); border: 1px solid var(--glass-b); text-align: center;
+}
+.stat-val { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+.stat-val.grad { background: var(--g-full); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat-label { font-size: 10px; color: var(--t4); font-weight: 600; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+/* ================================================================
+   VIEW: GALLERY
+   ================================================================ */
+.gallery-head { padding: 14px var(--p) 0; }
+.gallery-head h2 { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+
+.view-toggle { display: flex; gap: 4px; padding: 4px; background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--r8); width: fit-content; }
+.vt-btn {
+  width: 30px; height: 30px; border-radius: 5px; display: flex; align-items: center; justify-content: center;
+  color: var(--t3); transition: all 0.2s;
+}
+.vt-btn svg { width: 15px; height: 15px; }
+.vt-btn.active { background: var(--g-ip); color: #fff; }
+
+.chip-bar { padding: 12px var(--p) 14px; }
+
+/* Grid view */
+.photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 var(--p); }
+.photo-card { border-radius: var(--r12); overflow: hidden; position: relative; cursor: pointer; }
+.photo-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.35s ease; }
+.photo-card:active img { transform: scale(1.03); }
+.photo-overlay {
+  position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(7,11,24,0.9) 100%);
+  opacity: 0; transition: opacity 0.25s; display: flex; align-items: flex-end; padding: 10px;
+}
+.photo-card:hover .photo-overlay { opacity: 1; }
+.photo-card-actions { display: flex; gap: 6px; width: 100%; }
+.pa-btn {
+  flex: 1; height: 32px; border-radius: var(--r8); font-size: 11px; font-weight: 700;
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(6px);
+  color: #fff; border: 1px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.pa-btn svg { width: 13px; height: 13px; }
+
+/* Masonry view */
+.photo-masonry {
+  columns: 2; gap: 10px; padding: 0 var(--p);
+}
+.photo-masonry .photo-card { break-inside: avoid; margin-bottom: 10px; }
+.photo-masonry .photo-card img { aspect-ratio: auto; height: auto; }
+.photo-masonry .photo-card:nth-child(odd) img { aspect-ratio: 3/4; }
+.photo-masonry .photo-card:nth-child(even) img { aspect-ratio: 4/5; }
+.photo-masonry .photo-card:nth-child(3n) img { aspect-ratio: 3/5; }
+
+/* Skeleton */
+.skeleton { background: linear-gradient(90deg, var(--bg2), var(--bg3), var(--bg2)); background-size: 300%; animation: skel 1.4s ease infinite; border-radius: var(--r12); }
+@keyframes skel { 0%{background-position:0%}100%{background-position:300%} }
+
+/* ================================================================
+   PHOTO MODAL
+   ================================================================ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(7,11,24,0.95);
+  backdrop-filter: blur(20px);
+  display: none; flex-direction: column;
+  max-width: var(--max-w); margin: 0 auto;
+}
+.modal-overlay.open { display: flex; }
+
+.modal-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px var(--p); flex: none;
+}
+.modal-counter { font-size: 12px; color: var(--t3); font-weight: 600; }
+.modal-img-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 var(--p); overflow: hidden; position: relative; }
+.modal-img-wrap img { max-height: 100%; max-width: 100%; border-radius: var(--r16); object-fit: contain; }
+.modal-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center; z-index: 2;
+}
+.modal-nav svg { width: 18px; height: 18px; stroke: #fff; fill: none; }
+.modal-nav-prev { left: 22px; }
+.modal-nav-next { right: 22px; }
+.modal-bottom { flex: none; padding: 16px var(--p) 24px; }
+.modal-meta { margin-bottom: 14px; }
+.modal-filename { font-size: 14px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.modal-fileinfo { font-size: 12px; color: var(--t3); }
+.modal-actions { display: flex; gap: 8px; }
+.modal-actions .btn { flex: 1; }
+
+/* ================================================================
+   VIEW: LOCKED / EXPIRED
+   ================================================================ */
+.locked-bg {
+  position: fixed; inset: 0; z-index: 0;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px;
+  max-width: var(--max-w); margin: 0 auto;
+  filter: blur(8px) brightness(0.18);
+}
+.locked-bg img { width: 100%; height: 33.33vh; object-fit: cover; }
+.locked-overlay {
+  position: relative; z-index: 1; min-height: 100dvh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: var(--p);
+}
+.locked-card {
+  width: 100%; padding: 36px 28px 32px;
+  border-radius: var(--r24);
+  background: rgba(7,11,24,0.82);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(24px);
+  text-align: center;
+}
+.lock-icon-wrap {
+  width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 22px;
+  background: rgba(239,68,68,0.12); border: 1.5px solid rgba(239,68,68,0.35);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 40px rgba(239,68,68,0.2);
+}
+.lock-icon-wrap svg { width: 36px; height: 36px; color: #FCA5A5; }
+.locked-title { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+.locked-sub { font-size: 13.5px; color: var(--t3); line-height: 1.6; margin-bottom: 22px; max-width: 280px; margin-left: auto; margin-right: auto; }
+.locked-expiry {
+  padding: 14px 18px; border-radius: var(--r12);
+  background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
+  margin-bottom: 26px;
+}
+.locked-expiry .le-label { font-size: 11px; color: var(--warn); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.locked-expiry .le-date { font-size: 18px; font-weight: 800; color: #FCD34D; }
+.locked-actions { display: flex; flex-direction: column; gap: 10px; }
+.locked-logo { display: flex; align-items: center; justify-content: center; gap: 9px; margin-bottom: 36px; }
+.locked-logo .logo-mark { width: 36px; height: 36px; }
+.locked-logo .logo-name { font-size: 16px; }
+
+/* ================================================================
+   VIEW: ADMIN DASHBOARD
+   ================================================================ */
+.admin-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: var(--p) var(--p) 0; }
+.adm-card {
+  padding: 16px; border-radius: var(--r16);
+  background: var(--glass); border: 1px solid var(--glass-b);
+}
+.adm-card .ac-val { font-size: 26px; font-weight: 900; letter-spacing: -0.03em; }
+.adm-card .ac-val.g { background: var(--g-full); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.adm-card .ac-label { font-size: 11px; color: var(--t4); font-weight: 600; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.03em; }
+.adm-card .ac-icon { width: 36px; height: 36px; border-radius: var(--r8); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.adm-card .ac-icon svg { width: 18px; height: 18px; }
+
+/* Gallery list */
+.adm-section { padding: 20px var(--p) 0; }
+.adm-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.adm-section-head h3 { font-size: 16px; font-weight: 800; }
+.gallery-list { display: flex; flex-direction: column; gap: 10px; }
+.gallery-row {
+  padding: 14px 16px; border-radius: var(--r16);
+  background: var(--glass); border: 1px solid var(--glass-b);
+  display: flex; align-items: center; gap: 12px;
+}
+.gl-thumb { width: 46px; height: 46px; border-radius: var(--r8); object-fit: cover; flex: none; }
+.gl-info { flex: 1; min-width: 0; }
+.gl-name { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+.gl-meta { font-size: 11px; color: var(--t3); display: flex; gap: 8px; align-items: center; }
+.gl-actions { display: flex; gap: 6px; }
+.gl-act-btn {
+  width: 30px; height: 30px; border-radius: var(--r8);
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center; color: var(--t3);
+}
+.gl-act-btn svg { width: 14px; height: 14px; }
+.gl-act-btn.del { color: var(--bad); background: rgba(239,68,68,0.08); }
+
+/* FAB */
+.fab {
+  position: fixed; bottom: 72px; right: 18px; z-index: 100;
+  width: 54px; height: 54px; border-radius: 50%;
+  background: var(--g-full);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(99,102,241,0.45);
+  max-width: calc(var(--max-w) - 36px);
+  transition: transform 0.2s;
+}
+.fab:active { transform: scale(0.94); }
+.fab svg { width: 22px; height: 22px; stroke: #fff; fill: none; }
+#fabBtn { /* fab inside active admin view */ }
+
+/* Admin modal */
+.adm-modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(7,11,24,0.88); backdrop-filter: blur(16px);
+  display: none; align-items: flex-end;
+  max-width: var(--max-w); margin: 0 auto;
+}
+.adm-modal-overlay.open { display: flex; }
+.adm-modal {
+  width: 100%; padding: 28px 22px 36px;
+  background: var(--bg2); border: 1px solid var(--glass-b);
+  border-radius: var(--r24) var(--r24) 0 0;
+}
+.adm-modal h3 { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field label { font-size: 11.5px; font-weight: 700; color: var(--t3); text-transform: uppercase; letter-spacing: 0.04em; }
+.field input, .field select {
+  background: var(--glass); border: 1px solid var(--glass-b);
+  border-radius: var(--r8); padding: 12px 14px; font-size: 14px;
+  color: var(--t1); font-family: inherit; transition: border-color 0.2s;
+}
+.field input:focus, .field select:focus { outline: none; border-color: var(--iris); }
+.field input::placeholder { color: var(--t4); }
+.adm-modal-footer { display: flex; gap: 10px; margin-top: 20px; }
+.adm-modal-footer .btn { flex: 1; }
+
+/* ================================================================
+   TOAST
+   ================================================================ */
+.toast {
+  position: fixed; bottom: 84px; left: 50%; transform: translateX(-50%) translateY(20px);
+  z-index: 400; max-width: calc(var(--max-w) - 40px); width: calc(100% - 40px);
+  padding: 13px 18px; border-radius: var(--r12);
+  background: var(--glass2); border: 1px solid var(--glass-b2);
+  backdrop-filter: blur(16px);
+  font-size: 13px; font-weight: 600; color: var(--t1);
+  display: flex; align-items: center; gap: 10px;
+  opacity: 0; transition: all 0.3s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast svg { width: 16px; height: 16px; flex: none; }
+.toast.ok svg { color: var(--ok); }
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.4s ease both; }
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.16s; }
+.delay-3 { animation-delay: 0.24s; }
+.delay-4 { animation-delay: 0.32s; }
+.delay-5 { animation-delay: 0.40s; }
+
+/* ================================================================
+   MISC
+   ================================================================ */
+.divider { height: 1px; background: rgba(255,255,255,0.06); margin: 20px var(--p); }
+.mt8 { margin-top: 8px; }
+.mt14 { margin-top: 14px; }
+.mt16 { margin-top: 16px; }
+.mt20 { margin-top: 20px; }
+.px { padding-left: var(--p); padding-right: var(--p); }
+.info-section { padding: 0 var(--p) 0; margin-top: 16px; }
+.info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 13px 16px;
+}
+.info-row:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.05); }
+.info-row .ir-label { font-size: 12.5px; color: var(--t3); }
+.info-row .ir-val { font-size: 13px; font-weight: 700; }
+.info-wrap { background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--r16); overflow: hidden; }
+
+/* section heading helper */
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; padding: 20px var(--p) 0; }
+.sec-head h3 { font-size: 15px; font-weight: 800; }
+.sec-head a { font-size: 12px; color: var(--aqua); font-weight: 600; }
+
+/* ================================================================
+   QR MODAL (small premium extra)
+   ================================================================ */
+.qr-modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(7,11,24,0.88); backdrop-filter: blur(16px);
+  display: none; align-items: center; justify-content: center;
+  max-width: var(--max-w); margin: 0 auto; padding: var(--p);
+}
+.qr-modal-overlay.open { display: flex; }
+.qr-modal {
+  width: 100%; padding: 28px 22px 28px;
+  background: var(--bg2); border: 1px solid var(--glass-b);
+  border-radius: var(--r24); text-align: center;
+}
+.qr-modal h3 { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+.qr-modal p { font-size: 12.5px; color: var(--t3); margin-bottom: 22px; }
+.qr-box {
+  width: 170px; height: 170px; margin: 0 auto 20px;
+  background: #fff; border-radius: var(--r16);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.qr-box img { width: 140px; height: 140px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     AMBIENT BACKGROUND
+     ============================================================ -->
+<div class="ambient">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- ============================================================
+     SVG DEFS (gradient for storage ring)
+     ============================================================ -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="50%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ============================================================
+     VIEW 1: CLIENT DASHBOARD
+     ============================================================ -->
+<div class="view active" id="v-client">
+
+  <!-- Top bar -->
+  <nav class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20"><path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4zm0 1a5 5 0 1 0 0 10A5 5 0 0 0 10 5zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+      </div>
+      <span class="logo-name">LensaCloud</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="ib" onclick="showQr()" title="QR Code">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3" rx="0.5"/><rect x="18" y="17" width="3" height="3" rx="0.5"/><rect x="14" y="18" width="3" height="3" rx="0.5"/></svg>
+      </button>
+      <button class="ib" onclick="toast('Link galeri disalin ke clipboard 📋')" title="Share">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 3.9M15.4 6.6 8.6 10.5"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero card -->
+  <div class="hero-card fade-up">
+    <div class="iris-ring iris-ring1"></div>
+    <div class="iris-ring iris-ring2"></div>
+    <div class="hero-eyebrow" style="position:relative;z-index:1">
+      <span class="hero-tag">Paket Wedding Premium</span>
+      <span class="badge badge-ok"><span class="dot"></span>Aktif</span>
+    </div>
+    <div style="position:relative;z-index:1">
+      <div class="hero-gallery-name">Wedding Dinda &amp; Bayu</div>
+      <div class="hero-client">Galeri milik <strong>Dinda Rahmawati</strong></div>
+
+      <!-- Storage ring -->
+      <div class="storage-row">
+        <div class="storage-ring-wrap">
+          <svg class="ring-svg" viewBox="0 0 72 72">
+            <circle class="ring-bg" cx="36" cy="36" r="30"/>
+            <circle class="ring-fill ring-fill-grad" cx="36" cy="36" r="30" id="storageRing"
+              stroke-dashoffset="188"/>
+          </svg>
+          <div class="ring-pct" id="storagePct">0%</div>
+        </div>
+        <div class="storage-info">
+          <div class="storage-used">2,4 GB <span>/ 10 GB</span></div>
+          <div class="storage-label">Kapasitas terpakai · 152 file</div>
+          <div style="margin-top:8px;display:flex;gap:6px;">
+            <span style="font-size:11px;color:var(--t3)">🖼️ 140 foto</span>
+            <span style="font-size:11px;color:var(--t3)">🎥 12 video</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Days progress -->
+      <div class="days-row">
+        <div class="days-label">
+          <span>Masa aktif berakhir</span>
+          <strong id="daysLeft">0 hari lagi</strong>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="daysBar"></div>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="dates-row">
+        <div class="date-chip">
+          <div class="dc-label">Aktif sejak</div>
+          <div class="dc-val">15 Jun 2026</div>
+        </div>
+        <div class="date-chip dc-warn">
+          <div class="dc-label">Kadaluarsa</div>
+          <div class="dc-val">14 Sep 2026</div>
+        </div>
+      </div>
+
+      <button class="btn btn-grad" onclick="switchView('gallery')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+        Lihat Semua Foto &amp; Video
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick stats -->
+  <div class="stats-row fade-up delay-1">
+    <div class="stat-card">
+      <div class="stat-val grad">152</div>
+      <div class="stat-label">Total File</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">48</div>
+      <div class="stat-label">Diunduh</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">12</div>
+      <div class="stat-label">Favorit</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val grad">2.4<span style="font-size:11px;font-weight:500">GB</span></div>
+      <div class="stat-label">Ukuran</div>
+    </div>
+  </div>
+
+  <!-- Package info -->
+  <div class="info-section fade-up delay-2">
+    <div class="mt16 info-wrap">
+      <div class="info-row">
+        <span class="ir-label">Paket</span>
+        <span class="ir-val">Wedding Premium</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-label">Durasi</span>
+        <span class="ir-val">90 Hari</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-label">Kapasitas</span>
+        <span class="ir-val">10 GB</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-label">Akses foto HD</span>
+        <span class="ir-val">✅ Aktif</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-label">Unduh ZIP</span>
+        <span class="ir-val">✅ Aktif</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download all -->
+  <div class="px mt16 fade-up delay-3">
+    <button class="btn btn-glass" onclick="toast('Menyiapkan ZIP… Notifikasi dikirim saat siap 📦')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 15 0-12M8 11l4 4 4-4"/><path d="M3 19h18"/></svg>
+      Unduh Semua (ZIP)
+    </button>
+  </div>
+
+  <div style="height:20px"></div>
+</div><!-- /v-client -->
+
+<!-- ============================================================
+     VIEW 2: GALLERY
+     ============================================================ -->
+<div class="view" id="v-gallery">
+  <nav class="topbar">
+    <button class="ib" onclick="switchView('client')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <span style="font-size:15px;font-weight:800;">152 File</span>
+    <div class="topbar-actions">
+      <div class="view-toggle" id="viewToggle">
+        <button class="vt-btn active" data-mode="grid" onclick="setView('grid')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </button>
+        <button class="vt-btn" data-mode="masonry" onclick="setView('masonry')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="11" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="18" width="7" height="3" rx="1"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="chip-bar">
+    <div class="chip-row" id="filterChips">
+      <button class="chip active" data-f="all">Semua (152)</button>
+      <button class="chip" data-f="photo">📷 Foto (140)</button>
+      <button class="chip" data-f="video">🎥 Video (12)</button>
+      <button class="chip" data-f="fav">❤️ Favorit (12)</button>
+    </div>
+  </div>
+
+  <!-- Gallery grid -->
+  <div id="photoGrid" class="photo-grid">
+    <!-- populated by JS -->
+  </div>
+
+  <div style="height:20px"></div>
+</div><!-- /v-gallery -->
+
+<!-- ============================================================
+     VIEW 3: LOCKED
+     ============================================================ -->
+<div class="view" id="v-locked" style="min-height:100dvh;overflow:hidden">
+  <!-- Blurred BG -->
+  <div class="locked-bg">
+    <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=60&w=400&auto=format&fit=crop" alt="">
+    <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=60&w=400&auto=format&fit=crop" alt="">
+    <img src="https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=60&w=400&auto=format&fit=crop" alt="">
+    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=60&w=400&auto=format&fit=crop" alt="">
+    <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=60&w=400&auto=format&fit=crop" alt="">
+    <img src="https://images.unsplash.com/photo-1529636444744-adffc9135a5e?q=60&w=400&auto=format&fit=crop" alt="">
+  </div>
+  <div class="locked-overlay">
+    <div class="locked-logo">
+      <div class="logo-mark" style="width:36px;height:36px">
+        <svg viewBox="0 0 20 20" style="width:20px;height:20px"><path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4zm0 1a5 5 0 1 0 0 10A5 5 0 0 0 10 5zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+      </div>
+      <span class="logo-name">LensaCloud</span>
+    </div>
+    <div class="locked-card">
+      <div class="lock-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div class="locked-title">Masa Penyimpanan Berakhir</div>
+      <div class="locked-sub">Akses galeri foto kamu telah dikunci karena masa aktif penyimpanan telah berakhir.</div>
+      <div class="locked-expiry">
+        <div class="le-label">Kadaluarsa pada</div>
+        <div class="le-date">14 Maret 2026</div>
+      </div>
+      <div class="locked-actions">
+        <button class="btn btn-grad" onclick="toast('Menghubungkan ke halaman pembayaran perpanjangan…')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 2 3.09 6.26 6.91 1-5 4.87 1.18 6.87L12 17.77l-6.18 3.23L7 14.13 2 9.26l6.91-1L12 2z"/></svg>
+          Perpanjang Akses
+        </button>
+        <button class="btn btn-glass" onclick="toast('Membuka WhatsApp Admin…')">
+          Hubungi Admin via WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</div><!-- /v-locked -->
+
+<!-- ============================================================
+     VIEW 4: ADMIN DASHBOARD
+     ============================================================ -->
+<div class="view" id="v-admin">
+  <nav class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20"><path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4zm0 1a5 5 0 1 0 0 10A5 5 0 0 0 10 5zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+      </div>
+      <div>
+        <div class="logo-name" style="font-size:14px">LensaCloud Admin</div>
+        <div style="font-size:11px;color:var(--t3)">Edo Photography Studio</div>
+      </div>
+    </div>
+    <button class="ib">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </button>
+  </nav>
+
+  <!-- Admin stats -->
+  <div class="admin-stats mt8">
+    <div class="adm-card fade-up">
+      <div class="ac-icon" style="background:rgba(99,102,241,0.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#818CF8" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3"/></svg></div>
+      <div class="ac-val g">12</div>
+      <div class="ac-label">Galeri Aktif</div>
+    </div>
+    <div class="adm-card fade-up delay-1">
+      <div class="ac-icon" style="background:rgba(245,158,11,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#FCD34D" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div class="ac-val" style="color:#FCD34D">3</div>
+      <div class="ac-label">Hampir Exp</div>
+    </div>
+    <div class="adm-card fade-up delay-2">
+      <div class="ac-icon" style="background:rgba(239,68,68,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div class="ac-val" style="color:#FCA5A5">4</div>
+      <div class="ac-label">Terkunci</div>
+    </div>
+    <div class="adm-card fade-up delay-3">
+      <div class="ac-icon" style="background:rgba(34,211,238,0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+      <div class="ac-val g">48 <span style="font-size:12px;font-weight:500">GB</span></div>
+      <div class="ac-label">Total Storage</div>
+    </div>
+  </div>
+
+  <!-- Gallery list -->
+  <div class="adm-section">
+    <div class="adm-section-head">
+      <h3>Semua Galeri</h3>
+      <span style="font-size:12px;color:var(--t3)">19 galeri</span>
+    </div>
+    <div class="gallery-list" id="adminGalleryList">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" id="fabBtn" onclick="openAdmModal()">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+</div><!-- /v-admin -->
+
+<!-- ============================================================
+     PHOTO MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="photoModal">
+  <div class="modal-top">
+    <span class="modal-counter" id="modalCounter">1 / 8</span>
+    <div style="display:flex;gap:8px">
+      <button class="ib" onclick="toast('Link foto disalin 🔗')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 3.9M15.4 6.6 8.6 10.5"/></svg>
+      </button>
+      <button class="ib" id="modalFavBtn" onclick="toggleFav()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+      <button class="ib" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="modal-img-wrap">
+    <button class="modal-nav modal-nav-prev" onclick="prevPhoto()">
+      <svg viewBox="0 0 24 24" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <img id="modalImg" src="" alt="Preview">
+    <button class="modal-nav modal-nav-next" onclick="nextPhoto()">
+      <svg viewBox="0 0 24 24" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+  <div class="modal-bottom">
+    <div class="modal-meta">
+      <div class="modal-filename" id="modalFilename">IMG_2024_001.jpg</div>
+      <div class="modal-fileinfo" id="modalFileinfo">4.2 MB · 6000 × 4000 px · JPEG</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-grad btn-sm" style="flex:2" onclick="toast('Mengunduh foto… ✅')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 15 0-12M8 11l4 4 4-4"/><path d="M3 19h18"/></svg>
+        Unduh
+      </button>
+      <button class="btn btn-glass btn-sm" style="flex:1" onclick="toast('Link disalin 📋')">Salin Link</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ADMIN MODAL (Add Gallery)
+     ============================================================ -->
+<div class="adm-modal-overlay" id="admModal">
+  <div class="adm-modal">
+    <h3>Tambah Galeri Baru</h3>
+    <div class="field">
+      <label>Nama Klien</label>
+      <input type="text" placeholder="cth. Dinda Rahmawati">
+    </div>
+    <div class="field">
+      <label>Nama Galeri</label>
+      <input type="text" placeholder="cth. Wedding Dinda & Bayu">
+    </div>
+    <div class="field">
+      <label>Link Folder Google Drive</label>
+      <input type="url" placeholder="https://drive.google.com/drive/folders/...">
+    </div>
+    <div class="field">
+      <label>Paket</label>
+      <select>
+        <option>Wedding Premium — 90 Hari · 10 GB</option>
+        <option>Prewedding — 60 Hari · 5 GB</option>
+        <option>Event — 30 Hari · 3 GB</option>
+        <option>Custom</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Nomor WA Klien (Notifikasi)</label>
+      <input type="tel" placeholder="08xxxxxxxxxx">
+    </div>
+    <div class="adm-modal-footer">
+      <button class="btn btn-glass" onclick="closeAdmModal()">Batal</button>
+      <button class="btn btn-grad" onclick="saveGallery()">Simpan Galeri</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     QR MODAL
+     ============================================================ -->
+<div class="qr-modal-overlay" id="qrModal">
+  <div class="qr-modal">
+    <h3>QR Code Galeri</h3>
+    <p>Scan QR ini untuk membagikan akses galeri kepada klien</p>
+    <div class="qr-box">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://lensacloud.vercel.app/g/dinda-bayu-2026&color=6366F1" alt="QR Code" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\'font-size:12px;color:#888;padding:10px\'>QR Code tidak dapat dimuat</div>'">
+    </div>
+    <p style="font-size:12px;word-break:break-all;color:var(--t3);margin-bottom:16px">lensacloud.vercel.app/g/dinda-bayu-2026</p>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-glass btn-sm" style="flex:1" onclick="toast('Link disalin 📋')">Salin Link</button>
+      <button class="btn btn-grad btn-sm" style="flex:1" onclick="toast('Membagikan via WhatsApp…')">Kirim WA</button>
+      <button class="btn btn-glass btn-sm" style="width:40px;flex:none" onclick="closeQr()">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOAST
+     ============================================================ -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m22 4-10 10-3-3"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- ============================================================
+     DEMO SWITCHER
+     ============================================================ -->
+<div class="demo-bar">
+  <button class="demo-btn active" onclick="switchView('client')">Dashboard</button>
+  <button class="demo-btn" onclick="switchView('gallery')">Galeri</button>
+  <button class="demo-btn" onclick="switchView('locked')">Terkunci</button>
+  <button class="demo-btn" onclick="switchView('admin')">Admin</button>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ================================================================
+// DATA
+// ================================================================
+const PHOTOS = [
+  { src:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=600&auto=format&fit=crop', name:'WDD_001.jpg', size:'4.2 MB', dim:'6000×4000 px' },
+  { src:'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=600&auto=format&fit=crop', name:'WDD_002.jpg', size:'5.1 MB', dim:'6000×4000 px' },
+  { src:'https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=600&auto=format&fit=crop', name:'WDD_003.jpg', size:'3.8 MB', dim:'5500×3667 px' },
+  { src:'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop', name:'WDD_004.jpg', size:'6.2 MB', dim:'6000×4000 px' },
+  { src:'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=600&auto=format&fit=crop', name:'WDD_005.jpg', size:'4.7 MB', dim:'5500×3667 px' },
+  { src:'https://images.unsplash.com/photo-1529636444744-adffc9135a5e?q=80&w=600&auto=format&fit=crop', name:'WDD_006.jpg', size:'3.3 MB', dim:'4000×6000 px' },
+  { src:'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=600&auto=format&fit=crop', name:'WDD_007.jpg', size:'5.5 MB', dim:'6000×4000 px' },
+  { src:'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=600&auto=format&fit=crop', name:'WDD_008.jpg', size:'4.9 MB', dim:'6000×4000 px' },
+];
+
+const ADMIN_GALLERIES = [
+  { name:'Wedding Dinda & Bayu', client:'Dinda Rahmawati', pkg:'Wedding Premium', days:85, total:152, status:'ok',   thumb:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=60&w=120' },
+  { name:'Prewedding Sari & Ari', client:'Sari Putri',      pkg:'Prewedding',      days:18, total:68,  status:'warn', thumb:'https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=60&w=120' },
+  { name:'Wedding Yuni & Dion',   client:'Yuni Astuti',      pkg:'Wedding Premium', days:3,  total:201, status:'warn', thumb:'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=60&w=120' },
+  { name:'Maternity Rini',        client:'Rini Handayani',   pkg:'Event 30 Hari',   days:0,  total:45,  status:'bad',  thumb:'https://images.unsplash.com/photo-1529636444744-adffc9135a5e?q=60&w=120' },
+  { name:'Wedding Maya & Budi',   client:'Maya Sari',        pkg:'Wedding Premium', days:60, total:178, status:'ok',   thumb:'https://images.unsplash.com/photo-1519741497674-611481863552?q=60&w=120' },
+];
+
+// ================================================================
+// VIEW SWITCHING
+// ================================================================
+let currentView = 'client';
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('v-' + name).classList.add('active');
+  document.querySelectorAll('.demo-btn').forEach((b, i) => {
+    const views = ['client','gallery','locked','admin'];
+    b.classList.toggle('active', views[i] === name);
+  });
+  currentView = name;
+  if (name === 'gallery') renderGallery();
+  if (name === 'admin') renderAdmin();
+}
+
+// ================================================================
+// HERO ANIMATIONS
+// ================================================================
+function animateHero() {
+  // Storage ring (24% full: 2.4/10)
+  const pct = 24;
+  const ring = document.getElementById('storageRing');
+  const pctEl = document.getElementById('storagePct');
+  if (!ring) return;
+  const circumference = 188;
+  const offset = circumference - (circumference * pct / 100);
+  setTimeout(() => {
+    ring.style.strokeDashoffset = offset;
+    let count = 0;
+    const t = setInterval(() => {
+      count = Math.min(count + 1, pct);
+      pctEl.textContent = count + '%';
+      if (count >= pct) clearInterval(t);
+    }, 30);
+  }, 300);
+
+  // Days bar (85/90 days used ≈ 94% elapsed, but showing 5% remaining nicely: 85 days left of 90)
+  // Actually 85 days REMAINING out of 90. So (90-85)/90 = 5% used, 95% remaining. Show remaining.
+  const daysRemaining = 85;
+  const totalDays = 90;
+  const daysBarPct = (daysRemaining / totalDays) * 100;
+  const bar = document.getElementById('daysBar');
+  const daysEl = document.getElementById('daysLeft');
+  if (bar) {
+    setTimeout(() => {
+      bar.style.width = daysBarPct + '%';
+      daysEl.textContent = daysRemaining + ' hari lagi';
+    }, 400);
+  }
+}
+
+// ================================================================
+// GALLERY
+// ================================================================
+let currentMode = 'grid';
+let currentPhoto = 0;
+
+function setView(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.vt-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  renderGallery();
+}
+
+function renderGallery() {
+  const container = document.getElementById('photoGrid');
+  if (!container) return;
+
+  // Show skeleton briefly
+  container.className = 'photo-grid';
+  container.innerHTML = Array(8).fill(0).map(() =>
+    `<div class="photo-card"><div class="skeleton" style="aspect-ratio:3/4;width:100%"></div></div>`
+  ).join('');
+
+  setTimeout(() => {
+    if (currentMode === 'masonry') {
+      container.className = 'photo-masonry';
+    } else {
+      container.className = 'photo-grid';
+    }
+
+    container.innerHTML = PHOTOS.map((p, i) => `
+      <div class="photo-card" onclick="openModal(${i})">
+        <img src="${p.src}" alt="${p.name}" loading="lazy">
+        <div class="photo-overlay">
+          <div class="photo-card-actions">
+            <button class="pa-btn" onclick="event.stopPropagation();toast('Mengunduh ${p.name}…')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 15 0-9M8 11l4 4 4-4"/><path d="M3 19h18"/></svg>
+              Unduh
+            </button>
+            <button class="pa-btn" onclick="event.stopPropagation();toast('Ditambahkan ke favorit ❤️')" style="flex:0;width:32px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }, 700);
+
+  // Filter chips
+  document.querySelectorAll('#filterChips .chip').forEach(chip => {
+    chip.onclick = () => {
+      document.querySelectorAll('#filterChips .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    };
+  });
+}
+
+// ================================================================
+// MODAL
+// ================================================================
+let isFav = false;
+function openModal(i) {
+  currentPhoto = i;
+  updateModal();
+  document.getElementById('photoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('photoModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function prevPhoto() { currentPhoto = (currentPhoto - 1 + PHOTOS.length) % PHOTOS.length; updateModal(); }
+function nextPhoto() { currentPhoto = (currentPhoto + 1) % PHOTOS.length; updateModal(); }
+function updateModal() {
+  const p = PHOTOS[currentPhoto];
+  document.getElementById('modalImg').src = p.src;
+  document.getElementById('modalFilename').textContent = p.name;
+  document.getElementById('modalFileinfo').textContent = `${p.size} · ${p.dim} · JPEG`;
+  document.getElementById('modalCounter').textContent = `${currentPhoto + 1} / ${PHOTOS.length}`;
+}
+function toggleFav() {
+  isFav = !isFav;
+  const btn = document.getElementById('modalFavBtn');
+  btn.querySelector('svg path').setAttribute('fill', isFav ? '#EF4444' : 'none');
+  btn.querySelector('svg path').setAttribute('stroke', isFav ? '#EF4444' : 'currentColor');
+  toast(isFav ? 'Ditambahkan ke favorit ❤️' : 'Dihapus dari favorit');
+}
+
+// ================================================================
+// ADMIN
+// ================================================================
+function renderAdmin() {
+  const list = document.getElementById('adminGalleryList');
+  if (!list) return;
+  list.innerHTML = ADMIN_GALLERIES.map((g, i) => {
+    const badgeClass = g.status === 'ok' ? 'badge-ok' : g.status === 'warn' ? 'badge-warn' : 'badge-bad';
+    const badgeText = g.status === 'ok' ? 'Aktif' : g.status === 'warn' ? g.days + ' hari' : 'Terkunci';
+    return `
+      <div class="gallery-row fade-up" style="animation-delay:${i * 0.06}s">
+        <img class="gl-thumb" src="${g.thumb}" alt="">
+        <div class="gl-info">
+          <div class="gl-name">${g.name}</div>
+          <div class="gl-meta">
+            <span class="badge ${badgeClass}" style="font-size:10px;padding:2px 7px"><span class="dot"></span>${badgeText}</span>
+            <span>${g.total} file</span>
+            <span>${g.pkg.split(' ')[0]}</span>
+          </div>
+        </div>
+        <div class="gl-actions">
+          <button class="gl-act-btn" onclick="toast('Membuka galeri ${g.name}…')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <button class="gl-act-btn" onclick="toast('Edit galeri ${g.name}…')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="gl-act-btn del" onclick="toast('Galeri dihapus 🗑️')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openAdmModal() { document.getElementById('admModal').classList.add('open'); }
+function closeAdmModal() { document.getElementById('admModal').classList.remove('open'); }
+function saveGallery() {
+  closeAdmModal();
+  toast('Galeri baru berhasil dibuat! Link akses dikirim via WA 🎉');
+}
+
+// ================================================================
+// QR
+// ================================================================
+function showQr() { document.getElementById('qrModal').classList.add('open'); }
+function closeQr() { document.getElementById('qrModal').classList.remove('open'); }
+
+// ================================================================
+// TOAST
+// ================================================================
+let toastTimer;
+function toast(msg) {
+  clearTimeout(toastTimer);
+  const el = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  el.classList.add('show', 'ok');
+  toastTimer = setTimeout(() => { el.classList.remove('show'); }, 2800);
+}
+
+// ================================================================
+// INIT
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  animateHero();
+
+  // Close modal on bg click
+  document.getElementById('qrModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('qrModal')) closeQr();
+  });
+  document.getElementById('admModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('admModal')) closeAdmModal();
+  });
+
+  // Swipe to nav photos in modal
+  let touchStartX = 0;
+  document.getElementById('photoModal').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.getElementById('photoModal').addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) { dx < 0 ? nextPhoto() : prevPhoto(); }
+  });
+});
+</script>
+</body>
+</html>

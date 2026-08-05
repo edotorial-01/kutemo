@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/undangan/:slug", "destination": "/api/undangan?slug=:slug" }
+  ],
   "redirects": [
     {
       "source": "/(.*)",

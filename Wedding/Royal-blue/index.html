@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Wedding Of Romeo & juliet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aboreto&family=Arimo:ital,wght@0,400;0,700;1,400&family=Belleza&family=Caudex:ital,wght@0,400;0,700;1,400;1,700&family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Infant:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Gilda+Display&family=Inter:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Pinyon+Script&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Sora:wght@100..800&family=Vidaloka&family=Zen+Antique&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#002366;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% 0%, #4169E1 0%, #002366 70%);
+    min-height:100vh;
+  }
+  #root{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    min-height:100vh;
+  }
+  #app-container{
+    width:430px;
+    flex-shrink:0;
+    transform-origin:top center;
+    position:relative;
+  }
+  @media(min-width:431px){
+    #root{padding:32px 0 64px;}
+    #app-container{
+      box-shadow:0 8px 80px rgba(0,0,0,0.9),0 0 0 1px rgba(212,175,55,0.15);
+    }
+  }
+
+  /* ── Cover overlay ── */
+  #cover-overlay {
+    position:fixed; inset:0; z-index:20000;
+    display:flex; justify-content:center; align-items:flex-start;
+    background:#002366;
+    transition:transform 1s cubic-bezier(0.77,0,0.18,1);
+    overflow:hidden;
+    width:100vw;
+    height:100dvh;
+  }
+  #cover-overlay.closing { transform:translateY(-100%); }
+  #cover-card {
+    width:min(430px, 100vw); max-width:100vw; min-height:100svh; height:100dvh; position:relative; overflow:hidden;
+  }
+  #root:has(#cover-overlay) ~ #music-float { display:none; }
+  @media (max-width:430px) {
+    #cover-overlay { align-items:stretch; }
+    #cover-card { width:100vw; }
+    .cover-title { font-size:clamp(38px, 12vw, 52px) !important; }
+  }
+  @media (max-height:700px) {
+    .cover-hero { padding-top:16px !important; padding-bottom:16px !important; }
+    .cover-guest { padding-top:32px !important; }
+  }
+  @media (max-height:600px) {
+    .cover-guest { padding-top:24px !important; padding-bottom:calc(18px + env(safe-area-inset-bottom)) !important; }
+    .cover-scroll { display:none !important; }
+    .cover-title { font-size:38px !important; }
+  }
+  @media (max-width:360px) {
+    .cover-guest { padding-left:12px !important; padding-right:12px !important; }
+    .cover-title { font-size:36px !important; letter-spacing:1px !important; }
+  }
+  @keyframes coverIn {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes coverSwapA {
+    0%, 44% { opacity:1; }
+    50%, 94% { opacity:0; }
+    100% { opacity:1; }
+  }
+  @keyframes coverSwapB {
+    0%, 44% { opacity:0; }
+    50%, 94% { opacity:1; }
+    100% { opacity:0; }
+  }
+  .cv-text {
+    opacity:0;
+    animation:coverIn 0.7s ease-out forwards;
+  }
+  #cover-btn {
+    background:#C0C0C0; border:none; border-radius:5px;
+    height:36px; padding:0 22px;
+    cursor:pointer; display:flex; align-items:center; gap:6px;
+    font-family:'Poppins',sans-serif; font-size:12px; font-weight:500;
+    color:#002366; letter-spacing:0.5px;
+    transition:transform 0.15s, box-shadow 0.15s;
+  }
+  #cover-btn:hover  { transform:translateY(-1px); box-shadow:0 4px 16px rgba(212,175,55,0.4); }
+  #cover-btn:active { transform:translateY(0); }
+
+  /* ── Photo entrance animations ── */
+  [data-anim="groom-frame"] {
+    opacity:0;
+    transform:translateX(-55px) scale(0.88);
+    transition:opacity 1s cubic-bezier(.22,1,.36,1), transform 1s cubic-bezier(.22,1,.36,1);
+  }
+  [data-anim="bride-frame"] {
+    opacity:0;
+    transform:translateX(55px) scale(0.88);
+    transition:opacity 1s cubic-bezier(.22,1,.36,1), transform 1s cubic-bezier(.22,1,.36,1);
+  }
+  [data-anim="fade-up"] {
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+  [data-anim="fade-center"] {
+    opacity:0;
+    transition:opacity 0.8s ease-out;
+  }
+  [data-anim].anim-in {
+    opacity:1 !important;
+    transform:none !important;
+  }
+  @keyframes goldGlow {
+    0%   { filter:drop-shadow(0 0 22px rgba(212,175,55,0.7)) drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
+    100% { filter:none; }
+  }
+  .anim-glow { animation:goldGlow 1.6s ease-out forwards; }
+
+  @keyframes floatAndRotate {
+    0%,100% { transform:translateY(0) rotate(0deg); }
+    50% { transform:translateY(-8px) rotate(180deg); }
+  }
+  #music-float {
+    position:fixed;
+    right:18px;
+    bottom:24px;
+    z-index:15000;
+    width:46px;
+    height:46px;
+    display:none; /* default tersembunyi; ditampilkan via JS setelah cover ditutup */
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(192,192,192,0.75);
+    border-radius:50%;
+    background:rgba(0,35,102,0.92);
+    box-shadow:0 8px 24px rgba(0,20,64,0.35);
+    animation:floatAndRotate 6s ease-in-out infinite;
+    cursor:pointer;
+  }
+  #music-float img { width:19px; height:19px; pointer-events:none; }
+  #music-float.paused { animation:none; opacity:0.7; }
+
+  /* ── Mouse scroll indicator ── */
+  @keyframes mouseWheel{
+    0%   {opacity:0;transform:translateX(-50%) translateY(1px)}
+    18%  {opacity:1}
+    78%  {opacity:0.6}
+    100% {opacity:0;transform:translateX(-50%) translateY(17px)}
+  }
+  @keyframes mousePulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(248,245,240,0.45),0 0 12px rgba(212,175,55,0.15)}
+    55%    {box-shadow:0 0 0 9px rgba(248,245,240,0),0 0 20px rgba(212,175,55,0.35)}
+  }
+  @keyframes mouseGlow{
+    0%,100%{opacity:0.75}
+    50%    {opacity:1}
+  }
+  @keyframes chv1{
+    0%,100%{opacity:0;transform:translateY(-4px)}
+    30%    {opacity:1;transform:translateY(0)}
+    70%    {opacity:0;transform:translateY(5px)}
+  }
+  @keyframes chv2{
+    0%,20%,100%{opacity:0;transform:translateY(-4px)}
+    50%         {opacity:0.75;transform:translateY(0)}
+    85%         {opacity:0;transform:translateY(5px)}
+  }
+  @keyframes chv3{
+    0%,40%,100%{opacity:0;transform:translateY(-4px)}
+    65%         {opacity:0.45;transform:translateY(0)}
+    95%         {opacity:0;transform:translateY(5px)}
+  }
+  @keyframes scrollLabel{
+    0%,100%{opacity:0.4}
+    50%    {opacity:0.8}
+  }
+</style>
+</head>
+<body>
+<div id="root"><div id="app-container"></div></div>
+<div id="music-float" onclick="toggleMusic()"><img id="music-icon" alt="" src="./assets/imgIcon6.svg" /></div>
+<audio id="bg-music" loop preload="auto" src="../musik/romantic/perfect.mp3"></audio>
+<script type="text/plain" id="appsrc">
+const D = JSON.parse(localStorage.getItem('ktm_data') || '{}');
+D.cover = localStorage.getItem('ktm_cover') || D.cover || '';
+D.cover2 = localStorage.getItem('ktm_cover_2') || D.cover2 || '';
+D.foto_pria = localStorage.getItem('ktm_foto_pria') || D.foto_pria || '';
+D.foto_wanita = localStorage.getItem('ktm_foto_wanita') || D.foto_wanita || '';
+var _gal = []; for (var _i = 0; _i < 6; _i++) _gal.push(localStorage.getItem('ktm_gallery_' + _i) || '');
+var _stories = []; try { _stories = JSON.parse(localStorage.getItem('ktm_story_teks') || '[]'); } catch (e) { _stories = []; }
+var _stImgs = []; for (var _si = 0; _si < 6; _si++) _stImgs.push(localStorage.getItem('ktm_story_img_' + _si) || '');
+/* Sync musik: jika user pilih lagu di form, update audio source */
+if(D.lagu){try{var _el=document.getElementById('bg-music');if(_el){var _s=_el.querySelector('source');if(_s)_s.src='https://kutemo.id/'+D.lagu;else _el.src='https://kutemo.id/'+D.lagu;_el.load();}}catch(e){}}
+
+const coverGuest =
+  new URLSearchParams(window.location.search).get('to')
+  || new URLSearchParams(window.location.search).get('kpd')
+  || 'Bapak/Ibu/Saudara/i';
+
+/* ── ID date helpers ── */
+const BL_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const HR_ID = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+function fmtDateID(v) { if (!v) return ''; var d = new Date(v + 'T12:00:00'); return HR_ID[d.getDay()] + ', ' + d.getDate() + ' ' + BL_ID[d.getMonth()] + ' ' + d.getFullYear(); }
+function fmtDay(v) { return v ? new Date(v + 'T12:00:00').getDate() : ''; }
+function fmtMon(v) { return v ? BL_ID[new Date(v + 'T12:00:00').getMonth()] : ''; }
+function fmtYr(v) { return v ? new Date(v + 'T12:00:00').getFullYear() : ''; }
+function parseTimeToHHMM(w) { if (!w) return '08:00'; var m = (w || '').match(/(\d{1,2})[.:h](\d{2})/); return m ? String(+m[1]).padStart(2,'0') + ':' + m[2] : '08:00'; }
+
+const imgContainer  = D.cover || "./assets/cover1.png";
+const imgContainer1 = D.cover2 || "./assets/cover2.png";
+const img12 = D.foto_wanita || "./assets/wanita.jpg";
+const img13 = D.foto_pria || "./assets/pria.jpg";
+const imgContainer2 = "./assets/imgContainer2.png";
+const imgContainer3 = "./assets/imgContainer3.png";
+const imgContainer4 = "./assets/imgContainer4.png";
+const imgImage = "./assets/imgImage.png";
+const imgImage1 = "./assets/imgImage1.png";
+const imgImage2 = _gal[0] || "./assets/imgImage2.png";
+const imgImage3 = _gal[1] || "./assets/imgImage3.png";
+const imgImage4 = _gal[2] || "./assets/imgImage4.png";
+const imgImage5 = _gal[3] || "./assets/imgImage5.png";
+const imgImage6 = _gal[4] || "./assets/imgImage6.png";
+const imgImage7 = _gal[5] || "./assets/imgImage7.png";
+const imgContainer5 = "./assets/imgContainer5.png";
+const imgImageBni = "./assets/imgImageBni.png";
+const imgImageLogoBrkSyariah = "./assets/imgImageLogoBrkSyariah.png";
+const imgImage8 = "./assets/imgImage8.png";
+const imgContainer6 = "./assets/imgContainer6.png";
+const getUserCover3 = () => {
+  try {
+    return localStorage.getItem('ktm_cover_3') || '';
+  } catch (e) {
+    return '';
+  }
+};
+const imgIcon = "./assets/imgIcon.svg";
+const imgIcon1 = "./assets/imgIcon1.svg";
+const imgIcon2 = "./assets/imgIcon2.svg";
+const imgIcon3 = "./assets/imgIcon3.svg";
+const imgIcon4 = "./assets/imgIcon4.svg";
+const imgGroup = "./assets/imgGroup.svg";
+const imgGroup1 = "./assets/imgGroup1.svg";
+const imgGroup2 = "./assets/imgGroup2.svg";
+const imgGroup3 = "./assets/imgGroup3.svg";
+const imgGroup4 = "./assets/imgGroup4.svg";
+const imgGroup5 = "./assets/imgGroup5.svg";
+const imgIcon5 = "./assets/imgIcon5.svg";
+const imgIcon6 = "./assets/imgIcon6.svg";
+
+function TheWeddingOfRomeojuliet() {
+  const [lbImg, setLbImg] = React.useState(null);
+  const [copiedIdx, setCopiedIdx] = React.useState(null);
+  const copyRek = (text, idx) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
+    setCopiedIdx(idx);
+    setTimeout(() => setCopiedIdx((cur) => (cur === idx ? null : cur)), 1800);
+  };
+  const [wishes, setWishes] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem('ktm_wishes') || '[]'); } catch (e) { return []; }
+  });
+  const [wName, setWName] = React.useState('');
+  const [wRsvp, setWRsvp] = React.useState('');
+  const [wMsg, setWMsg] = React.useState('');
+  const submitWish = () => {
+    if (!wName.trim() || !wMsg.trim()) return;
+    const entry = { nama: wName.trim(), rsvp: wRsvp, pesan: wMsg.trim(), waktu: Date.now() };
+    const next = [entry, ...wishes];
+    setWishes(next);
+    try { localStorage.setItem('ktm_wishes', JSON.stringify(next)); } catch (e) {}
+    setWName(''); setWRsvp(''); setWMsg('');
+  };
+
+  /* ── Countdown ── */
+  const cdDate = D.tanggal_resepsi || D.tanggal_akad || '';
+  const cdTime = D.tanggal_resepsi
+    ? (D.waktu_resepsi || D.waktu_akad || '')
+    : (D.waktu_akad || '');
+  const [cd, setCd] = React.useState({ d: 0, h: 0, m: 0, s: 0 });
+  React.useEffect(() => {
+    if (!cdDate) return;
+    const hhmm = parseTimeToHHMM(cdTime);
+    const target = new Date(cdDate + 'T' + hhmm + ':00+07:00');
+    const tick = () => {
+      const diff = Math.max(0, target - new Date());
+      setCd({
+        d: Math.floor(diff / 86400000),
+        h: Math.floor((diff % 86400000) / 3600000),
+        m: Math.floor((diff % 3600000) / 60000),
+        s: Math.floor((diff % 60000) / 1000),
+      });
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [cdDate, cdTime]);
+  const pad2 = (n) => String(n).padStart(2, '0');
+
+  const namaPria = D.pria || 'Romeo';
+  const namaWanita = D.wanita || 'Juliet';
+  const coupleName = `${namaPria} & ${namaWanita}`;
+  const monogram = `${(namaPria[0] || 'R').toUpperCase()}${(namaWanita[0] || 'J').toUpperCase()}`;
+  const tanggalUtama = fmtDateID(D.tanggal_resepsi || D.tanggal_akad) || 'Senin, 13 April 2026';
+  const mapsAkad = D.maps_akad || (D.lokasi_akad || D.alamat_akad
+    ? 'https://maps.google.com/?q=' + encodeURIComponent((D.lokasi_akad || '') + ' ' + (D.alamat_akad || ''))
+    : '');
+  const mapsResepsi = D.maps_resepsi || (D.lokasi_resepsi || D.alamat_resepsi
+    ? 'https://maps.google.com/?q=' + encodeURIComponent((D.lokasi_resepsi || '') + ' ' + (D.alamat_resepsi || ''))
+    : '');
+  const giftList = (D.gift_methods || []).filter((g) => g && g.no && String(g.no).trim());
+  const defaultStories = [
+    { date: '01 JUL 2022', title: 'Pertemuan', icon: 'fa-champagne-glasses', text: 'Tidak ada yang kebetulan di dunia ini, semua sudah tersusun rapi oleh yang Maha Kuasa. Kisah ini berawal saat kami bertemu pertama kalinya tanpa sengaja di salah satu tempat nongkrong. Lalu dia ngefollow Instagram saya tanpa ada percakapan apapun.' },
+    { date: '10 OKT 2022', title: 'Pendekatan', icon: 'fa-comments', text: 'Setelah 3 bulan melewati PDKT dari Instagram dan juga sudah bertukaran no WhatsApp, bertepatan dengan ulangtahun saya, dia menyatakan cintanya dan saya menerimanya. Perjalanan kami bukan hanya tentang kebahagiaan, tapi tentang proses saling mendewasakan.' },
+    { date: '08 APR 2025', title: 'Lamaran', icon: 'fa-gem', text: 'Akhirnya di titik ini, kami memilih untuk berhenti mencari. Momen lamaran menjadi bukti nyata dari kesungguhan hati, sebuah pernyataan bahwa kami siap melangkah lebih jauh, hingga akhirnya membawa kami pada sebuah ikatan suci yang dicintai-Nya.' },
+    { date: '12 APR 2026', title: 'Pernikahan', icon: 'fa-rings-wedding', text: 'Hari ini, dua doa menyatu menjadi satu tujuan. Di hadapan Sang Pencipta, kami mengukir janji suci untuk memulai hidup baru. Pernikahan ini bukanlah akhir, melainkan gerbang menuju pertualangan abadi yang kami tempuh bersama.' },
+  ];
+  const storyIcons = ['fa-champagne-glasses', 'fa-comments', 'fa-gem', 'fa-rings-wedding', 'fa-heart', 'fa-house'];
+  const storyItems = (_stories && _stories.some((s) => s && (s.teks || s.judul || s.tanggal || s.bulan || s.tahun)))
+    ? _stories.filter((s) => s && (s.teks || s.judul || s.tanggal || s.bulan || s.tahun)).map((s, i) => ({
+        date: [s.tanggal, s.bulan, s.tahun].filter(Boolean).join(' ') || '',
+        title: s.judul || ('Momen ' + (i + 1)),
+        icon: storyIcons[i % storyIcons.length],
+        text: s.teks || '',
+        img: _stImgs[i] || '',
+      }))
+    : defaultStories;
+
+  const openMaps = (url) => { if (url) window.open(url, '_blank', 'noopener,noreferrer'); };
+  const saveCalendar = () => {
+    if (!cdDate) return;
+    const hhmm = parseTimeToHHMM(cdTime);
+    const [hh, mm] = hhmm.split(':');
+    const start = cdDate.replace(/-/g, '') + 'T' + hh + mm + '00';
+    const endH = String((+hh + 3) % 24).padStart(2, '0');
+    const end = cdDate.replace(/-/g, '') + 'T' + endH + mm + '00';
+    const title = 'Pernikahan ' + coupleName;
+    const loc = D.lokasi_resepsi || D.lokasi_akad || '';
+    window.open(
+      'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(title)
+      + '&dates=' + start + '/' + end
+      + '&location=' + encodeURIComponent(loc),
+      '_blank', 'noopener,noreferrer'
+    );
+  };
+  return (
+    <div className="bg-[#F8F5F0] content-stretch flex flex-col items-start relative size-full">
+      <div className="relative shrink-0 w-[430px]">
+        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[inherit] size-full">
+          <div className="h-[10705.42px] overflow-clip relative shrink-0 w-[430px]">
+            <div id="hero-section" className="absolute h-[838.797px] left-0 overflow-clip top-0 w-[430px]">
+              <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={"./assets/cover1.png"} />
+              {/* ── Overlay gelap agar teks terbaca ── */}
+              <div style={{position:'absolute',inset:0,background:'linear-gradient(180deg, rgba(0,10,40,0.35) 0%, rgba(0,10,40,0.55) 40%, rgba(0,10,40,0.7) 100%)',zIndex:1}} />
+              <div className="absolute h-[141px] left-[20px] top-[50px] w-[390px]" />
+              <p data-px-rate="0.09" className="-translate-x-1/2 [word-break:break-word] absolute font-['Cinzel'] font-normal font-medium leading-[12px] left-[215px] text-[#F8F5F0] text-[12px] text-center top-[211px] tracking-[2px] uppercase whitespace-nowrap" style={{zIndex:2,textShadow:'0 2px 8px rgba(0,0,0,0.6)'}}>
+                The Wedding Of
+              </p>
+              <div data-px-rate="0.065" className="absolute content-stretch flex flex-col h-[50px] items-start left-[-4px] pt-[10px] top-[249px] w-[370px]" style={{zIndex:2}}>
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                    <p className="[word-break:break-word] font-['Vidaloka'] font-normal leading-[30px] not-italic relative shrink-0 text-[#FFFFFF] text-[50px] text-center tracking-[1px] uppercase whitespace-nowrap" style={{textShadow:'0 3px 12px rgba(0,0,0,0.7)'}}>{D.pria ? `${D.pria} &` : 'Romeo &'}</p>
+                  </div>
+                </div>
+              </div>
+              <div data-px-rate="0.065" className="absolute content-stretch flex flex-col h-[50px] items-start left-[89px] pt-[10px] top-[291px] w-[370px]" style={{zIndex:2}}>
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                    <p className="[word-break:break-word] font-['Vidaloka'] font-normal leading-[30px] not-italic relative shrink-0 text-[#FFFFFF] text-[50px] text-center tracking-[1px] uppercase whitespace-nowrap" style={{textShadow:'0 3px 12px rgba(0,0,0,0.7)'}}>
+                      {D.wanita || 'Juliet'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div data-px-rate="0.038" className="absolute content-stretch flex flex-col h-[92px] items-start left-[20px] py-[20px] top-[383px] w-[390px]" style={{zIndex:2}}>
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                    <p className="[word-break:break-word] font-['Cinzel'] font-normal font-medium leading-[12px] relative shrink-0 text-[#F8F5F0] text-[12px] text-center tracking-[3px] uppercase whitespace-nowrap" style={{textShadow:'0 2px 8px rgba(0,0,0,0.6)'}}>
+                      {D.tanggal_resepsi ? new Date(D.tanggal_resepsi + 'T12:00:00').toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Senin, 13 April 2026'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {/* ── Scroll indicator ── */}
+              <div data-px-rate="0.020" className="absolute flex flex-col items-center" style={{left:'50%',top:'455px',transform:'translateX(-50%)',zIndex:2}}>
+                {/* Mouse body */}
+                <div style={{
+                  width:'26px',height:'46px',
+                  border:'1.5px solid rgba(248,245,240,0.85)',
+                  borderRadius:'13px',
+                  position:'relative',
+                  animation:'mousePulse 2.2s ease-in-out infinite, mouseGlow 2.2s ease-in-out infinite',
+                  background:'rgba(248,245,240,0.04)',
+                }}>
+                  {/* Scroll wheel dot */}
+                  <div style={{
+                    position:'absolute',
+                    left:'50%',
+                    top:'7px',
+                    width:'3px',height:'8px',
+                    borderRadius:'2px',
+                    background:'rgba(248,245,240,0.9)',
+                    animation:'mouseWheel 2s ease-in-out infinite',
+                    transformOrigin:'top center',
+                  }} />
+                  {/* Corner dots */}
+                  <div style={{position:'absolute',bottom:'8px',left:'50%',transform:'translateX(-50%)',display:'flex',gap:'4px'}}>
+                    <div style={{width:'2px',height:'2px',borderRadius:'50%',background:'rgba(248,245,240,0.3)'}} />
+                    <div style={{width:'2px',height:'2px',borderRadius:'50%',background:'rgba(248,245,240,0.3)'}} />
+                  </div>
+                </div>
+                {/* Chevron arrows */}
+                <div className="flex flex-col items-center" style={{marginTop:'8px',gap:'1px'}}>
+                  <svg width="16" height="9" viewBox="0 0 16 9" fill="none" style={{animation:'chv1 2s ease-in-out 0s infinite',opacity:0}}>
+                    <path d="M1 1l7 7 7-7" stroke="rgba(248,245,240,0.9)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <svg width="16" height="9" viewBox="0 0 16 9" fill="none" style={{animation:'chv2 2s ease-in-out 0.18s infinite',opacity:0}}>
+                    <path d="M1 1l7 7 7-7" stroke="rgba(248,245,240,0.65)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <svg width="16" height="9" viewBox="0 0 16 9" fill="none" style={{animation:'chv3 2s ease-in-out 0.36s infinite',opacity:0}}>
+                    <path d="M1 1l7 7 7-7" stroke="rgba(248,245,240,0.35)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                {/* Scroll label */}
+                <p style={{
+                  marginTop:'6px',
+                  fontFamily:"'Cinzel',serif",
+                  fontSize:'8px',
+                  letterSpacing:'3px',
+                  color:'rgba(248,245,240,0.65)',
+                  animation:'scrollLabel 2.2s ease-in-out infinite',
+                  textTransform:'uppercase',
+                }}>Scroll</p>
+              </div>
+            </div>
+            <div className="absolute h-[549.984px] left-0 overflow-clip top-[838.8px] w-[430px]" style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 430 549.98' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(0 -38.89 -30.406 0 215 274.99)'><stop stop-color='rgba(30,58,138,1)' offset='0'/><stop stop-color='rgba(24,50,110,1)' offset='0.25'/><stop stop-color='rgba(18,42,90,1)' offset='0.5'/><stop stop-color='rgba(14,36,74,1)' offset='0.75'/><stop stop-color='rgba(12,33,66,1)' offset='0.875'/><stop stop-color='rgba(11,31,58,1)' offset='1'/></radialGradient></defs></svg>\")" }}>
+
+              {/* ── Monogram Inisial ── */}
+              <div data-anim="fade-center" style={{position:'absolute',top:'90px',left:'0',width:'100%',display:'flex',justifyContent:'center',alignItems:'baseline',gap:'4px'}}>
+                <span style={{fontFamily:"'Pinyon Script',cursive",fontSize:'70px',color:'#C0C0C0',lineHeight:1}}>
+                  {(D.pria || 'N')[0]}
+                </span>
+                <span style={{fontFamily:"'Pinyon Script',cursive",fontSize:'70px',color:'#C0C0C0',lineHeight:1,textTransform:'uppercase'}}>
+                  {(D.wanita || 'J')[0]}
+                </span>
+              </div>
+
+              {/* ── WE FOUND LOVE ── */}
+              <p data-anim="fade-center" data-delay="200" style={{position:'absolute',top:'230px',left:'0',width:'100%',fontFamily:"'Aboreto',sans-serif",fontSize:'22px',color:'#C0C0C0',textAlign:'center',whiteSpace:'nowrap',letterSpacing:'2px',textTransform:'capitalize'}}>
+                {D.verse || 'WE FOUND LOVE'}
+              </p>
+
+              {/* ── Ayat Al-Quran ── */}
+              <p data-anim="fade-center" data-delay="400" style={{position:'absolute',top:'290px',left:'20px',width:'390px',fontFamily:"'Gilda Display',serif",fontSize:'12px',lineHeight:'22px',color:'#C0C0C0',textAlign:'center'}}>
+                {`" Dan di antara tanda-tanda kekuasaan-Nya diciptakan-Nya untukmu pasangan hidup dari jenismu sendiri supaya kamu dapat ketenangan hati dan dijadikannya kasih sayang di antara kamu. Sesungguhnya yang demikian menjadi tanda-tanda kebesaran-Nya bagi orang-orang yang berpikir. "`}
+              </p>
+
+              {/* ── Surat Arum Ayat 21 ── */}
+              <p data-anim="fade-center" data-delay="600" style={{position:'absolute',top:'420px',left:'0',width:'100%',fontFamily:"'Gilda Display',serif",fontSize:'14px',color:'#C0C0C0',textAlign:'center',whiteSpace:'nowrap'}}>
+                Surat Arum Ayat 21
+              </p>
+            </div>
+            <div className="absolute h-[1735.813px] left-0 overflow-clip top-[1388.78px] w-[430px]">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img alt="" className="absolute h-full left-0 max-w-none object-cover top-0 w-full" src={"./assets/cover2.png"} />
+                <div className="absolute inset-0" style={{background:'linear-gradient(180deg, rgba(0,20,64,0.45) 0%, rgba(0,25,80,0.65) 30%, rgba(0,26,84,0.9) 58%, #002366 78%)'}} />
+              </div>
+              <div className="absolute border-4 border-[#C0C0C0] border-solid h-[1675.813px] left-[20px] rounded-[30px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.5)] top-[30px] w-[390px]" style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 390 1675.8' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(0 -118.5 -27.577 0 195 837.91)'><stop stop-color='rgba(11,31,58,1)' offset='0'/><stop stop-color='rgba(15,35,70,0.93)' offset='0.5'/><stop stop-color='rgba(20,45,85,0.86)' offset='1'/></radialGradient></defs></svg>\")" }}>
+                <div className="-translate-x-1/2 [word-break:break-word] absolute capitalize font-['Vidaloka'] font-normal leading-[0] left-[191px] not-italic text-[#C0C0C0] text-[35px] text-center top-[40px] whitespace-nowrap">
+                  <p className="leading-[38.5px] mb-0">{D.pria ? `${D.pria} &` : 'Bride &'}</p>
+                  <p className="leading-[38.5px]">{D.wanita || 'Groom'}</p>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[76.813px] items-start left-[10px] top-[137px] w-[362px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <div className="[word-break:break-word] font-['Caudex'] font-bold leading-[0] not-italic relative shrink-0 text-[#C0C0C0] text-[12px] text-center w-[362px]">
+                        <p className="leading-[19.2px] mb-0">{D.salam_pembuka || 'Assalamualaikum Warahmatullaahi Wabarakaatuh'}</p>
+                        <p className="leading-[19.2px]">{D.paragraf_pembuka || 'Dengan memohon rahmat dan ridho Allah Swt. kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan putra-putri kami:'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div data-anim="groom-frame" className="absolute border-5 border-[#C0C0C0] border-solid h-[402.797px] left-[64.3px] rounded-[120px] top-[233.81px] w-[253.391px]">
+                  <div className="absolute border-5 border-[#C0C0C0] border-solid content-stretch flex flex-col h-[402.797px] items-start left-[-5px] overflow-clip p-[5px] rounded-[120px] top-[-5px] w-[253.391px]">
+                    <div className="h-[393px] relative shrink-0 w-[243px]">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                        <div className="absolute h-[393px] left-[0] top-0 w-[243px]">
+                          <img alt="" className="absolute bg-clip-padding border-0 border-[transparent] border-solid inset-0 max-w-none object-cover pointer-events-none size-full" src={img13} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div data-anim="fade-up" data-delay="280" className="absolute content-stretch flex flex-col h-[40px] items-start left-[10px] top-[656.61px] w-[362px]">
+                  <div className="absolute h-[53px] left-0 top-0 w-[362px]">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                      <div className="relative shrink-0 w-full">
+                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                          <p className="[word-break:break-word] capitalize font-['Pinyon_Script'] font-normal leading-[66px] not-italic relative shrink-0 text-[#C0C0C0] text-[60px] text-center whitespace-nowrap">
+                            {D.pria || 'Romeo'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div data-anim="fade-up" data-delay="380" className="absolute content-stretch flex flex-col h-[14.406px] items-start left-[10px] top-[729.61px] w-[362px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Zen_Antique'] font-normal leading-[14.4px] not-italic relative shrink-0 text-[#C0C0C0] text-[16px] text-center whitespace-nowrap">
+                        {D.pria_lengkap || 'Muhammad Romeo'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[22.406px] items-start left-[20px] top-[774.02px] w-[342px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Caudex'] font-bold leading-[22.4px] not-italic relative shrink-0 text-[#C0C0C0] text-[14px] text-center whitespace-nowrap">
+                        Putra dari
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[22.406px] items-start left-[20px] top-[796.42px] w-[342px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Caudex'] font-bold leading-[22.4px] not-italic relative shrink-0 text-[#C0C0C0] text-[14px] text-center whitespace-nowrap">{`Bapak ${D.ayah_pria || 'Hasan Yusuf'} & Ibu ${D.ibu_pria || 'Fatimah'}`}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[17.188px] items-start left-[10px] top-[848.83px] w-[362px]">
+                  <div className="absolute h-[22.188px] left-0 top-[-5px] w-[362px]">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                      <div className="absolute bg-[#C0C0C0] content-stretch flex items-center justify-center left-[167.41px] rounded-[13.594px] size-[27.188px] top-0">
+                        <div className="relative shrink-0 size-[17px]">
+                          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Font_Awesome_6_Brands'] font-normal leading-[17px] left-[8.5px] not-italic text-[#002366] text-[17px] text-center top-0 whitespace-nowrap">{`\uF16D`}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[46.594px] items-start left-[10px] top-[891.02px] w-[362px]">
+                  <div className="absolute h-[59.594px] left-0 top-0 w-[362px]">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                      <div className="relative shrink-0 w-full">
+                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                          <p className="[word-break:break-word] font-['Pinyon_Script'] font-normal leading-[72.6px] not-italic relative shrink-0 text-[#C0C0C0] text-[33px] text-center whitespace-nowrap">
+                            dengan
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div data-anim="bride-frame" className="absolute border-5 border-[#C0C0C0] border-solid h-[402.797px] left-[64.3px] rounded-[120px] top-[970.61px] w-[253.391px]">
+                  <div className="absolute border-5 border-[#C0C0C0] border-solid content-stretch flex flex-col h-[402.797px] items-start left-[-5px] overflow-clip p-[5px] rounded-[120px] top-[-5px] w-[253.391px]">
+                    <div className="h-[393px] relative shrink-0 w-[243px]">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                        <div className="absolute h-[393px] left-[0] top-0 w-[243px]">
+                          <img alt="" className="absolute bg-clip-padding border-0 border-[transparent] border-solid inset-0 max-w-none object-cover pointer-events-none size-full" src={img12} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div data-anim="fade-up" data-delay="280" className="absolute content-stretch flex flex-col h-[40px] items-start left-[10px] top-[1393.41px] w-[362px]">
+                  <div className="absolute h-[53px] left-0 top-0 w-[362px]">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                      <div className="relative shrink-0 w-full">
+                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                          <p className="[word-break:break-word] capitalize font-['Pinyon_Script'] font-normal leading-[66px] not-italic relative shrink-0 text-[#C0C0C0] text-[60px] text-center whitespace-nowrap">
+                            {D.wanita || 'Juliet'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div data-anim="fade-up" data-delay="380" className="absolute content-stretch flex flex-col h-[14.406px] items-start left-[12px] top-[1466.41px] w-[362px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Zen_Antique'] font-normal leading-[14.4px] not-italic relative shrink-0 text-[#C0C0C0] text-[16px] text-center whitespace-nowrap">
+                        {D.wanita_lengkap || 'Putri Juliet'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[22.406px] items-start left-[20px] top-[1510.81px] w-[342px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Caudex'] font-bold leading-[22.4px] not-italic relative shrink-0 text-[#C0C0C0] text-[14px] text-center whitespace-nowrap">
+                        Putri Pertama dari
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[22.406px] items-start left-[20px] top-[1533.22px] w-[342px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Caudex'] font-bold leading-[22.4px] not-italic relative shrink-0 text-[#C0C0C0] text-[14px] text-center whitespace-nowrap">{`Bapak ${D.ayah_wanita || 'Joko'} & Ibu ${D.ibu_wanita || 'Tenik'}`}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[17.188px] items-start left-[10px] top-[1585.63px] w-[362px]">
+                  <div className="absolute h-[22.188px] left-0 top-[-5px] w-[362px]">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                      <div className="absolute bg-[#C0C0C0] content-stretch flex items-center justify-center left-[167.41px] rounded-[13.594px] size-[27.188px] top-0">
+                        <div className="relative shrink-0 size-[17px]">
+                          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Font_Awesome_6_Brands'] font-normal leading-[17px] left-[8.5px] not-italic text-[#002366] text-[17px] text-center top-0 whitespace-nowrap">{`\uF16D`}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* ═══════════════════════════════════════════════
+               COUNTING THE DAYS — Royal Blue style
+               ═══════════════════════════════════════════════ */}
+            <div className="absolute left-0 overflow-clip top-[3124.59px] w-[430px] h-[669.438px]" style={{background:'#002366'}}>
+              {/* ── Background photo ── */}
+              <div className="absolute inset-0">
+                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgContainer} style={{animation:'coverSwapA 10s ease-in-out infinite'}} />
+                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgContainer1} style={{animation:'coverSwapB 10s ease-in-out infinite'}} />
+              </div>
+              {/* ── Royal blue gradient overlay ── */}
+              <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(0,20,64,0.92) 0%, rgba(0,35,102,0.4) 45%, rgba(65,105,225,0.12) 100%)'}} />
+
+              {/* ── Content: top ── */}
+              <div style={{position:'relative',zIndex:10,width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'flex-start',alignItems:'center',padding:'70px 20px 0'}}>
+
+                {/* ── Title dengan ornamen ── */}
+                <div style={{display:'flex',flexDirection:'column',alignItems:'center',marginBottom:'28px'}}>
+                  {/* garis atas */}
+                  <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'12px'}}>
+                    <div style={{width:'50px',height:'1px',background:'linear-gradient(90deg, transparent, #C0C0C0)'}} />
+                    <div style={{width:'6px',height:'6px',transform:'rotate(45deg)',border:'1px solid #C0C0C0'}} />
+                    <div style={{width:'50px',height:'1px',background:'linear-gradient(90deg, #C0C0C0, transparent)'}} />
+                  </div>
+                  {/* judul utama */}
+                  <p style={{fontFamily:"'Great Vibes',cursive",fontSize:'30px',color:'#FFFFFF',margin:0,textShadow:'0 2px 16px rgba(0,0,0,0.6),0 0 40px rgba(65,105,225,0.3)'}}>
+                    Counting The Days
+                  </p>
+                  {/* subtitle */}
+                  <p style={{fontFamily:"'Cormorant Garamond',serif",fontSize:'13px',letterSpacing:'3px',color:'#C0C0C0',textTransform:'uppercase',marginTop:'250px'}}>
+                    Menuju hari bahagia kami
+                  </p>
+                  {/* garis bawah */}
+                  <div style={{display:'flex',alignItems:'center',gap:'12px',marginTop:'12px'}}>
+                    <div style={{width:'50px',height:'1px',background:'linear-gradient(90deg, transparent, #C0C0C0)'}} />
+                    <div style={{width:'6px',height:'6px',transform:'rotate(45deg)',border:'1px solid #C0C0C0'}} />
+                    <div style={{width:'50px',height:'1px',background:'linear-gradient(90deg, #C0C0C0, transparent)'}} />
+                  </div>
+                </div>
+
+                {/* ── 4 countdown boxes — glassmorphism ── */}
+                <div style={{display:'flex',gap:'12px',marginBottom:'36px'}}>
+                  {[
+                    { val: String(cd.d).padStart(2, '0'), lbl: 'Hari' },
+                    { val: pad2(cd.h), lbl: 'Jam' },
+                    { val: pad2(cd.m), lbl: 'Menit' },
+                    { val: pad2(cd.s), lbl: 'Detik' },
+                  ].map((b, i) => (
+                    <div key={i} style={{width:'75px',height:'75px',background:'rgba(255,255,255,0.07)',backdropFilter:'blur(10px)',WebkitBackdropFilter:'blur(10px)',borderRadius:'14px',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',border:'1px solid rgba(255,255,255,0.12)',boxShadow:'0 8px 32px rgba(0,0,0,0.18)'}}>
+                      <span style={{fontSize:b.val.length > 2 ? '28px' : '34px',fontWeight:700,color:'#FFFFFF',lineHeight:1,fontFamily:"'Poppins',sans-serif",letterSpacing:'1px',textShadow:'0 2px 12px rgba(0,0,0,0.5)'}}>{b.val}</span>
+                      <small style={{marginTop:'4px',fontSize:'11px',fontWeight:500,color:'rgba(255,255,255,0.65)',fontFamily:"'Poppins',sans-serif",letterSpacing:'1.5px',textTransform:'uppercase'}}>{b.lbl}</small>
+                    </div>
+                  ))}
+                </div>
+
+                {/* ── Tombol Simpan Kalender ── */}
+                <div onClick={saveCalendar} style={{display:'inline-flex',alignItems:'center',gap:'10px',padding:'16px 12px',borderRadius:'50px',background:'#4169E1',fontSize:'11px',letterSpacing:'1px',color:'#FFFFFF',cursor:'pointer',fontFamily:"'Cormorant Garamond',serif",fontWeight:600,boxShadow:'0 6px 24px rgba(65,105,225,0.4)',transition:'transform 0.3s,background 0.3s'}} onMouseOver={(e)=>{e.currentTarget.style.transform='translateY(-3px)';e.currentTarget.style.background='#5A7FE8';}} onMouseOut={(e)=>{e.currentTarget.style.transform='';e.currentTarget.style.background='#4169E1';}}>
+                  <i className="fa-solid fa-calendar-days" style={{fontSize:'18px'}} />
+                  Simpan di Kalender
+                </div>
+
+              </div>
+            </div>
+            <div className="absolute bg-gradient-to-b from-[#002366] h-[1285.297px] left-0 overflow-clip to-[#4169E1] top-[3794.03px] w-[430px]">
+              <div className="absolute border-5 border-[#C0C0C0] border-solid h-[604.359px] left-[20px] rounded-[120px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.5)] top-[20px] w-[390px]">
+                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[120px] size-full" src={imgContainer4} />
+                <div className="absolute h-[84.953px] left-[10px] top-[70px] w-[360px]">
+                  <div className="absolute h-[64.953px] left-[142.2px] top-0 w-[75.594px]">
+                    <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage} />
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[27.5px] items-start left-[10px] top-[154.95px] w-[360px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Vidaloka'] font-normal leading-[27.5px] not-italic relative shrink-0 text-[#F8F5F0] text-[25px] text-center uppercase whitespace-nowrap">
+                        Akad Nikah
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[28.5px] items-start left-[10px] top-[202.45px] w-[360px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
+                      <div className="relative shrink-0">
+                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                          <p className="[word-break:break-word] font-['Aboreto'] font-normal leading-[28.5px] not-italic relative shrink-0 text-[#F8F5F0] text-[19px] uppercase whitespace-nowrap">
+                            {D.tanggal_akad ? new Date(D.tanggal_akad + 'T12:00:00').toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Minggu, 12 April 2026'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[3px] items-start left-[10px] top-[250.95px] w-[360px]">
+                  <div className="absolute h-[14px] left-0 top-[-11px] w-[360px]">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Caudex'] font-bold leading-[24px] not-italic relative shrink-0 text-[#F8F5F0] text-[15px] text-center whitespace-nowrap">
+                        {D.waktu_akad || '20.00 WIB'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute h-[41px] left-[10px] top-[284.95px] w-[360px]" />
+                <div className="absolute h-[53.406px] left-[20px] top-[345.95px] w-[340px]">
+                  <p className="-translate-x-1/2 [word-break:break-word] absolute font-['ZCOOL_XiaoWei'] font-normal leading-[25.2px] left-[170px] not-italic text-[#F8F5F0] text-[14px] text-center top-[5px] whitespace-nowrap">
+                    {D.lokasi_akad || 'Kediaman Mempelai Wanita'}
+                  </p>
+                  <div className="absolute content-stretch flex flex-col h-[6.203px] items-start left-0 top-[32.2px] w-[340px]">
+                    <div className="relative shrink-0 w-full">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                        <p className="[word-break:break-word] font-['ZCOOL_XiaoWei'] font-normal leading-[25.2px] not-italic relative shrink-0 text-[#F8F5F0] text-[14px] text-center whitespace-nowrap">
+                          {D.alamat_akad || 'Jl. SMA 2'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute h-[35px] left-[10px] top-[419.36px] w-[360px]" onClick={() => openMaps(mapsAkad)} style={{cursor:'pointer'}}>
+                  <div className="absolute h-[35px] left-[108.69px] rounded-[50px] top-0 w-[142.625px]" style={{ backgroundImage: "linear-gradient(176.238deg, rgb(17 33 59) 7.735%, rgb(30, 58, 138) 92.265%)" }}>
+                    <div className="absolute content-stretch flex gap-[5px] h-[15px] items-start justify-center left-[20px] top-[10px]">
+                      <div className="h-full relative shrink-0">
+                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                          <p className="[word-break:break-word] font-['Font_Awesome_6_Free'] leading-[15px] not-italic relative shrink-0 text-[15px] text-center text-white uppercase whitespace-nowrap">{`\uF3C5`}</p>
+                        </div>
+                      </div>
+                      <div className="h-full relative shrink-0">
+                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                          <p className="[word-break:break-word] font-['Aboreto'] font-normal leading-[15px] not-italic relative shrink-0 text-[15px] text-center text-white uppercase whitespace-nowrap">
+                            Open Maps
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute border-5 border-[#C0C0C0] border-solid h-[600.938px] left-[20px] rounded-[120px] shadow-[0px_0px_10px_0px_rgba(0,0,0,0.5)] top-[644.36px] w-[390px]">
+                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[120px] size-full" src={imgContainer4} />
+                <div className="absolute h-[101.531px] left-[10px] top-[70px] w-[360px]">
+                  <div className="absolute h-[81.531px] left-[142.2px] top-0 w-[75.594px]">
+                    <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage1} />
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[27.5px] items-start left-[10px] top-[171.53px] w-[360px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Vidaloka'] font-normal leading-[27.5px] not-italic relative shrink-0 text-[#F8F5F0] text-[25px] text-center uppercase whitespace-nowrap">
+                        Resepsi
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[28.5px] items-start left-[10px] top-[219.03px] w-[360px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
+                      <div className="relative shrink-0">
+                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                          <p className="[word-break:break-word] font-['Aboreto'] font-normal leading-[28.5px] not-italic relative shrink-0 text-[#F8F5F0] text-[19px] uppercase whitespace-nowrap">
+                            {fmtDateID(D.tanggal_resepsi) || 'Senin, 13 April 2026'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute content-stretch flex flex-col h-[3px] items-start left-[10px] top-[267.53px] w-[360px]">
+                  <div className="absolute h-[14px] left-0 top-[-11px] w-[360px]">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Caudex'] font-bold leading-[24px] not-italic relative shrink-0 text-[#F8F5F0] text-[15px] text-center whitespace-nowrap">
+                        {D.waktu_resepsi || '11.00 WIB - Selesai'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute h-[41px] left-[10px] top-[301.53px] w-[360px]" />
+                <p className="-translate-x-1/2 [word-break:break-word] absolute font-['ZCOOL_XiaoWei'] font-normal leading-[25.2px] left-[190px] not-italic text-[#F8F5F0] text-[14px] text-center top-[357.53px] whitespace-nowrap">
+                  {D.lokasi_resepsi || 'Kediaman Mempelai Wanita'}
+                </p>
+                <div className="absolute content-stretch flex flex-col h-[6.203px] items-start left-[10px] top-[384.73px] w-[360px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['ZCOOL_XiaoWei'] font-normal leading-[25.2px] not-italic relative shrink-0 text-[#F8F5F0] text-[14px] text-center whitespace-nowrap">
+                        {D.alamat_resepsi || 'Jl. SMA 2'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute h-[35px] left-[10px] top-[415.94px] w-[360px]" onClick={() => openMaps(mapsResepsi)} style={{cursor:'pointer'}}>
+                  <div className="absolute h-[35px] left-[108.69px] rounded-[50px] top-0 w-[142.625px]" style={{ backgroundImage: "linear-gradient(176.238deg, rgb(17 33 59) 7.735%, rgb(30, 58, 138) 92.265%)" }}>
+                    <div className="absolute content-stretch flex gap-[5px] h-[15px] items-start justify-center left-[20px] top-[10px]">
+                      <div className="h-full relative shrink-0">
+                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                          <p className="[word-break:break-word] font-['Font_Awesome_6_Free'] leading-[15px] not-italic relative shrink-0 text-[15px] text-center text-white uppercase whitespace-nowrap">{`\uF3C5`}</p>
+                        </div>
+                      </div>
+                      <div className="h-full relative shrink-0">
+                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                          <p className="[word-break:break-word] font-['Aboreto'] font-normal leading-[15px] not-italic relative shrink-0 text-[15px] text-center text-white uppercase whitespace-nowrap">
+                            Open Maps
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute h-[990.406px] left-0 overflow-clip top-[5079.33px] w-[430px]" style={{background:'radial-gradient(ellipse 90% 60% at 50% 0%, #5A7FE8 0%, #4169E1 45%, #2E4FB8 100%)'}}>
+              <div className="absolute" style={{left:'50%',top:'34px',transform:'translateX(-50%)',width:'26px',height:'1px',background:'rgba(192,192,192,0.6)'}} />
+              <div className="absolute content-stretch flex flex-col h-[36.406px] items-start left-[30px] pr-[5px] pt-[5px] top-[42px] w-[370px]">
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                    <p className="[word-break:break-word] font-['Aboreto'] font-normal leading-[26.4px] not-italic relative shrink-0 text-[33px] text-center text-white whitespace-nowrap">
+                      Our Gallery
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute content-stretch flex flex-col h-[9px] items-start left-[30px] top-[76.41px] w-[370px]">
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                    <p className="[word-break:break-word] font-['Vidaloka'] font-normal leading-[24px] not-italic relative shrink-0 text-[12px] text-center text-white whitespace-nowrap">
+                      Constantly, consistently, continually, You.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {[
+                {src: imgImage2, left: 20, top: 120, w: 187, h: 280, delay: 0},
+                {src: imgImage4, left: 20, top: 416, w: 187, h: 220, delay: 90},
+                {src: imgImage6, left: 20, top: 652, w: 187, h: 280, delay: 180},
+                {src: imgImage3, left: 223, top: 180, w: 187, h: 220, delay: 45},
+                {src: imgImage5, left: 223, top: 416, w: 187, h: 280, delay: 135},
+                {src: imgImage7, left: 223, top: 712, w: 187, h: 220, delay: 225},
+              ].map((ph, i) => (
+                <div
+                  key={i}
+                  data-anim="fade-up"
+                  data-delay={ph.delay}
+                  onClick={() => setLbImg(ph.src)}
+                  className="absolute overflow-hidden rounded-[14px] cursor-pointer group"
+                  style={{left: ph.left+'px', top: ph.top+'px', width: ph.w+'px', height: ph.h+'px', border:'2.5px solid #C0C0C0', boxShadow:'0 8px 24px rgba(0,20,64,0.45)'}}
+                >
+                  <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={ph.src} style={{transition:'transform 0.4s ease'}} />
+                  <div className="absolute inset-0 flex items-center justify-center" style={{background:'linear-gradient(180deg, rgba(0,20,64,0) 55%, rgba(0,20,64,0.55) 100%)'}}>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {lbImg && (
+              <div
+                onClick={() => setLbImg(null)}
+                style={{position:'fixed', inset:0, zIndex:99999, background:'rgba(0,10,38,0.94)', display:'flex', alignItems:'center', justifyContent:'center', padding:'28px', cursor:'zoom-out'}}
+              >
+                <img alt="" src={lbImg} style={{maxWidth:'100%', maxHeight:'78vh', objectFit:'contain', borderRadius:'12px', border:'3px solid #C0C0C0', boxShadow:'0 12px 60px rgba(0,0,0,0.6)'}} />
+                <button
+                  onClick={(e) => { e.stopPropagation(); setLbImg(null); }}
+                  style={{position:'absolute', top:'26px', right:'26px', width:'38px', height:'38px', borderRadius:'50%', background:'rgba(248,245,240,0.12)', border:'1.5px solid #C0C0C0', color:'#F8F5F0', fontSize:'16px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center'}}
+                >
+                  <i className="fa-solid fa-xmark" />
+                </button>
+              </div>
+            )}
+            <div className="absolute h-[1493.406px] left-0 overflow-clip top-[6069.73px] w-[430px]" style={{background:"radial-gradient(ellipse 80% 50% at 50% 0%, #FFFFFF 0%, #F8F5F0 55%, #EFE6D3 100%)"}}>
+              <div className="absolute inset-0" style={{background:'radial-gradient(ellipse 90% 34% at 50% 0%, #FFFFFF 0%, #F8F5F0 58%, #EFE6D3 100%)', zIndex:2}}>
+                <div className="absolute pointer-events-none" style={{left:'-105px', top:'210px', width:'250px', height:'250px', borderRadius:'50%', border:'1px solid rgba(192,192,192,0.28)'}} />
+                <div className="absolute pointer-events-none" style={{right:'-135px', bottom:'95px', width:'300px', height:'300px', borderRadius:'50%', border:'1px solid rgba(0,35,102,0.08)'}} />
+                <div className="absolute" style={{left:'20px', top:'42px', width:'390px', textAlign:'center'}}>
+                  <p className="font-['Poppins']" style={{margin:'0 0 10px', fontSize:'10px', fontWeight:600, letterSpacing:'3.4px', color:'#4169E1'}}>CHAPTERS OF US</p>
+                  <p className="font-['Vidaloka']" style={{margin:0, fontSize:'40px', lineHeight:1, color:'#002366', letterSpacing:'1px'}}>Love Story</p>
+                  <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'9px', marginTop:'17px'}}><span style={{width:'48px', height:'1px', background:'linear-gradient(90deg, transparent, #C0C0C0)'}} /><i className="fa-solid fa-heart" style={{fontSize:'10px', color:'#4169E1'}} /><span style={{width:'48px', height:'1px', background:'linear-gradient(90deg, #C0C0C0, transparent)'}} /></div>
+                  <p className="font-['Caudex']" style={{margin:'15px 0 0', fontSize:'12px', fontStyle:'italic', color:'rgba(0,35,102,0.72)'}}>Every love story is beautiful, but ours is my favorite.</p>
+                </div>
+                <div className="absolute" style={{left:'39px', top:'190px', bottom:'142px', width:'1px', background:'linear-gradient(180deg, transparent, #C0C0C0 6%, #4169E1 52%, #C0C0C0 94%, transparent)'}} />
+                {storyItems.map((story, index) => (
+                  <div key={story.title} className="absolute" style={{left:'20px', top:(188 + index * 282)+'px', width:'390px', display:'flex', alignItems:'flex-start'}}>
+                    <div style={{width:'40px', minWidth:'40px', height:'40px', marginTop:'22px', borderRadius:'50%', background:'#F8F5F0', border:'1px solid #C0C0C0', boxShadow:'0 4px 14px rgba(0,35,102,0.14)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1}}><i className={'fa-solid '+story.icon} style={{fontSize:'13px', color:'#4169E1'}} /></div>
+                    <div style={{position:'relative', width:'330px', minHeight:'237px', marginLeft:'20px', padding:'25px 24px 22px', background:'rgba(255,255,255,0.9)', border:'1px solid rgba(192,192,192,0.9)', borderRadius:'4px 18px 18px 18px', boxShadow:'0 12px 28px rgba(0,35,102,0.11)'}}>
+                      <div style={{position:'absolute', left:'-7px', top:'28px', width:'13px', height:'13px', background:'#FFFFFF', borderLeft:'1px solid rgba(192,192,192,0.9)', borderBottom:'1px solid rgba(192,192,192,0.9)', transform:'rotate(45deg)'}} />
+                      <p className="font-['Poppins']" style={{display:'inline-block', margin:'0 0 13px', padding:'5px 10px', borderRadius:'20px', background:'#002366', fontSize:'9px', lineHeight:1, fontWeight:600, letterSpacing:'1px', color:'#C0C0C0'}}>{story.date}</p>
+                      <p className="font-['Pinyon_Script']" style={{margin:'0 0 8px', fontSize:'33px', lineHeight:1, color:'#002366'}}>{story.title}</p><div style={{width:'28px', height:'1px', background:'#C0C0C0', marginBottom:'11px'}} />
+                      <p className="font-['Caudex']" style={{margin:0, fontSize:'12.5px', lineHeight:'19px', color:'rgba(0,35,102,0.82)'}}>{story.text}</p>
+                    </div>
+                  </div>
+                ))}
+                <div className="absolute" style={{left:'20px', bottom:'45px', width:'390px', textAlign:'center'}}><i className="fa-solid fa-infinity" style={{fontSize:'17px', color:'#4169E1'}} /><p className="font-['Poppins']" style={{margin:'9px 0 0', fontSize:'9px', letterSpacing:'2.3px', color:'rgba(0,35,102,0.7)'}}>AND OUR FOREVER BEGINS</p></div>
+              </div>
+              <div className="absolute content-stretch flex flex-col h-[46.203px] items-start left-[15px] top-[25px] w-[400px]">
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                    <p className="[word-break:break-word] capitalize font-['ZCOOL_XiaoWei'] font-normal leading-[46.2px] not-italic relative shrink-0 text-[#002366] text-[42px] text-center whitespace-nowrap">
+                      Love Story
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute content-stretch flex flex-col h-[3.203px] items-start left-[15px] top-[75.2px] w-[400px]">
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                    <p className="[word-break:break-word] font-['Caudex'] font-normal leading-[19.2px] not-italic relative shrink-0 text-[#002366] text-[12px] text-center whitespace-nowrap">
+                      Every love story is beautiful, but ours is my favorite.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute" style={{left:'50%', top:'96px', transform:'translateX(-50%)', width:'34px', height:'1px', background:'#C0C0C0'}} />
+              <div className="absolute content-stretch flex flex-col h-[1004px] items-start left-[34px] overflow-clip rounded-[1px] top-[114.16px] w-[2px]" style={{background:"linear-gradient(180deg, #002366 0%, #C0C0C0 50%, #002366 100%)"}}>
+                <div className="bg-[#002366] h-0 relative shrink-0 w-full" />
+              </div>
+              <div className="absolute content-stretch flex flex-col items-start left-[15px] top-[114.41px] w-[400px]">
+                <div className="relative shrink-0 w-[400px]">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start relative size-full">
+                    <div className="relative shrink-0">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start pr-[20px] relative size-full">
+                        <div className="bg-[#F8F5F0] content-stretch flex items-center justify-center relative rounded-[20px] shrink-0 size-[40px] border-2 border-[#C0C0C0] shadow-[0_3px_10px_rgba(0,35,102,0.18)]">
+                          <div className="relative shrink-0">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                              <div className="relative shrink-0 size-[16px]">
+                                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon1} />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-[#FFFFFF] drop-shadow-[0_6px_20px_rgba(0,35,102,0.18)] flex-[340_0_0] h-[311px] min-w-px relative rounded-[14px]">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                        <div className="absolute flex items-center justify-center left-[-10.61px] size-[21.213px] top-[6.89px]">
+                          <div className="flex-none rotate-45">
+                            <div className="bg-[#FFFFFF] relative size-[15px]" />
+                          </div>
+                        </div>
+                        <div className="absolute bg-[#FFFFFF] content-stretch flex flex-col h-[311px] items-start left-0 overflow-clip p-[40px] rounded-[14px] top-0 w-[340px] border border-[#C0C0C0]">
+                          <div className="h-[31px] relative shrink-0 w-full">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                              <div className="absolute bg-[#002366] h-[25px] left-[-0.03px] overflow-clip rounded-full top-0 w-[60px]">
+                                <p className="[word-break:break-word] absolute font-['Poppins'] font-semibold leading-[15px] left-[5.03px] not-italic text-[#C0C0C0] text-[10px] font-semibold tracking-[0.5px] top-[5px] whitespace-nowrap">
+                                  1 Juli 2022
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="relative shrink-0 w-full">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                              <p className="[word-break:break-word] font-['Pinyon_Script'] font-normal leading-[36px] not-italic relative shrink-0 text-[#002366] text-[30px] whitespace-nowrap">
+                                Pertemuan
+                              </p>
+                            </div>
+                          </div>
+                          <div className="relative shrink-0 w-full">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pt-[8px] relative size-full">
+                              <p className="[word-break:break-word] font-['Caudex'] font-normal leading-[19.5px] not-italic relative shrink-0 text-[13px] text-[#002366] w-[260px] leading-[20px]">
+                                Tidak ada yang kebetulan di dunia ini, semua sudah tersusun rapi oleh yang Maha Kuasa. Kita tidak bisa memilih kepada siapa kita akan jatuh cinta. Kisah ini berawal saat kami bertemu pertama kalinya tanpa sengaja di salah satu tempat nongkrong. Lalu dia ngefollow Instagram saya tanpa ada percakapan apapun.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start pt-[30px] relative size-full">
+                    <div className="relative shrink-0">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start pr-[20px] relative size-full">
+                        <div className="bg-[#F8F5F0] content-stretch flex items-center justify-center relative rounded-[20px] shrink-0 size-[40px] border-2 border-[#C0C0C0] shadow-[0_3px_10px_rgba(0,35,102,0.18)]">
+                          <div className="relative shrink-0">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                              <div className="relative shrink-0 size-[16px]">
+                                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon1} />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-[#FFFFFF] drop-shadow-[0_6px_20px_rgba(0,35,102,0.18)] flex-[340_0_0] h-[292px] min-w-px relative rounded-[14px]">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                        <div className="absolute flex items-center justify-center left-[-10.61px] size-[21.213px] top-[7.14px]">
+                          <div className="flex-none rotate-45">
+                            <div className="bg-[#FFFFFF] relative size-[15px]" />
+                          </div>
+                        </div>
+                        <div className="absolute bg-[#FFFFFF] content-stretch flex flex-col h-[292px] items-start left-0 overflow-clip rounded-[14px] top-0 w-[340px] border border-[#C0C0C0]">
+                          <div className="relative shrink-0 w-full">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start p-[40px] relative size-full">
+                              <div className="h-[31.25px] relative shrink-0 w-full">
+                                <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                                  <div className="absolute bg-[#002366] h-[25px] left-[0.23px] overflow-clip rounded-full top-[0.25px] w-[89px]">
+                                    <p className="[word-break:break-word] absolute font-['Poppins'] font-semibold leading-[15px] left-[4.77px] not-italic text-[#C0C0C0] text-[10px] font-semibold tracking-[0.5px] top-[5px] whitespace-nowrap">
+                                      10 Oktober 2022
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative shrink-0 w-full">
+                                <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                                  <p className="[word-break:break-word] font-['Pinyon_Script'] font-normal leading-[36px] not-italic relative shrink-0 text-[#002366] text-[30px] whitespace-nowrap">
+                                    Pendekatan
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="relative shrink-0 w-full">
+                                <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pt-[8px] relative size-full">
+                                  <p className="[word-break:break-word] font-['Caudex'] font-normal leading-[19.5px] not-italic relative shrink-0 text-[13px] text-[#002366] w-[260px] leading-[20px]">
+                                    Setelah 3 bulan melewati PDKT dari Instagram dan juga sudah bertukaran no WhatsApp, bertepatan dengan ulangtahun saya, dia menyatakan cintanya dan saya menerimanya. Perjalanan kami bukan hanya tentang kebahagiaan, tapi tentang proses saling mendewasakan.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start pt-[30px] relative size-full">
+                    <div className="relative shrink-0">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start pr-[20px] relative size-full">
+                        <div className="bg-[#F8F5F0] content-stretch flex items-center justify-center relative rounded-[20px] shrink-0 size-[40px] border-2 border-[#C0C0C0] shadow-[0_3px_10px_rgba(0,35,102,0.18)]">
+                          <div className="relative shrink-0">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                              <div className="relative shrink-0 size-[16px]">
+                                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon1} />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-[#FFFFFF] drop-shadow-[0_6px_20px_rgba(0,35,102,0.18)] flex-[340_0_0] h-[311px] min-w-px relative rounded-[14px]">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                        <div className="absolute flex items-center justify-center left-[-10.61px] size-[21.213px] top-[6.89px]">
+                          <div className="flex-none rotate-45">
+                            <div className="bg-[#FFFFFF] relative size-[15px]" />
+                          </div>
+                        </div>
+                        <div className="absolute bg-[#FFFFFF] content-stretch flex flex-col h-[311px] items-start left-0 overflow-clip p-[40px] rounded-[14px] top-0 w-[340px] border border-[#C0C0C0]">
+                          <div className="h-[31px] relative shrink-0 w-full">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                              <div className="absolute bg-[#002366] h-[25px] left-[-0.21px] overflow-clip rounded-full top-0 w-[76px]">
+                                <p className="[word-break:break-word] absolute font-['Poppins'] font-semibold leading-[15px] left-[5.21px] not-italic text-[#C0C0C0] text-[10px] font-semibold tracking-[0.5px] top-[5px] whitespace-nowrap">
+                                  08 April 2025
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="relative shrink-0 w-full">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                              <p className="[word-break:break-word] font-['Pinyon_Script'] font-normal leading-[36px] not-italic relative shrink-0 text-[#002366] text-[30px] whitespace-nowrap">
+                                Lamaran
+                              </p>
+                            </div>
+                          </div>
+                          <div className="relative shrink-0 w-full">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pt-[8px] relative size-full">
+                              <p className="[word-break:break-word] font-['Caudex'] font-normal leading-[19.5px] not-italic relative shrink-0 text-[13px] text-[#002366] w-[260px] leading-[20px]">
+                                Akhirnya di titik ini, kami memilih untuk berhenti mencari. Momen lamaran menjadi bukti nyata dari kesungguhan hati, sebuah pernyatan bahwa kami siap melangkah lebih jauh. Kehendak-Nya menuntun kami pada sebuah pertemuan yang tak pernah disangka, hingga akhirnya membawa kami pada sebuah ikatan suci yang dicintai-Nya.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative shrink-0 w-full">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start pt-[30px] relative size-full">
+                    <div className="relative shrink-0">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-start pr-[20px] relative size-full">
+                        <div className="bg-[#F8F5F0] content-stretch flex items-center justify-center relative rounded-[20px] shrink-0 size-[40px] border-2 border-[#C0C0C0] shadow-[0_3px_10px_rgba(0,35,102,0.18)]">
+                          <div className="relative shrink-0">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                              <div className="relative shrink-0 size-[16px]">
+                                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon1} />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-[#FFFFFF] drop-shadow-[0_6px_20px_rgba(0,35,102,0.18)] flex-[340_0_0] h-[331px] min-w-px relative rounded-[14px]">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                        <div className="absolute flex items-center justify-center left-[-10.61px] size-[21.213px] top-[7.14px]">
+                          <div className="flex-none rotate-45">
+                            <div className="bg-[#FFFFFF] relative size-[15px]" />
+                          </div>
+                        </div>
+                        <div className="absolute bg-[#FFFFFF] content-stretch flex flex-col h-[331px] items-start left-0 overflow-clip rounded-[14px] top-0 w-[340px] border border-[#C0C0C0]">
+                          <div className="relative shrink-0 w-full">
+                            <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start p-[40px] relative size-full">
+                              <div className="h-[31.25px] relative shrink-0 w-full">
+                                <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                                  <div className="absolute bg-[#002366] h-[25px] left-0 overflow-clip rounded-full top-[0.25px] w-[72px]">
+                                    <p className="[word-break:break-word] absolute font-['Poppins'] font-semibold leading-[15px] left-[5px] not-italic text-[#C0C0C0] text-[10px] font-semibold tracking-[0.5px] top-[5px] whitespace-nowrap">
+                                      12 April 2026
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative shrink-0 w-full">
+                                <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                                  <p className="[word-break:break-word] font-['Pinyon_Script'] font-normal leading-[36px] not-italic relative shrink-0 text-[#002366] text-[30px] whitespace-nowrap">
+                                    Pernikahan
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="relative shrink-0 w-full">
+                                <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pt-[8px] relative size-full">
+                                  <p className="[word-break:break-word] font-['Caudex'] font-normal leading-[19.5px] not-italic relative shrink-0 text-[13px] text-[#002366] w-[260px] leading-[20px]">
+                                    Hari ini, dua doa menyatu menjadi satu tujuan. Di hadapan Sang Pencipta, kami mengukir janji suci untuk memulai hidup baru. Pernikahan ini bukanlah akhir, melainkan gerbang menuju pertualangan abadi yang kami tempuh bersama. Percayalah, bukan karena bertemu lalu berjodoh, tapi karena berjodohlah kami dipertemukan.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute h-[783.016px] left-0 overflow-clip top-[7563.14px] w-[430px]">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img alt="" className="absolute h-[97.55%] left-0 max-w-none top-0 w-full" src={imgContainer1} />
+              </div>
+              <div className="absolute bg-[#F8F5F0] border-2 border-[#002366] border-solid h-[723.016px] left-[30px] rounded-[20px] top-[40px] w-[370px]">
+                <div className="absolute content-stretch flex flex-col h-[45.203px] items-start left-[20px] pr-[5px] pt-[5px] top-[80px] w-[326px]">
+                  <div className="relative shrink-0 w-full">
+                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                      <p className="[word-break:break-word] font-['Pinyon_Script'] font-normal leading-[35.2px] not-italic relative shrink-0 text-[#002366] text-[44px] text-center whitespace-nowrap">
+                        Wedding Gift
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Caudex'] font-bold leading-[19.2px] left-[183px] not-italic text-[#002366] text-[12px] text-center top-[140.2px] w-[326px]">
+                  Bagi bapak/ibu/saudara/i yang ingin mengirimkan hadiah pernikahan dapat melalui nomer rekening di bawah ini
+                </p>
+                <div className="absolute left-[20px] top-[210px] w-[326px]" style={{display:'flex', flexDirection:'column', gap:'18px'}}>
+                  {(giftList.length > 0 ? giftList : [
+                    { label: 'BNI', no: '1845996783', name: D.pria || 'Romeo', type: 'bank' },
+                    { label: 'BRK Syariah', no: '1134304502', name: D.wanita || 'Juliet', type: 'bank' },
+                  ]).map((g, i) => (
+                    <div key={i} className="w-full" style={{background:'#FFFFFF', border:'1.5px solid #C0C0C0', borderRadius:'14px', padding:'18px 20px', boxShadow:'0 6px 18px rgba(0,35,102,0.10)'}}>
+                      <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                        <i className={g.type === 'ewallet' ? 'fa-solid fa-wallet' : 'fa-solid fa-building-columns'} style={{color:'#4169E1', fontSize:'13px'}} />
+                        <p style={{fontFamily:"'Poppins',sans-serif", fontSize:'10px', fontWeight:600, letterSpacing:'2px', color:'#4169E1', textTransform:'uppercase', margin:0}}>{g.label}</p>
+                      </div>
+                      <p style={{fontFamily:"'Sora',sans-serif", fontWeight:700, fontSize:'20px', letterSpacing:'1.5px', color:'#002366', margin:'10px 0 3px'}}>{g.no}</p>
+                      <p style={{fontFamily:"'Nunito',sans-serif", fontWeight:600, fontSize:'13px', color:'#002366', opacity:0.7, margin:'0 0 14px'}}>a.n. {g.name}</p>
+                      <button
+                        onClick={() => copyRek(g.no, i)}
+                        style={{width:'100%', height:'38px', borderRadius:'8px', border:'none', background: copiedIdx === i ? '#4169E1' : '#002366', color:'#F8F5F0', fontFamily:"'Poppins',sans-serif", fontSize:'12px', fontWeight:500, letterSpacing:'0.5px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', transition:'background 0.2s'}}
+                      >
+                        <i className={copiedIdx === i ? 'fa-solid fa-check' : 'fa-regular fa-copy'} />
+                        {copiedIdx === i ? 'Tersalin' : 'Salin Nomor Rekening'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="absolute h-[790px] left-0 overflow-clip top-[8326.16px] w-[430px]" style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 430 2376.5' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(0 -168.04 -30.406 0 215 1188.2)'><stop stop-color='rgba(30,58,138,1)' offset='0'/><stop stop-color='rgba(24,50,110,1)' offset='0.25'/><stop stop-color='rgba(18,42,90,1)' offset='0.5'/><stop stop-color='rgba(14,36,74,1)' offset='0.75'/><stop stop-color='rgba(12,33,66,1)' offset='0.875'/><stop stop-color='rgba(11,31,58,1)' offset='1'/></radialGradient></defs></svg>\")" }}>
+              <div className="absolute" data-anim="fade-up" style={{left:'20px', top:'34px', width:'390px', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                <i className="fa-solid fa-heart" style={{color:'#C0C0C0', fontSize:'13px', marginBottom:'6px', opacity:0.85}} />
+                <p className="[word-break:break-word] font-['Vidaloka'] font-normal leading-[25.9px] not-italic text-[#C0C0C0] text-[37px] text-center uppercase" style={{margin:0}}>
+                  Best Wishes
+                </p>
+                <div style={{width:'44px', height:'1px', background:'rgba(192,192,192,0.6)', marginTop:'8px'}} />
+              </div>
+
+              <div data-anim="fade-up" data-delay="100" className="absolute" style={{left:'20px', top:'115px', width:'390px', background:'#F8F5F0', border:'1.5px solid #C0C0C0', borderRadius:'16px', boxShadow:'0 10px 30px rgba(0,20,64,0.18)', padding:'20px'}}>
+                <p style={{fontFamily:"'Poppins',sans-serif", fontWeight:600, fontSize:'12px', letterSpacing:'1.5px', color:'#4169E1', textTransform:'uppercase', textAlign:'center', margin:'0 0 14px'}}>Ucapan &amp; Doa</p>
+                <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
+                  <div style={{position:'relative'}}>
+                    <i className="fa-regular fa-user" style={{position:'absolute', left:'14px', top:'50%', transform:'translateY(-50%)', color:'#4169E1', fontSize:'13px'}} />
+                    <input
+                      type="text"
+                      value={wName}
+                      onChange={(e) => setWName(e.target.value)}
+                      placeholder="Nama Anda"
+                      className="border border-[#C0C0C0] rounded-[8px] font-['Inter'] text-[14px] text-[#002366] w-full outline-none bg-white"
+                      style={{boxSizing:'border-box', padding:'10px 14px 10px 38px'}}
+                    />
+                  </div>
+                  <div className="relative w-full">
+                    <i className="fa-regular fa-circle-check" style={{position:'absolute', left:'14px', top:'50%', transform:'translateY(-50%)', color:'#4169E1', fontSize:'13px', zIndex:1}} />
+                    <select
+                      value={wRsvp}
+                      onChange={(e) => setWRsvp(e.target.value)}
+                      className="border border-[#C0C0C0] rounded-[8px] font-['Inter'] text-[14px] text-[#002366] w-full outline-none bg-white appearance-none"
+                      style={{boxSizing:'border-box', padding:'10px 36px 10px 38px'}}
+                    >
+                      <option value="" disabled>Konfirmasi Kehadiran</option>
+                      <option value="Hadir">Hadir</option>
+                      <option value="Tidak Hadir">Tidak Hadir</option>
+                      <option value="Masih Ragu">Masih Ragu</option>
+                    </select>
+                    <div className="pointer-events-none absolute right-[14px] top-1/2 -translate-y-1/2 text-[#4169E1]">
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="#4169E1" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                    </div>
+                  </div>
+                  <div style={{position:'relative'}}>
+                    <i className="fa-regular fa-pen-to-square" style={{position:'absolute', left:'14px', top:'14px', color:'#4169E1', fontSize:'13px'}} />
+                    <textarea
+                      value={wMsg}
+                      onChange={(e) => setWMsg(e.target.value)}
+                      placeholder="Tulis ucapan dan doa terbaik Anda..."
+                      rows={3}
+                      className="border border-[#C0C0C0] rounded-[8px] font-['Inter'] text-[14px] text-[#002366] w-full outline-none resize-none bg-white"
+                      style={{boxSizing:'border-box', padding:'10px 14px 10px 38px'}}
+                    />
+                  </div>
+                  <button
+                    onClick={submitWish}
+                    className="font-['Aboreto'] text-[13px] tracking-[1.5px] uppercase"
+                    style={{background:'#002366', color:'#C0C0C0', border:'none', borderRadius:'8px', width:'100%', padding:'12px 0', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px'}}
+                  >
+                    <i className="fa-regular fa-paper-plane" />
+                    Kirim Ucapan
+                  </button>
+                </div>
+              </div>
+
+              <div data-anim="fade-up" data-delay="180" className="absolute" style={{left:'20px', top:'460px', width:'390px', maxHeight:'320px', overflowY:'auto'}}>
+                {wishes.length === 0 ? (
+                  <p style={{fontFamily:"'Nunito',sans-serif", fontSize:'12px', color:'#C0C0C0', textAlign:'center', opacity:0.75}}>Jadilah yang pertama mengirimkan ucapan &amp; doa 💌</p>
+                ) : wishes.map((w, i) => (
+                  <div key={i} style={{background:'rgba(248,245,240,0.08)', border:'1px solid rgba(192,192,192,0.35)', borderRadius:'12px', padding:'14px 16px', marginBottom:'10px'}}>
+                    <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'4px'}}>
+                      <p style={{fontFamily:"'Poppins',sans-serif", fontWeight:600, fontSize:'13px', color:'#F8F5F0', margin:0}}>{w.nama}</p>
+                      {w.rsvp && (
+                        <span style={{fontFamily:"'Poppins',sans-serif", fontSize:'9px', color:'#002366', background:'#C0C0C0', borderRadius:'20px', padding:'2px 9px', letterSpacing:'0.5px'}}>{w.rsvp}</span>
+                      )}
+                    </div>
+                    <p style={{fontFamily:"'Nunito',sans-serif", fontSize:'12.5px', color:'rgba(248,245,240,0.85)', lineHeight:'18px', margin:0}}>{w.pesan}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="absolute h-[460px] left-0 overflow-clip top-[9116.16px] w-[430px]">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img alt="" className="absolute h-full left-0 max-w-none object-cover top-0 w-full" src={getUserCover3() || imgContainer4} />
+                <div className="absolute inset-0" style={{background:'linear-gradient(180deg, rgba(0,20,64,0.12) 0%, rgba(0,20,64,0.22) 48%, rgba(0,20,64,0.88) 100%)'}} />
+              </div>
+              <div className="absolute pointer-events-none" style={{left:'20px', top:'20px', right:'20px', bottom:'20px', border:'1.5px solid rgba(192,192,192,0.75)', borderRadius:'4px'}} />
+              <div data-anim="fade-up" className="absolute" style={{left:'20px', bottom:'36px', width:'390px', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                <div style={{width:'30px', height:'1px', background:'#C0C0C0', marginBottom:'10px', opacity:0.85}} />
+                <p className="font-['Pinyon_Script'] font-normal not-italic" style={{fontSize:'40px', color:'#F8F5F0', margin:0, textShadow:'0 2px 14px rgba(0,0,0,0.55)'}}>{coupleName}</p>
+                <p className="font-['Nunito'] font-semibold" style={{fontSize:'11px', letterSpacing:'2.5px', color:'#C0C0C0', textTransform:'uppercase', marginTop:'8px'}}>A Moment To Remember</p>
+              </div>
+            </div>
+            <div className="absolute h-[731.266px] left-0 overflow-clip top-[9575.16px] w-[430px]">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img alt="" className="absolute h-[107.69%] left-0 max-w-none top-[-7.69%] w-full" src={imgContainer4} />
+                <div className="absolute inset-0" style={{background:'linear-gradient(180deg, rgba(0,20,64,0.18) 0%, rgba(0,20,64,0.42) 38%, rgba(0,20,64,0.8) 100%)'}} />
+              </div>
+              <div className="absolute pointer-events-none" style={{left:'34px', right:'34px', top:'242px', height:'1px', background:'linear-gradient(90deg, rgba(192,192,192,0), rgba(255,255,255,0.55), rgba(192,192,192,0))'}} />
+              <div className="absolute content-stretch flex flex-col h-[199.375px] items-start left-[20px] top-[30px] w-[390px]">
+                <div className="absolute h-[209.375px] left-0 top-[-10px] w-[390px]">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+                    <div className="absolute h-[219.375px] left-0 top-0 w-[390px]">
+                      <div className="absolute h-[219.375px] left-0 overflow-clip top-0 w-[390px]">
+                        <div className="absolute contents inset-0 opacity-65 mix-blend-screen">
+                          <div className="absolute contents inset-[-0.14%_-6.88%_60.9%_4.48%]">
+                            <div className="absolute contents inset-[15.14%_93.09%_81.8%_4.48%]" style={{ containerType: "size" }}>
+                              <div className="absolute flex inset-[15.14%_93.09%_81.8%_4.48%] items-center justify-center" style={{ containerType: "size" }}>
+                                <div className="flex-none h-[hypot(13.3226cqw,64.1823cqh)] rotate-[-16.32deg] w-[hypot(86.6774cqw,-35.8177cqh)]">
+                                  <div className="mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-17.475px_-33.207px] mask-size-[390px_219.375px] relative size-full" style={{ maskImage: `url("${imgGroup}")` }}>
+                                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroup1} />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="absolute contents inset-[32.12%_21.96%_66.33%_77.08%]" style={{ containerType: "size" }}>
+                              <div className="absolute flex inset-[32.12%_21.96%_66.33%_77.08%] items-center justify-center" style={{ containerType: "size" }}>
+                                <div className="-scale-x-100 flex-none h-[100cqh] w-[100cqw]">
+                                  <div className="mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-300.602px_-70.453px] mask-size-[390px_219.375px] relative size-full" style={{ maskImage: `url("${imgGroup}")` }}>
+                                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroup2} />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="absolute contents inset-[36.43%_-6.88%_60.9%_105.23%]" style={{ containerType: "size" }}>
+                              <div className="absolute flex inset-[36.43%_-6.88%_60.9%_105.23%] items-center justify-center" style={{ containerType: "size" }}>
+                                <div className="-scale-x-100 flex-none h-[hypot(26.2045cqw,37.9096cqh)] rotate-[-37.33deg] w-[hypot(-73.7955cqw,62.0904cqh)]">
+                                  <div className="mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-410.383px_-79.912px] mask-size-[390px_219.375px] relative size-full" style={{ maskImage: `url("${imgGroup}")` }}>
+                                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroup3} />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="absolute contents inset-[30.1%_29.67%_66.58%_67.66%]" style={{ containerType: "size" }}>
+                              <div className="absolute flex inset-[30.1%_29.67%_66.58%_67.66%] items-center justify-center" style={{ containerType: "size" }}>
+                                <div className="-scale-x-100 flex-none h-[hypot(-13.0534cqw,63.64cqh)] rotate-[16.32deg] w-[hypot(-86.9466cqw,-36.36cqh)]">
+                                  <div className="mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-263.873px_-66.024px] mask-size-[390px_219.375px] relative size-full" style={{ maskImage: `url("${imgGroup}")` }}>
+                                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroup4} />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="absolute contents inset-[-0.14%_-2.44%_98.6%_100.82%]" style={{ containerType: "size" }}>
+                              <div className="absolute flex inset-[-0.14%_-2.44%_98.6%_100.82%] items-center justify-center" style={{ containerType: "size" }}>
+                                <div className="-scale-x-100 flex-none h-[100cqh] w-[100cqw]">
+                                  <div className="mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-393.191px_0.299px] mask-size-[390px_219.375px] relative size-full" style={{ maskImage: `url("${imgGroup}")` }}>
+                                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroup5} />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute content-stretch flex flex-col h-[36.391px] items-start left-[20px] top-[259.38px] w-[390px]">
+                <div className="absolute h-[55.391px] left-0 top-0">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                    <p className="[word-break:break-word] font-['ZCOOL_XiaoWei'] font-normal leading-[21px] not-italic relative shrink-0 text-[#FBF7F2] text-[14px] text-center w-[390px]" style={{textShadow:'0 2px 12px rgba(0,0,0,0.82)'}}>{`Merupakan suatu kebahagiaan dan kehormatan bagi kami, apabila Bapak/Ibu/Saudara/i, berkenan hadir dan memberikan do'a restu kepada kami.`}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute content-stretch flex flex-col h-[4px] items-start left-[20px] top-[334.77px] w-[390px]">
+                <div className="absolute h-[14px] left-0 top-0 w-[390px]">
+                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                    <div className="relative shrink-0 w-full">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center relative size-full">
+                        <p className="[word-break:break-word] font-['ZCOOL_XiaoWei'] font-normal leading-[24px] not-italic relative shrink-0 text-[#FBF7F2] text-[15px] text-center whitespace-nowrap" style={{textShadow:'0 2px 12px rgba(0,0,0,0.82)'}}>
+                          KAMI YANG BERBAHAGIA
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute content-stretch flex flex-col h-[80.5px] items-center left-[20px] p-[10px] top-[368.77px] w-[390px]">
+                <p className="[word-break:break-word] font-['Pinyon_Script'] font-normal leading-[40.5px] not-italic relative shrink-0 text-[#FBF7F2] text-[46px] text-center whitespace-nowrap" style={{textShadow:'0 3px 14px rgba(0,0,0,0.82)'}}>{coupleName}</p>
+              </div>
+              <div className="absolute h-[200px] left-[20px] top-[449.27px] w-[289.766px]" />
+            </div>
+            <div className="absolute bg-[#002366] h-[400px] left-0 overflow-clip top-[10305.42px] w-[430px]">
+              <div className="absolute inset-0 pointer-events-none" style={{background:'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(65,105,225,0.35) 0%, rgba(0,35,102,0) 60%)'}} />
+              <div data-anim="fade-up" className="absolute" style={{left:'5%', top:'44px', transform:'translateX(-50%)', width:'390px', display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center'}}>
+                <div style={{display:'flex', alignItems:'center', gap:'10px', marginBottom:'18px'}}>
+                  <div style={{width:'26px', height:'1px', background:'rgba(192,192,192,0.6)'}} />
+                  <div style={{width:'6px', height:'6px', transform:'rotate(45deg)', border:'1px solid #C0C0C0'}} />
+                  <div style={{width:'26px', height:'1px', background:'rgba(192,192,192,0.6)'}} />
+                </div>
+                <div style={{width:'72px', height:'72px', borderRadius:'50%', border:'1.5px solid #C0C0C0', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:'16px'}}>
+                  <p className="font-['Pinyon_Script']" style={{fontSize:'34px', color:'#C0C0C0', margin:0}}>{monogram[0] + '&' + monogram[1]}</p>
+                </div>
+                <p className="font-['Vidaloka']" style={{fontSize:'20px', color:'#F8F5F0', letterSpacing:'2px', textTransform:'uppercase', margin:'0 0 8px', textIndent:'2px'}}>Thank You</p>
+                <p className="font-['Nunito']" style={{fontSize:'12px', color:'rgba(248,245,240,0.75)', textAlign:'center', width:'300px', lineHeight:'19px', margin:0}}>
+                  Terima kasih atas doa, restu, dan kehadiran Bapak/Ibu/Saudara/i, kebahagiaan kami tak akan lengkap tanpa dukungan yang tulus dari Anda.
+                </p>
+              </div>
+              <div className="absolute" style={{left:'50%', top:'260px', transform:'translateX(-50%)', width:'50px', height:'1px', background:'rgba(192,192,192,0.6)'}} />
+              <div className="absolute" style={{left:'50%', top:'295px', transform:'translateX(-50%)', width:'390px', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                <p className="font-['Poppins']" style={{fontSize:'12px', color:'#FFFFFF', margin:'0 0 16px', textAlign:'center'}}>
+                  Made with ❤️ by Kutemo
+                </p>
+                <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'14px'}}>
+                  <div className="flex items-center justify-center rounded-full size-[30px]" style={{border:'1px solid rgba(192,192,192,0.5)'}}>
+                    <div className="relative shrink-0 size-[15px]">
+                      <p className="[word-break:break-word] font-['Font_Awesome_6_Brands'] font-normal leading-[15px] not-italic relative shrink-0 text-[15px] text-center text-white whitespace-nowrap">{`\uF16D`}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center rounded-full size-[30px]" style={{border:'1px solid rgba(192,192,192,0.5)'}}>
+                    <div className="relative shrink-0 size-[15px]">
+                      <img alt="" className="block max-w-none size-full" src={imgIcon5} />
+                    </div>
+                  </div>
+                  <a
+                    href="https://kutemo.id"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center rounded-full size-[30px]"
+                    style={{border:'1px solid rgba(192,192,192,0.5)', background:'rgba(192,192,192,0.08)', textDecoration:'none', cursor:'pointer'}}
+                    title="Kunjungi Kutemo"
+                  >
+                    <p className="font-['Aboreto']" style={{fontSize:'12px', color:'#C0C0C0', margin:0, lineHeight:1}}>K</p>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute hidden h-[36px] left-[380px] top-[846px] w-[30px]">
+        <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
+          <div className="absolute flex items-center justify-center left-[-5.58px] size-[41.165px] top-[-5.58px]">
+            <div className="flex-none rotate-[-59.01deg]">
+              <div className="bg-[#002366] relative rounded-[15px] size-[30px]" style={{animation:'floatAndRotate 6s ease-in-out infinite'}}>
+                <div className="absolute left-[7.5px] size-[15px] top-[7.5px]">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon6} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ─────────────────────────────────────────────
+   COVER COMPONENT
+   ───────────────────────────────────────────── */
+function Cover({ onOpen }) {
+  const [visible, setVisible] = React.useState(false);
+  React.useEffect(() => { const t = setTimeout(() => setVisible(true), 120); return () => clearTimeout(t); }, []);
+
+  const delay = (s) => ({ animationDelay: s });
+
+  return (
+    <div id="cover-overlay">
+      <div id="cover-card">
+
+        {/* ── Hero: background images ── */}
+        <div style={{position:'absolute',top:0,left:0,width:'100%',height:'100%'}}>
+          <img alt="" src={"./assets/cover1.png"} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover'}} />
+          <img alt="" src={"./assets/cover2.png"} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:0.75}} />
+        </div>
+
+        {/* ── Gradient vignette top & bottom ── */}
+        <div style={{position:'absolute',top:0,left:0,width:'100%',height:'220px',background:'linear-gradient(to bottom,rgba(11,31,58,0.75),transparent)',zIndex:1}} />
+        <div style={{position:'absolute',bottom:0,left:0,width:'100%',height:'260px',background:'linear-gradient(to top,rgba(11,31,58,0.92),transparent)',zIndex:1}} />
+
+        {/* ── Content wrapper: flex column so hero & guest-card never overlap/kepotong di layar pendek ── */}
+        <div style={{position:'relative',zIndex:2,height:'100%',width:'100%',display:'flex',flexDirection:'column'}}>
+
+          {/* ── Hero texts (mengisi sisa ruang di atas guest-card) ── */}
+          <div className="cover-hero" style={{flex:'1 1 auto',minHeight:0,position:'relative',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'24px 16px',textAlign:'center'}}>
+            {visible && <>
+              <p className="cv-text" style={{fontFamily:"'Cinzel',serif",fontSize:'11px',letterSpacing:'3px',color:'#F8F5F0',textTransform:'uppercase',...delay('0.1s')}}>The Wedding Of</p>
+              <p className="cv-text cover-title" style={{fontFamily:"'Vidaloka',serif",fontSize:'52px',lineHeight:'1',color:'#C0C0C0',letterSpacing:'2px',textTransform:'uppercase',marginTop:'10px',...delay('0.28s')}}>{(D.pria || 'Romeo') + ' &'}</p>
+              <p className="cv-text cover-title" style={{fontFamily:"'Vidaloka',serif",fontSize:'52px',lineHeight:'1.1',color:'#C0C0C0',letterSpacing:'2px',textTransform:'uppercase',...delay('0.44s')}}>{D.wanita || 'Juliet'}</p>
+              <div className="cv-text" style={{width:'60px',height:'1px',background:'rgba(212,175,55,0.5)',margin:'14px 0',...delay('0.58s')}} />
+              <p className="cv-text" style={{fontFamily:"'Cinzel',serif",fontSize:'11px',letterSpacing:'3px',color:'rgba(248,245,240,0.8)',textTransform:'uppercase',...delay('0.7s')}}>{fmtDateID(D.tanggal_resepsi || D.tanggal_akad) || 'Senin, 13 April 2026'}</p>
+            </>}
+
+            {/* ── Scroll indicator (nempel di bawah area hero, otomatis ikut menyusut) ── */}
+            <div className="cover-scroll" style={{
+              position:'absolute',bottom:'6px',left:'50%',transform:'translateX(-50%)',
+              display:'flex',flexDirection:'column',alignItems:'center',
+              opacity:visible?1:0,transition:'opacity 0.5s ease 0.9s',
+            }}>
+              <div style={{width:'24px',height:'42px',border:'1.5px solid rgba(248,245,240,0.6)',borderRadius:'12px',position:'relative',animation:'mousePulse 2.2s ease-in-out infinite'}}>
+                <div style={{position:'absolute',left:'50%',top:'6px',width:'3px',height:'7px',borderRadius:'2px',background:'rgba(248,245,240,0.85)',animation:'mouseWheel 2s ease-in-out infinite',transformOrigin:'top center'}} />
+              </div>
+              <svg style={{marginTop:'8px',animation:'chv1 2s ease-in-out 0s infinite',opacity:0}} width="14" height="8" viewBox="0 0 14 8" fill="none">
+                <path d="M1 1l6 6 6-6" stroke="rgba(248,245,240,0.8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <svg style={{marginTop:'2px',animation:'chv2 2s ease-in-out 0.18s infinite',opacity:0}} width="14" height="8" viewBox="0 0 14 8" fill="none">
+                <path d="M1 1l6 6 6-6" stroke="rgba(248,245,240,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          {/* ── Guest card (selalu utuh di bawah, tinggi mengikuti konten) ── */}
+          <div className="cover-guest" style={{
+            flexShrink:0,width:'100%',
+            background:'linear-gradient(to top, rgba(11,31,58,0.97) 60%, rgba(11,31,58,0.7) 85%, transparent 100%)',
+            paddingTop:'60px',paddingBottom:'calc(44px + env(safe-area-inset-bottom))',
+            paddingLeft:'16px',paddingRight:'16px',
+            display:'flex',flexDirection:'column',alignItems:'center',
+          }}>
+            {/* divider ornament */}
+            <svg width="160" height="14" viewBox="0 0 160 14" fill="none" style={{marginBottom:'14px',opacity:0.6}}>
+              <line x1="0" y1="7" x2="58" y2="7" stroke="#C0C0C0" strokeWidth="0.8"/>
+              <path d="M74 2 L80 12 L86 2" stroke="#C0C0C0" strokeWidth="0.8" fill="none"/>
+              <circle cx="80" cy="7" r="2" fill="#C0C0C0"/>
+              <line x1="102" y1="7" x2="160" y2="7" stroke="#C0C0C0" strokeWidth="0.8"/>
+            </svg>
+
+            <p style={{fontFamily:"'Philosopher',serif",fontSize:'12px',color:'rgba(248,245,240,0.7)',letterSpacing:'1px',marginBottom:'4px'}}>Kepada Yth :</p>
+            <p style={{fontFamily:"'Philosopher',serif",fontSize:'12px',color:'rgba(248,245,240,0.7)',letterSpacing:'1px',marginBottom:'10px'}}>Bpk / Ibu / Saudara/i</p>
+
+            <p style={{fontFamily:"'Cormorant Infant',serif",fontSize:'22px',fontWeight:'600',color:'#C0C0C0',marginBottom:'4px',letterSpacing:'0.5px'}}>{coverGuest}</p>
+            <p style={{fontFamily:"'Poppins',sans-serif",fontSize:'12px',fontWeight:'300',color:'rgba(255,255,255,0.65)',marginBottom:'20px'}}>Di Tempat</p>
+
+            <button id="cover-btn" onClick={onOpen}>
+              <img alt="" src={imgIcon1} style={{width:'13px',height:'13px'}} />
+              Buka Undangan
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   APP WRAPPER — manages cover open/close state
+   ───────────────────────────────────────────── */
+function App() {
+  const [closing, setClosing] = React.useState(false);
+  const [gone,    setGone]    = React.useState(false);
+
+  /* kunci scroll selama cover tampil */
+  React.useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+  }, []);
+
+  /* pastikan ikon musik tersembunyi selama cover tampil (tidak bergantung pada dukungan CSS :has()) */
+  React.useEffect(() => {
+    const mf = document.getElementById('music-float');
+    if (mf) mf.style.display = gone ? 'flex' : 'none';
+  }, [gone]);
+
+  function openInvitation() {
+    const el = document.getElementById('cover-overlay');
+    const audio = document.getElementById('bg-music');
+    if (audio) {
+      audio.volume = 0.7;
+      audio.currentTime = 0;
+      const playPromise = audio.play();
+      if (playPromise && playPromise.catch) playPromise.catch(() => {});
+    }
+    if (el) el.classList.add('closing');
+    setClosing(true);
+    setTimeout(() => {
+      setGone(true);
+      /* buka kunci scroll setelah cover hilang */
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }, 1050);
+  }
+
+  return (
+    <>
+      <TheWeddingOfRomeojuliet />
+      {!gone && <Cover onOpen={openInvitation} />}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("app-container")).render(React.createElement(App));
+
+</script>
+<script>
+  (function(){
+    var src = document.getElementById('appsrc').textContent;
+    var out = Babel.transform(src, { presets: [['react', { runtime: 'classic' }]] }).code;
+    (0, eval)(out);
+  })();
+</script>
+<script>
+(function(){
+  var DESIGN_W = 430;
+  function applyScale(){
+    var el = document.getElementById('app-container');
+    if(!el) return;
+    var vw = window.innerWidth;
+    if(vw < DESIGN_W){
+      var scale = vw / DESIGN_W;
+      el.style.transform = 'scale(' + scale + ')';
+      el.style.marginBottom = Math.round((scale - 1) * el.offsetHeight) + 'px';
+    } else {
+      el.style.transform = '';
+      el.style.marginBottom = '';
+    }
+  }
+  function waitAndScale(){
+    var el = document.getElementById('app-container');
+    if(el && el.offsetHeight > 100){
+      applyScale();
+    } else {
+      setTimeout(waitAndScale, 50);
+    }
+  }
+  waitAndScale();
+  window.addEventListener('resize', applyScale);
+})();
+</script>
+<script>
+/* ── Music toggle ── */
+function toggleMusic() {
+  var audio = document.getElementById("bg-music");
+  var icon = document.getElementById("music-icon");
+  var btn = document.getElementById("music-float");
+  if (!audio || !icon || !btn) return;
+  if (audio.paused) {
+    audio.play()["catch"](function(){});
+    icon.src = "./assets/imgIcon6.svg";
+    btn.classList.remove("paused");
+  } else {
+    audio.pause();
+    icon.src = "./assets/imgIcon-play.svg";
+    btn.classList.add("paused");
+  }
+}
+</script>
+<script>
+/* ── Parallax: floating particles + scroll depth ── */
+(function(){
+  var DESIGN_W  = 430;
+  var rafPend   = false;
+  var pxItems   = []; // bg image parallax targets
+  var heroLayers = []; // hero text layer parallax
+
+  /* ── 1. Floating gold particles ── */
+  function initParticles() {
+    var N   = 24;
+    var css = '';
+
+    for (var i = 0; i < N; i++) {
+      var dx   = Math.round((Math.random() - 0.5) * 130);
+      var rot  = Math.round(Math.random() * 400);
+      var peak = (0.35 + Math.random() * 0.45).toFixed(2);
+      css += '@keyframes fp'+i+'{'
+        + '0%{opacity:0;transform:translate(0,0) rotate(0deg)}'
+        + '7%{opacity:'+peak+'}'
+        + '93%{opacity:0.1}'
+        + '100%{opacity:0;transform:translate('+dx+'px,-110vh) rotate('+rot+'deg)}'
+        + '}';
+    }
+
+    var st = document.createElement('style');
+    st.textContent = css;
+    document.head.appendChild(st);
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'position:absolute;top:0;left:0;width:430px;height:1388.781px;pointer-events:none;overflow:hidden;z-index:5';
+
+    for (var j = 0; j < N; j++) {
+      var sz  = (2 + Math.random() * 4.5).toFixed(1);
+      var dur = (11 + Math.random() * 14).toFixed(1);
+      var del = (-Math.random() * parseFloat(dur)).toFixed(1);
+      var lx  = (Math.random() * 100).toFixed(1);
+      var br  = Math.random() > 0.45 ? '50%' : '2px';
+      var el  = document.createElement('div');
+      el.style.cssText = [
+        'position:absolute','bottom:0',
+        'left:'+lx+'%',
+        'width:'+sz+'px','height:'+sz+'px',
+        'border-radius:'+br,
+        'background:#C0C0C0',
+        'opacity:0',
+        'animation:fp'+j+' '+dur+'s ease-in '+del+'s infinite'
+      ].join(';');
+      wrap.appendChild(el);
+    }
+    document.getElementById('app-container').appendChild(wrap);
+  }
+
+  /* ── 2. Floating leaves & flowers ── */
+  function initNature() {
+    var N_LEAF   = 14;
+    var N_FLOWER = 9;
+    var css = '';
+
+    var leafPaths = [
+      'M0,-20 C9,-12 11,-2 7,9 C3,18 -3,18 -7,9 C-11,-2 -9,-12 0,-20Z',
+      'M0,-22 C13,-8 13,8 0,22 C-13,8 -13,-8 0,-22Z',
+      'M-3,-17 C7,-11 13,-2 9,10 C5,18 -2,20 -6,12 C-12,4 -10,-8 -3,-17Z',
+      'M0,-18 C6,-14 10,-6 8,6 C6,14 2,18 -2,14 C-8,6 -8,-6 0,-18Z',
+    ];
+    var leafColors = ['#C0C0C0','#B8952E','rgba(212,175,55,0.82)','#C0C0C0','rgba(212,175,55,0.6)'];
+
+    for (var i = 0; i < N_LEAF; i++) {
+      var swayX = Math.round((Math.random()-0.5)*170);
+      var midX  = Math.round((Math.random()-0.5)*70);
+      var rot   = Math.round(-40+Math.random()*80);
+      var peak  = (0.38+Math.random()*0.42).toFixed(2);
+      css += '@keyframes lf'+i+'{'
+        +'0%{opacity:0;transform:translate(0,0) rotate(0deg)}'
+        +'8%{opacity:'+peak+'}'
+        +'30%{transform:translate('+midX+'px,-28vh) rotate('+(rot/2)+'deg)}'
+        +'65%{transform:translate('+(swayX*0.6|0)+'px,-62vh) rotate('+rot+'deg);opacity:'+peak+'}'
+        +'92%{opacity:0.12}'
+        +'100%{opacity:0;transform:translate('+swayX+'px,-108vh) rotate('+(rot*1.6|0)+'deg)}'
+        +'}';
+    }
+
+    var st = document.createElement('style');
+    st.textContent = css;
+    document.head.appendChild(st);
+
+    /* leaf layer — floats upward, clipped to the verse section */
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'position:absolute;top:0;left:0;width:430px;height:1388.781px;pointer-events:none;overflow:hidden;z-index:4';
+
+    /* — leaves — */
+    for (var j = 0; j < N_LEAF; j++) {
+      var sz   = (13+Math.random()*15)|0;
+      var dur  = (22+Math.random()*28).toFixed(1);
+      var del  = (-Math.random()*parseFloat(dur)).toFixed(1);
+      var lx   = (Math.random()*100).toFixed(1);
+      var col  = leafColors[(Math.random()*leafColors.length)|0];
+      var lp   = leafPaths[(Math.random()*leafPaths.length)|0];
+
+      var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('width', sz);
+      svg.setAttribute('height', sz);
+      svg.setAttribute('viewBox','-15 -24 30 48');
+      svg.style.cssText = 'position:absolute;bottom:'+(-sz/2|0)+'px;left:'+lx+'%;opacity:0;transform-origin:center center;animation:lf'+j+' '+dur+'s ease-in-out '+del+'s infinite';
+
+      var pth = document.createElementNS('http://www.w3.org/2000/svg','path');
+      pth.setAttribute('d', lp);
+      pth.setAttribute('fill', col);
+      pth.setAttribute('stroke','#002366');
+      pth.setAttribute('stroke-width','0.9');
+      pth.setAttribute('stroke-opacity','0.35');
+      svg.appendChild(pth);
+
+      var vein = document.createElementNS('http://www.w3.org/2000/svg','line');
+      vein.setAttribute('x1','0'); vein.setAttribute('y1','-18');
+      vein.setAttribute('x2','0'); vein.setAttribute('y2','16');
+      vein.setAttribute('stroke','#002366');
+      vein.setAttribute('stroke-width','0.7');
+      vein.setAttribute('stroke-opacity','0.45');
+      svg.appendChild(vein);
+
+      var vl = document.createElementNS('http://www.w3.org/2000/svg','line');
+      vl.setAttribute('x1','-1'); vl.setAttribute('y1','-4');
+      vl.setAttribute('x2','-7'); vl.setAttribute('y2','2');
+      vl.setAttribute('stroke','#002366');
+      vl.setAttribute('stroke-width','0.5');
+      vl.setAttribute('stroke-opacity','0.35');
+      svg.appendChild(vl);
+
+      var vr = document.createElementNS('http://www.w3.org/2000/svg','line');
+      vr.setAttribute('x1','1'); vr.setAttribute('y1','-4');
+      vr.setAttribute('x2','7'); vr.setAttribute('y2','2');
+      vr.setAttribute('stroke','#002366');
+      vr.setAttribute('stroke-width','0.5');
+      vr.setAttribute('stroke-opacity','0.35');
+      svg.appendChild(vr);
+
+      wrap.appendChild(svg);
+    }
+
+    document.getElementById('app-container').appendChild(wrap);
+  }
+
+  /* ── 3. Scroll parallax on section backgrounds + hero text layers ── */
+  function getScale() {
+    return window.innerWidth < DESIGN_W ? window.innerWidth / DESIGN_W : 1;
+  }
+
+  function collectHeroLayers() {
+    heroLayers = [];
+    var heroSec = document.getElementById('hero-section');
+    if (!heroSec) return;
+    document.querySelectorAll('[data-px-rate]').forEach(function(el) {
+      var rate = parseFloat(el.getAttribute('data-px-rate') || 0);
+      if (!rate) return;
+      el.style.willChange = 'transform';
+      /* capture existing horizontal transform so we don't lose it */
+      var baseTx = el.classList.contains('-translate-x-1/2')
+        ? 'translateX(-50%)'
+        : (el.style.transform || '').replace(/\s*translateY\([^)]*\)/g, '').trim();
+      heroLayers.push({ el: el, sec: heroSec, rate: rate, baseTx: baseTx });
+    });
+  }
+
+  function hasRoundedAncestor(img, container) {
+    var el = img.parentElement;
+    for (var n = 0; n < 10; n++) {
+      if (!el || el === container) return false;
+      var cn = el.className || '';
+      if (/rounded-\[(?:500|14)/.test(cn)) return true;
+      el = el.parentElement;
+    }
+    return false;
+  }
+
+  function collectTargets() {
+    var c = document.getElementById('app-container');
+    if (!c) return;
+    pxItems = [];
+
+    c.querySelectorAll('img.object-cover').forEach(function(img) {
+      /* skip portrait photos inside oval frames (rounded-[500px] is on parent, not img) */
+      if (hasRoundedAncestor(img, c)) return;
+
+      /* walk up to find the nearest overflow-clip container */
+      var sec = img.parentElement;
+      for (var n = 0; n < 10; n++) {
+        if (!sec || sec === c) { sec = null; break; }
+        if (sec.classList && sec.classList.contains('overflow-clip')) break;
+        sec = sec.parentElement;
+      }
+      if (!sec || sec === c) return;
+
+      img.style.willChange     = 'transform';
+      img.style.transformOrigin = 'center center';
+      pxItems.push({
+        img  : img,
+        sec  : sec,
+        rate : 0.14 + Math.random() * 0.08
+      });
+    });
+  }
+
+  function applyParallax() {
+    rafPend = false;
+    var scale = getScale();
+    var vh    = window.innerHeight;
+
+    /* ── background image parallax ── */
+    pxItems.forEach(function(p) {
+      var r        = p.sec.getBoundingClientRect();
+      var secMidY  = r.top + r.height * 0.5;
+      var diff     = secMidY - vh * 0.5;
+      var clampMax = r.height * 0.16;
+      diff = Math.max(-clampMax, Math.min(clampMax, diff));
+      var dy = (diff * p.rate) / scale;
+      p.img.style.transform = 'translateY('+dy.toFixed(1)+'px) scale(1.35)';
+    });
+
+    /* ── hero text layer parallax (multi-depth) ── */
+    heroLayers.forEach(function(p) {
+      var r       = p.sec.getBoundingClientRect();
+      /* skip when hero is completely out of viewport */
+      if (r.bottom < 0 || r.top > vh) return;
+      var secMidY  = r.top + r.height * 0.5;
+      var diff     = secMidY - vh * 0.5;
+      var clampMax = r.height * 0.22;
+      diff = Math.max(-clampMax, Math.min(clampMax, diff));
+      var dy = (diff * p.rate) / scale;
+      p.el.style.transform = (p.baseTx ? p.baseTx + ' ' : '') + 'translateY('+dy.toFixed(1)+'px)';
+    });
+  }
+
+  function onScroll() {
+    if (!rafPend) { rafPend = true; requestAnimationFrame(applyParallax); }
+  }
+
+  /* ── Boot after React renders ── */
+  /* ── Scroll-triggered entrance animations ── */
+  function initScrollAnims() {
+    var targets = document.querySelectorAll('[data-anim]');
+    if (!targets.length || !('IntersectionObserver' in window)) {
+      /* fallback: show everything immediately */
+      targets.forEach(function(el) { el.classList.add('anim-in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (!e.isIntersecting) return;
+        var el    = e.target;
+        var delay = parseInt(el.getAttribute('data-delay') || 0);
+        var isPhoto = el.getAttribute('data-anim') === 'groom-frame' ||
+                      el.getAttribute('data-anim') === 'bride-frame';
+        setTimeout(function() {
+          el.classList.add('anim-in');
+          if (isPhoto) {
+            /* brief gold glow after the frame slides in */
+            setTimeout(function() { el.classList.add('anim-glow'); }, 80);
+          }
+        }, delay);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+    targets.forEach(function(el) { io.observe(el); });
+  }
+
+  function init() {
+    var c = document.getElementById('app-container');
+    if (!c || c.offsetHeight < 200) { setTimeout(init, 80); return; }
+    initParticles();
+    initNature();
+    collectTargets();
+    collectHeroLayers();
+    applyParallax();
+    initScrollAnims();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', function() { collectTargets(); collectHeroLayers(); applyParallax(); });
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
