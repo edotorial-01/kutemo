@@ -69,6 +69,13 @@ export default async function handler(req, res) {
     // ikut ter-update tanpa perlu regenerate.
     html = injectUcapan(html, slug);
 
+    // ── Transformasi saat serve: paksa mode pembayaran PRODUKSI ────────
+    // Backend /api/create-transaction memakai server key produksi
+    // (is_sandbox=false). Widget Snap di frontend WAJIB cocok — kalau
+    // masih sandbox, token produksi ditolak. Snapshot lama yang dibuat
+    // saat MIDTRANS_IS_SANDBOX=true otomatis dikoreksi di sini.
+    html = injectMidtransProduction(html);
+
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400");
     res.send(html);
@@ -213,6 +220,21 @@ function injectUcapan(html, slug) {
 `;
   if (html.includes('</body>')) {
     html = html.replace('</body>', SCRIPT + '\n</body>');
+  }
+  return html;
+}
+
+/* ── Injeksi mode pembayaran PRODUKSI (serve-time) ─────────────────────
+ * Midtrans tidak bisa dicampur mode: token dibuat backend dengan server
+ * key produksi (is_sandbox=false) sehingga widget Snap frontend harus
+ * memakai app.midtrans.com + client key produksi. Snapshot lama yang
+ * masih MIDTRANS_IS_SANDBOX=true (widget sandbox) akan menolak token
+ * produksi. Diganti di sini agar semua undangan konsisten tanpa perlu
+ * regenerate.
+ */
+function injectMidtransProduction(html) {
+  if (/MIDTRANS_IS_SANDBOX\s*=\s*true/.test(html)) {
+    html = html.replace(/MIDTRANS_IS_SANDBOX\s*=\s*true/, 'MIDTRANS_IS_SANDBOX = false');
   }
   return html;
 }
