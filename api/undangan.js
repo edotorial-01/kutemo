@@ -233,8 +233,17 @@ function injectUcapan(html, slug) {
  * regenerate.
  */
 function injectMidtransProduction(html) {
+  // Snapshot lama (dibuat sebelum /api/midtrans-config ada) masih
+  // hardcode MIDTRANS_IS_SANDBOX=true → paksa ke produksi.
   if (/MIDTRANS_IS_SANDBOX\s*=\s*true/.test(html)) {
     html = html.replace(/MIDTRANS_IS_SANDBOX\s*=\s*true/, 'MIDTRANS_IS_SANDBOX = false');
+  }
+  // Snapshot lama juga masih hardcode client key → ganti dengan key dari
+  // env terpusat. Snapshot baru tidak punya const ini (pakai runtime fetch),
+  // jadi regex tidak menyentuhnya.
+  const clientKey = process.env.MIDTRANS_CLIENT_KEY;
+  if (clientKey && /MIDTRANS_CLIENT_KEY\s*=\s*'[^']*'/.test(html)) {
+    html = html.replace(/MIDTRANS_CLIENT_KEY\s*=\s*'[^']*'/, `MIDTRANS_CLIENT_KEY = '${clientKey}'`);
   }
   return html;
 }

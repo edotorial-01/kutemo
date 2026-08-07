@@ -3285,8 +3285,14 @@ function toggleTheme() {
 </script>
 <script>
 /* ── PAYMENT MODAL ── */
-const MIDTRANS_CLIENT_KEY = 'Mid-client-2v9pXKZN6TUp3Gib';
-const MIDTRANS_IS_SANDBOX = false;
+/* Konfigurasi Midtrans diambil dari env (terpusat) lewat /api/midtrans-config.
+   Fallback hardcode di bawah hanya jaring pengaman bila endpoint belum
+   ter-deploy — nilai utamanya dibaca dari server saat runtime. */
+const MIDTRANS_FALLBACK = {
+  client_key: 'Mid-client-2v9pXKZN6TUp3Gib',
+  is_sandbox: false
+};
+let MIDTRANS_CONFIG = MIDTRANS_FALLBACK;
 const WA_ADMIN = '6289526016022';
 
 const _LUXORA_PRODUCT = {
@@ -3295,15 +3301,41 @@ const _LUXORA_PRODUCT = {
 };
 
 let _midtransLoaded = false;
+let _configPromise = null;
+
+/* Ambil config Midtrans dari env terpusat (/api/midtrans-config). Dipanggil
+   sekali & di-cache; kalau endpoint gagal, pakai fallback hardcode. */
+function _getMidtransConfig() {
+  if (MIDTRANS_CONFIG !== MIDTRANS_FALLBACK) return Promise.resolve(MIDTRANS_CONFIG);
+  if (!_configPromise) {
+    _configPromise = fetch('/api/midtrans-config')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(cfg) {
+        if (cfg && cfg.client_key) {
+          MIDTRANS_CONFIG = { client_key: cfg.client_key, is_sandbox: !!cfg.is_sandbox };
+        }
+        return MIDTRANS_CONFIG;
+      })
+      .catch(function() { return MIDTRANS_FALLBACK; });
+  }
+  return _configPromise;
+}
+
+/* Muat snap.js HANYA setelah config siap, supaya client key & mode selalu
+   yang aktif dari server (bukan stale fallback). Idempoten: panggilan
+   bersamaan berbagi config promise & guard _midtransLoaded. */
 function _loadMidtrans() {
-  if (_midtransLoaded) return;
-  _midtransLoaded = true;
-  var s = document.createElement('script');
-  s.src = MIDTRANS_IS_SANDBOX
-    ? 'https://app.sandbox.midtrans.com/snap/snap.js'
-    : 'https://app.midtrans.com/snap/snap.js';
-  s.setAttribute('data-client-key', MIDTRANS_CLIENT_KEY);
-  document.head.appendChild(s);
+  if (_midtransLoaded) return Promise.resolve();
+  return _getMidtransConfig().then(function(cfg) {
+    if (_midtransLoaded) return;
+    _midtransLoaded = true;
+    var s = document.createElement('script');
+    s.src = cfg.is_sandbox
+      ? 'https://app.sandbox.midtrans.com/snap/snap.js'
+      : 'https://app.midtrans.com/snap/snap.js';
+    s.setAttribute('data-client-key', cfg.client_key);
+    document.head.appendChild(s);
+  });
 }
 
 function formatRp(a) { return 'Rp ' + a.toLocaleString('id-ID'); }
