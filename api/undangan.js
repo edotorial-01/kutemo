@@ -89,6 +89,20 @@ function injectUcapan(html, slug) {
   const safeSlug = (slug || '').replace(/[^a-z0-9-]/gi, '');
   if (!safeSlug) return html;
 
+  // Halaman yang sudah punya handler ucapan BAWAAN TIDAK perlu disuntik
+  // lagi — injeksi dobel membuat beberapa handler submit bertabrakan.
+  //  - window.submitRSVP=  → generate-invitation 13c sudah me-override
+  //  - RSVP_SLUG=          → template modern (Seri Melayu dkk) sudah handle
+  //  - _ktmSlug            → generate-invitation selalu set; tema submitRSVP
+  //                          di-handle oleh 13c. (TIDAK dijadikan kondisi mati
+  //                          karena hampir semua undangan punya ini.)
+  if (
+    /window\.submitRSVP\s*=/.test(html) ||
+    /RSVP_SLUG\s*=/.test(html)
+  ) {
+    return html;
+  }
+
   const SCRIPT = `
 <script>
 /* KTM ucapan universal — disuntikkan saat serve agar semua undangan ter-update */
